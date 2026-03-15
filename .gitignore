@@ -3,3 +3,5 @@ Foursix46Frontend/node_modules
 FourSix46Backend/ServiceAccountKey.json
 FourSix46Backend/node_modules
 FourSix46Backend/.env
+.DS_Store
+Foursix46Frontend/temp.txt
