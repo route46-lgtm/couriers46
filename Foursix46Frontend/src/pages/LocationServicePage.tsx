@@ -909,7 +909,7 @@ export default function LocationServicePage() {
   }
 
   /* ── Derived data ── */
-  const heroImage = page.heroImage || "/route462.jpeg";
+  const heroImage = page.heroImage || "/route4622.png";
   const canonicalUrl =
     page.canonicalUrl || `${BASE_URL}/locations/${locationSlug}/${serviceSlug}`;
   const proofPoints = page.localProofPoints || [];

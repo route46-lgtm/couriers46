@@ -219,9 +219,25 @@ export default function Footer() {
 
           {/* Copyright */}
           <p className="text-xs text-[#134467]/55 font-medium">
-            Route46 Couriers is a trading name of FourSix46® Global Ltd. ©{" "}
-            {new Date().getFullYear()} FourSix46® Global Ltd. All rights
-            reserved.
+            Route46 Couriers is a trading name of{" "}
+            <a
+              href="https://foursix46.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#48AEDD] hover:text-[#E53935] transition-colors duration-300"
+            >
+              FourSix46® Global Ltd.
+            </a>{" "}
+            © {new Date().getFullYear()}{" "}
+            <a
+              href="https://foursix46.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#48AEDD] hover:text-[#E53935] transition-colors duration-300"
+            >
+              FourSix46® Global Ltd.
+            </a>{" "}
+            All rights reserved.
           </p>
         </div>
 

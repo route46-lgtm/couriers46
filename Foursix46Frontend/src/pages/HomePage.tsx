@@ -72,7 +72,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       <HeroSection
         backgroundImageUrl="/route462.jpeg"
-        mobileBackgroundImageUrl="/route462.jpeg"
+        mobileBackgroundImageUrl="/route463mob.png"
         // backgroundImageUrl="/FourSixLogo.png"
         onSendParcel={() => navigate("/quick-quote")}
         onJoinNetwork={() => navigate("/for-businesses")}

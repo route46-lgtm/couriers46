@@ -37,46 +37,44 @@ export default function TermsPage() {
       content: (
         <div className="space-y-2">
           <p>
+            These Terms and Conditions govern the provision of courier,
+            transport, and related logistics services offered by{" "}
             <strong className="text-[#134467]">FourSix46® Global Ltd</strong>,
             trading as{" "}
-            <strong className="text-[#134467]">Route46 Couriers</strong>,
-            undertakes all carriage and related services strictly under the{" "}
-            <strong className="text-[#E53935]">
-              Road Haulage Association (RHA) Conditions of Carriage 2024
-            </strong>
-            .
+            <strong className="text-[#134467]">Route46 Couriers</strong>, within
+            the United Kingdom.
           </p>
           <p>
-            All transport and delivery services are undertaken in accordance
-            with these industry-standard conditions, which set out the rights,
-            responsibilities and liability limits applicable to UK road freight
-            operations.
+            All carriage and delivery services arranged by Route46 Couriers are
+            undertaken strictly in accordance with the Road Haulage Association
+            (RHA) Conditions of Carriage 2024, which set out the standard terms,
+            responsibilities, and liability limits applicable to road freight
+            operations in the UK.
           </p>
           <p>
-            By booking a delivery, opening an account, or consigning goods, the
-            Customer confirms{" "}
-            <strong className="text-[#134467]">acceptance</strong> of the RHA
-            Conditions of Carriage 2024.
+            By requesting a delivery quotation, booking a shipment, opening an
+            account, or consigning goods for transport, the customer confirms
+            their acceptance of these Terms and Conditions and the applicable
+            RHA Conditions of Carriage 2024.
+          </p>
+          <p>
+            No additional or alternative terms shall apply unless expressly
+            agreed in writing and signed by an authorised director of FourSix46
+            Global Ltd.
           </p>
           <p className="italic text-sm">
             A full copy of the RHA Conditions is available upon request.
           </p>
           <p>
-            These Terms and Conditions govern the provision of courier,
-            transport, and related logistics services oered by FourSix46® Global
-            Ltd, trading as Route46 Couriers, within the United Kingdom. All
-            carriage and delivery services arranged by Route46 Couriers are
-            undertaken strictly in accordance with the Road Haulage Association
-            (RHA) Conditions of Carriage 2024, which set out the standard terms,
-            responsibilities, and liability limits applicable to road freight
-            operations in the UK. By requesting a delivery quotation, booking a
-            shipment, opening an account, or consigning goods for transport, the
-            customer conrms their acceptance of these Terms and Conditions and
-            the applicable RHA Conditions of Carriage 2024. No additional or
-            alternative terms shall apply unless expressly agreed in writing and
-            signed by an authorised director of FourSix46® Global Ltd. A full
-            copy of the RHA Conditions of Carriage 2024 is available upon
-            request.
+            Company Information:
+            <br />
+            FourSix46® Global Ltd Trading as Route46 Couriers
+            <br />
+            66 Paul Street
+            <br />
+            London EC2A 4NA
+            <br />
+            United Kingdom
           </p>
         </div>
       ),
@@ -580,9 +578,13 @@ export default function TermsPage() {
                   Important Agreement
                 </h2>
                 <p className="text-white/90 leading-relaxed">
-                  Route46 Global Ltd, trading as Route46 Couriers, undertakes
-                  all carriage and related services strictly under the Road
-                  Haulage Association (RHA) Conditions of Carriage 2024.
+                  FourSix46 Global Ltd, trading as Route46 Couriers, undertakes
+                  all carriage and related transport services strictly under the
+                  Road Haulage Association (RHA) Conditions of Carriage 2024.
+                  All transport and delivery services are undertaken in
+                  accordance with these industry-standard conditions, which set
+                  out the rights, responsibilities and liability limits
+                  applicable to UK road freight operations.
                 </p>
               </div>
             </div>
