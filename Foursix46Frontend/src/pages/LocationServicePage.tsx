@@ -776,7 +776,9 @@ const DedicatedCourierNetwork = () => (
     <div className="max-w-3xl mx-auto px-5 sm:px-6 text-center">
       <p className="text-[#134467] font-semibold text-base sm:text-lg leading-relaxed">
         Route46 Couriers provides reliable same-day transport across the UK with
-        professional drivers, secure handling, and real-time delivery updates.
+        access to thousands of verified drivers and vehicles through our
+        extended courier network, ensuring fast collection, secure handling, and
+        true nationwide delivery coverage.
       </p>
     </div>
   </div>

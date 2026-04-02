@@ -2752,6 +2752,7 @@ import { LocationFormDialog } from "@/components/admin/LocationFormDialog";
 import { LandingPageFormDialog } from "@/components/admin/LandingPageFormDialog";
 import { FaqFormDialog } from "@/components/admin/FaqFormDialog";
 import { BlogFormDialog } from "@/components/admin/BlogFormDialog"; // ✅ NEW
+import { VatSettingsCard } from "@/components/admin/VatSettingsCard";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -3585,9 +3586,7 @@ export default function AdminDashboardPage() {
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />
-
       {/* ── CMS Form Dialogs ──────────────────────────────────────────────── */}
-
       {/* Services */}
       <ServiceFormDialog
         open={isFormOpen && currentView === "services"}
@@ -3599,7 +3598,6 @@ export default function AdminDashboardPage() {
           "Service",
         )}
       />
-
       {/* Sectors */}
       <SectorFormDialog
         open={isFormOpen && currentView === "sectors"}
@@ -3612,7 +3610,6 @@ export default function AdminDashboardPage() {
           "Sector",
         )}
       />
-
       {/* Locations */}
       <LocationFormDialog
         open={isFormOpen && currentView === "locations"}
@@ -3624,7 +3621,6 @@ export default function AdminDashboardPage() {
           "Location",
         )}
       />
-
       {/* Landing Pages */}
       <LandingPageFormDialog
         open={isFormOpen && currentView === "landingPages"}
@@ -3641,7 +3637,6 @@ export default function AdminDashboardPage() {
           "Landing page",
         )}
       />
-
       {/* FAQs */}
       <FaqFormDialog
         open={isFormOpen && currentView === "faqs"}
@@ -3653,7 +3648,6 @@ export default function AdminDashboardPage() {
           "FAQ",
         )}
       />
-
       {/* ✅ NEW — Blogs */}
       <BlogFormDialog
         open={isFormOpen && currentView === "blogs"}
@@ -3665,7 +3659,8 @@ export default function AdminDashboardPage() {
           "Blog post",
         )}
       />
-
+      // Inside your admin settings page/tab:
+      <VatSettingsCard />
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <header className="flex items-center justify-between p-4 md:p-6 bg-card border-b">
         <div>
@@ -3690,7 +3685,6 @@ export default function AdminDashboardPage() {
           </Button>
         </div>
       </header>
-
       {/* ── Main ─────────────────────────────────────────────────────────── */}
       <main className="p-4 md:p-6 grid gap-6">
         {/* Stat Cards */}
@@ -4882,7 +4876,6 @@ export default function AdminDashboardPage() {
           );
         })}
       </main>
-
       {/* ── Detail View Dialog ───────────────────────────────────────────── */}
       <Dialog
         open={!!selectedApp}

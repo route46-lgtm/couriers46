@@ -536,7 +536,7 @@ export default function AboutPage() {
               fadeInUp,
             )}
           >
-            ONE IDENTITY, NATIONWIDE COURIER NETWORK
+            NATIONWIDE COURIER NETWORK
           </span>
           <h1
             className={cn(
