@@ -1,10 +1,10 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { initConsentManager } from "./lib/ConsentManager";
+//import { initConsentManager } from "./lib/ConsentManager";
 
 // Initialise the consent manager
-initConsentManager();
+//initConsentManager();
 
 // Fade out the static placeholder before React renders
 const root = document.getElementById("root")!;
