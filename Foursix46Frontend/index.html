@@ -43,36 +43,41 @@
 
   <!-- Theme Color for Mobile Browsers -->
   <meta name="theme-color" content="#F8F8F8" />
-  <!-- ① Google Consent Mode v2 — MUST be first, before any Google tag -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-
-      gtag('consent', 'default', {
-        ad_storage:              'denied',
-        ad_user_data:            'denied',
-        ad_personalization:      'denied',
-        analytics_storage:       'denied',
-        functionality_storage:   'denied',
-        personalization_storage: 'denied',
-        security_storage:        'granted',  // Strictly Necessary — always on
-        wait_for_update:          500
-      });
-
-      gtag('set', 'ads_data_redaction', true);   // Redact ad click IDs when denied
-      gtag('set', 'url_passthrough',    true);   // Preserve measurement without cookies
-    </script>
-  <!-- ② CookieYes script — replace YOUR_SCRIPT_ID with your account's ID -->
-   <!-- Start cookieyes banner --> 
-  <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/806dd9435fca1f4570080fef39d8e42d/script.js"></script> <!-- End cookieyes banner -->
-    <!-- Google tag (gtag.js) -->
-<script type="text/plain" cookieyes="analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-DJ2LG13XLG"></script>
-
-<script type="text/plain" cookieyes="analytics">
+  <!-- 1. Consent defaults -->
+<script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  function gtag(){ dataLayer.push(arguments); }
 
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'denied',
+    personalization_storage: 'denied',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+
+  gtag('set', 'ads_data_redaction', true);
+  gtag('set', 'url_passthrough', true);
+</script>
+
+<!-- 2. CookieYes -->
+<script id="cookieyes" type="text/javascript"
+  src="https://cdn-cookieyes.com/client_data/806dd9435fca1f4570080fef39d8e42d/script.js">
+</script>
+
+<!-- 3. GA4 blocked until analytics consent -->
+<script
+  async
+  data-cookieyes="cookieyes-analytics"
+  src="https://www.googletagmanager.com/gtag/js?id=G-DJ2LG13XLG">
+</script>
+<script data-cookieyes="cookieyes-analytics">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
   gtag('config', 'G-DJ2LG13XLG', {
     anonymize_ip: true
   });
