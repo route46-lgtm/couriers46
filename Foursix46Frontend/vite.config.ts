@@ -119,23 +119,21 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // Point Vite's browser + SSR builds at the plain CJS file.
-      // resolve.alias bypasses the exports field, so Rollup handles
-      // CJS→ESM and never sees the Node-only createRequire wrapper.
-      'react-helmet-async': path.resolve(
-        __dirname,
-        'node_modules/react-helmet-async/lib/index.js'
-      ),
+      // ── react-helmet-async alias intentionally REMOVED ──────────────────
+      // Adding an alias makes Rollup treat it as a local file and BUNDLE it
+      // into the SSR temp output → two separate module instances → dual
+      // HelmetProvider/HelmetDispatcher contexts → crash.
+      // Without the alias, Vite SSR externalises it (it's a node_module).
+      // At SSR runtime Node.js resolves it via our patched exports.node.import
+      // → same createRequire-cached CJS instance as vite-react-ssg → one context.
     },
     dedupe: ['react', 'react-dom', 'react-router-dom', 'react-helmet-async'],
   },
 
-  // ── ssr.noExternal is intentionally OMITTED for react-helmet-async ────────
-  // Externalising it means the SSR temp bundle does a real Node.js import at
-  // runtime → resolves via exports.node.import → same createRequire wrapper →
-  // same require-cached CJS instance as vite-react-ssg's HelmetProvider.
-  // Both share the same React context. Bundling them separately (noExternal)
-  // creates two distinct instances → HelmetDispatcher context is undefined.
+  // ── ssr.noExternal intentionally OMITTED for react-helmet-async ───────────
+  // noExternal = bundle into SSR temp = second instance = crash.
+  // External (default for node_modules) = runtime Node.js import = shared
+  // require() cache = single instance = HelmetProvider context is found.
 
   ssgOptions: {
     script: 'async',
@@ -157,14 +155,15 @@ export default defineConfig(({ mode }) => ({
           return []
         }
 
-        // Valid slug: non-empty, no slashes, only url-safe chars, max 50 chars
-        // Filters out malformed entries like "same-day-couriersame-day-courier"
+        // Strict slug validation — rejects doubled/malformed slugs
         const validSlug = (s: any): s is string =>
           typeof s === 'string' &&
-          s.length > 0 &&
-          s.length <= 50 &&
+          s.length >= 2 &&
+          s.length <= 60 &&
           !s.includes('/') &&
-          /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s)
+          /^[a-z0-9]+(-[a-z0-9]+)*$/.test(s) &&
+          // Reject doubled slugs: split by '-', no segment should appear twice consecutively
+          !(s.replace(/-/g, '') !== s.replace(/-/g, '').slice(0, s.replace(/-/g, '').length / 2).repeat(2))
 
         const allRoutes = [
           ...paths,
