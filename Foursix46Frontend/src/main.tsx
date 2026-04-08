@@ -32,9 +32,10 @@
 // }, 400);
 // src/main.tsx
 import { ViteReactSSG } from "vite-react-ssg";
-import App from "./App.tsx";
 import "./index.css";
 import { routes } from "./routes";
+// ❌ Removed: import App from "./App.tsx" — App is never consumed here
+// ❌ Removed: export default RootLayout  — belongs in App.tsx only
 
 export const createRoot = ViteReactSSG({ routes }, ({ isClient }) => {
   if (isClient) {
@@ -48,8 +49,6 @@ export const createRoot = ViteReactSSG({ routes }, ({ isClient }) => {
     });
 
     // ── Fade out the loading overlay once React hydrates ──────────────────
-    // The overlay lives in index.html outside #root so it never touches
-    // the React app itself. We fade it out and then remove it from the DOM.
     const overlay = document.getElementById("loading-overlay");
     if (overlay) {
       overlay.style.opacity = "0";
