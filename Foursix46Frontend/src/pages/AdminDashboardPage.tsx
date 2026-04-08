@@ -21,6 +21,7 @@
 //   Eye,
 //   RefreshCw,
 //   Trash2,
+//   Settings,
 // } from "lucide-react";
 // import { Button } from "@/components/ui/button";
 // import {
@@ -64,6 +65,8 @@
 // import { LocationFormDialog } from "@/components/admin/LocationFormDialog";
 // import { LandingPageFormDialog } from "@/components/admin/LandingPageFormDialog";
 // import { FaqFormDialog } from "@/components/admin/FaqFormDialog";
+// import { BlogFormDialog } from "@/components/admin/BlogFormDialog"; // ✅ NEW
+// import { VatSettingsCard } from "@/components/admin/VatSettingsCard";
 
 // const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -131,6 +134,7 @@
 //   revenue: number;
 // }
 
+// // ✅ Added "blogs" to DashboardView
 // type DashboardView =
 //   | "overview"
 //   | "pending"
@@ -144,7 +148,9 @@
 //   | "locations"
 //   | "landingPages"
 //   | "faqs"
+//   | "blogs"
 //   | "quickQuotes"
+//   | "vatSettings"
 //   | "payments";
 
 // interface Booking {
@@ -296,32 +302,20 @@
 // );
 
 // // --- Format Date ---
-// // ✅ New — handles all 4 timestamp formats
 // const formatDate = (timestamp: any): string => {
 //   if (!timestamp) return "N/A";
-
 //   let date: Date | null = null;
-
-//   // 1. Firestore Timestamp object (direct SDK — drivers, shippers, bookings)
 //   if (typeof timestamp.toDate === "function") {
 //     date = timestamp.toDate();
-//   }
-//   // 2. Serialized Firestore Timestamp from REST API: { _seconds, _nanoseconds }
-//   else if (timestamp._seconds !== undefined) {
+//   } else if (timestamp._seconds !== undefined) {
 //     date = new Date(timestamp._seconds * 1000);
-//   }
-//   // 3. Alternate serialization: { seconds, nanoseconds }
-//   else if (timestamp.seconds !== undefined) {
+//   } else if (timestamp.seconds !== undefined) {
 //     date = new Date(timestamp.seconds * 1000);
-//   }
-//   // 4. ISO string or numeric timestamp (e.g. from server.js Date.now())
-//   else {
+//   } else {
 //     const parsed = new Date(timestamp);
 //     if (!isNaN(parsed.getTime())) date = parsed;
 //   }
-
 //   if (!date) return "N/A";
-
 //   return date.toLocaleDateString("en-GB", {
 //     day: "2-digit",
 //     month: "short",
@@ -373,11 +367,12 @@
 //   const [locations, setLocations] = useState<any[]>([]);
 //   const [landingPages, setLandingPages] = useState<any[]>([]);
 //   const [faqs, setFaqs] = useState<any[]>([]);
+//   const [blogs, setBlogs] = useState<any[]>([]); // ✅ NEW
 //   const [quickQuotes, setQuickQuotes] = useState<any[]>([]);
 //   const [payments, setPayments] = useState<any[]>([]);
 //   const [drivers, setDrivers] = useState<any[]>([]);
 
-//   // CMS dialog state — shared open flag + which item is being edited
+//   // CMS dialog state
 //   const [isFormOpen, setIsFormOpen] = useState(false);
 //   const [editingItem, setEditingItem] = useState<any>(null);
 
@@ -394,13 +389,13 @@
 
 //   const getTimestamp = (ts: any): number => {
 //     if (!ts) return 0;
-//     if (typeof ts.toMillis === "function") return ts.toMillis(); // Firestore Timestamp (SDK)
-//     if (ts.seconds !== undefined) return ts.seconds * 1000; // REST serialized { seconds }
-//     if (ts._seconds !== undefined) return ts._seconds * 1000; // Alt serialization
+//     if (typeof ts.toMillis === "function") return ts.toMillis();
+//     if (ts.seconds !== undefined) return ts.seconds * 1000;
+//     if (ts._seconds !== undefined) return ts._seconds * 1000;
 //     const p = new Date(ts);
-//     return isNaN(p.getTime()) ? 0 : p.getTime(); // ISO string fallback
+//     return isNaN(p.getTime()) ? 0 : p.getTime();
 //   };
-//   // --- Filter & Sort ---
+
 //   const filterAndSort = (
 //     data: any[],
 //     type: "driver" | "business" | "booking",
@@ -444,7 +439,7 @@
 //         nameA = "",
 //         nameB = "";
 //       if (type === "driver") {
-//         dateA = getTimestamp(a.submittedAt); // ← was a.submittedAt?.toMillis() ?? 0
+//         dateA = getTimestamp(a.submittedAt);
 //         dateB = getTimestamp(b.submittedAt);
 //         nameA = a.firstName + " " + a.lastName;
 //         nameB = b.firstName + " " + b.lastName;
@@ -524,6 +519,7 @@
 //         locRes,
 //         landRes,
 //         faqRes,
+//         blogRes, // ✅ NEW
 //         qqRes,
 //         payRes,
 //       ] = await Promise.all([
@@ -533,6 +529,9 @@
 //         fetch(`${apiUrl}/api/admin/locations`),
 //         fetch(`${apiUrl}/api/admin/location-services`),
 //         fetch(`${apiUrl}/api/admin/faqs`),
+//         fetch(`${apiUrl}/api/admin/blog`).catch(() => ({
+//           json: async () => [],
+//         })), // ✅ NEW
 //         fetch(`${apiUrl}/api/admin/quick-quotes`).catch(() => ({
 //           json: async () => [],
 //         })),
@@ -542,8 +541,6 @@
 //       ]);
 
 //       const driversData = await driversRes.json();
-
-//       // ✅ Populate ALL driver states from the single API call
 //       setDrivers(driversData);
 //       setPendingApplications(
 //         driversData.filter((d: any) => d.status === "pending"),
@@ -560,6 +557,7 @@
 //       setLocations(await locRes.json());
 //       setLandingPages(await landRes.json());
 //       setFaqs(await faqRes.json());
+//       setBlogs(await (blogRes as any).json()); // ✅ NEW
 //       setQuickQuotes(await (qqRes as any).json());
 //       setPayments(await (payRes as any).json());
 //     } catch (err) {
@@ -571,26 +569,6 @@
 //   // --- Fetch Firestore Data ---
 //   const fetchAllData = useCallback(async () => {
 //     try {
-//       // const pendingSnap = await getDocs(
-//       //   query(collection(db, "drivers"), where("status", "==", "pending")),
-//       // );
-//       // const pendingDocs = pendingSnap.docs.map((d) => ({
-//       //   id: d.id,
-//       //   ...d.data(),
-//       // })) as DriverApplication[];
-//       // setPendingApplications(pendingDocs);
-//       // setStats((prev) => ({ ...prev, pending: pendingDocs.length }));
-
-//       // const activeSnap = await getDocs(
-//       //   query(collection(db, "drivers"), where("status", "==", "approved")),
-//       // );
-//       // const activeDocs = activeSnap.docs.map((d) => ({
-//       //   id: d.id,
-//       //   ...d.data(),
-//       // })) as DriverApplication[];
-//       // setActiveDrivers(activeDocs);
-//       // setStats((prev) => ({ ...prev, approved: activeDocs.length }));
-
 //       const pendingShipSnap = await getDocs(
 //         query(collection(db, "businesses"), where("status", "==", "pending")),
 //       );
@@ -691,7 +669,6 @@
 //     fetchAllData();
 //   };
 
-//   // --- Action Handlers ---
 //   const handleLogout = async () => {
 //     try {
 //       await signOut(auth);
@@ -699,10 +676,9 @@
 //       toast.error("Failed to sign out.");
 //     }
 //   };
-//   /* ── Copy ID Badge ─────────────────────────────────────────── */
+
 //   const CopyIdBadge = ({ id }: { id: string }) => {
 //     const [copied, setCopied] = useState(false);
-
 //     const handleCopy = async (e: React.MouseEvent) => {
 //       e.stopPropagation();
 //       try {
@@ -710,7 +686,6 @@
 //         setCopied(true);
 //         setTimeout(() => setCopied(false), 2000);
 //       } catch {
-//         /* fallback for older browsers */
 //         const el = document.createElement("textarea");
 //         el.value = id;
 //         document.body.appendChild(el);
@@ -721,7 +696,6 @@
 //         setTimeout(() => setCopied(false), 2000);
 //       }
 //     };
-
 //     return (
 //       <div className="flex items-center gap-1.5 group">
 //         <code className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-1 rounded-md max-w-[120px] truncate block">
@@ -827,12 +801,10 @@
 //     }
 //   };
 
-//   // Trigger delete confirm modal
 //   const confirmDelete = (type: string, id: string, label: string) => {
 //     setDeleteTarget({ type, id, label });
 //   };
 
-//   // Actual delete after confirmation
 //   const handleDelete = async () => {
 //     if (!deleteTarget) return;
 //     const { type, id } = deleteTarget;
@@ -846,6 +818,7 @@
 //       location: `${apiUrl}/api/locations/${id}`,
 //       landingPage: `${apiUrl}/api/location-services/${id}`,
 //       faq: `${apiUrl}/api/faqs/${id}`,
+//       blog: `${apiUrl}/api/blog/${id}`, // ✅ NEW
 //       quickQuote: `${apiUrl}/api/admin/quick-quotes/${id}`,
 //     };
 //     try {
@@ -861,7 +834,6 @@
 //     }
 //   };
 
-//   // --- CMS Form Open Helpers ---
 //   const openCreateForm = () => {
 //     setEditingItem(null);
 //     setIsFormOpen(true);
@@ -872,7 +844,6 @@
 //     setIsFormOpen(true);
 //   };
 
-//   // --- CMS save handler factory (used by all 5 dialogs) ---
 //   const makeSaveHandler =
 //     (
 //       createEndpoint: string,
@@ -930,9 +901,7 @@
 //         onConfirm={handleDelete}
 //         onCancel={() => setDeleteTarget(null)}
 //       />
-
 //       {/* ── CMS Form Dialogs ──────────────────────────────────────────────── */}
-
 //       {/* Services */}
 //       <ServiceFormDialog
 //         open={isFormOpen && currentView === "services"}
@@ -944,7 +913,6 @@
 //           "Service",
 //         )}
 //       />
-
 //       {/* Sectors */}
 //       <SectorFormDialog
 //         open={isFormOpen && currentView === "sectors"}
@@ -957,7 +925,6 @@
 //           "Sector",
 //         )}
 //       />
-
 //       {/* Locations */}
 //       <LocationFormDialog
 //         open={isFormOpen && currentView === "locations"}
@@ -969,7 +936,6 @@
 //           "Location",
 //         )}
 //       />
-
 //       {/* Landing Pages */}
 //       <LandingPageFormDialog
 //         open={isFormOpen && currentView === "landingPages"}
@@ -986,7 +952,6 @@
 //           "Landing page",
 //         )}
 //       />
-
 //       {/* FAQs */}
 //       <FaqFormDialog
 //         open={isFormOpen && currentView === "faqs"}
@@ -998,7 +963,19 @@
 //           "FAQ",
 //         )}
 //       />
+//       {/* ✅ NEW — Blogs */}
+//       <BlogFormDialog
+//         open={isFormOpen && currentView === "blogs"}
+//         editingItem={currentView === "blogs" ? editingItem : null}
+//         onClose={() => setIsFormOpen(false)}
+//         onSave={makeSaveHandler(
+//           `${apiUrl}/api/blog`,
+//           (id) => `${apiUrl}/api/blog/${id}`,
+//           "Blog post",
+//         )}
+//       />
 
+//       {currentView === "vatSettings" && <VatSettingsCard />}
 //       {/* ── Header ───────────────────────────────────────────────────────── */}
 //       <header className="flex items-center justify-between p-4 md:p-6 bg-card border-b">
 //         <div>
@@ -1023,7 +1000,6 @@
 //           </Button>
 //         </div>
 //       </header>
-
 //       {/* ── Main ─────────────────────────────────────────────────────────── */}
 //       <main className="p-4 md:p-6 grid gap-6">
 //         {/* Stat Cards */}
@@ -1084,7 +1060,7 @@
 //         </div>
 
 //         {/* CMS Cards */}
-//         <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+//         <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-8">
 //           {[
 //             { view: "services", label: "Services", count: services.length },
 //             { view: "sectors", label: "Sectors", count: sectors.length },
@@ -1095,12 +1071,14 @@
 //               count: landingPages.length,
 //             },
 //             { view: "faqs", label: "FAQs", count: faqs.length },
+//             { view: "blogs", label: "Blog Posts", count: blogs.length }, // ✅ NEW
 //             {
 //               view: "quickQuotes",
 //               label: "Quick Quotes",
 //               count: quickQuotes.length,
 //             },
 //             { view: "payments", label: "Payments", count: payments.length },
+//             { view: "vatSettings", label: "VAT Settings", count: undefined },
 //           ].map(({ view, label, count }) => (
 //             <Card
 //               key={view}
@@ -1111,8 +1089,16 @@
 //                 <CardTitle className="text-sm">{label}</CardTitle>
 //               </CardHeader>
 //               <CardContent>
-//                 <div className="text-2xl font-bold">{count}</div>
-//                 <p className="text-xs text-muted-foreground">Manage {label}</p>
+//                 <div className="text-2xl font-bold">
+//                   {count !== undefined ? (
+//                     count
+//                   ) : (
+//                     <Settings className="h-5 w-5 text-muted-foreground mt-1" />
+//                   )}
+//                 </div>
+//                 <p className="text-xs text-muted-foreground">
+//                   {count !== undefined ? `Manage ${label}` : "Configure"}
+//                 </p>
 //               </CardContent>
 //             </Card>
 //           ))}
@@ -1205,8 +1191,7 @@
 //                             variant="outline"
 //                             onClick={() => setSelectedApp(app)}
 //                           >
-//                             <Eye className="w-4 h-4 mr-1" />
-//                             View
+//                             <Eye className="w-4 h-4 mr-1" /> View
 //                           </Button>
 //                           <Button
 //                             size="sm"
@@ -1214,16 +1199,14 @@
 //                             className="text-green-600 border-green-600"
 //                             onClick={() => handleApprove(app.id)}
 //                           >
-//                             <Check className="w-4 h-4 mr-1" />
-//                             Approve
+//                             <Check className="w-4 h-4 mr-1" /> Approve
 //                           </Button>
 //                           <Button
 //                             size="sm"
 //                             variant="destructive"
 //                             onClick={() => handleReject(app.id)}
 //                           >
-//                             <X className="w-4 h-4 mr-1" />
-//                             Reject
+//                             <X className="w-4 h-4 mr-1" /> Reject
 //                           </Button>
 //                           <Button
 //                             size="sm"
@@ -1236,8 +1219,7 @@
 //                               )
 //                             }
 //                           >
-//                             <Trash2 className="w-4 h-4 mr-1" />
-//                             Delete
+//                             <Trash2 className="w-4 h-4 mr-1" /> Delete
 //                           </Button>
 //                         </TableCell>
 //                       </TableRow>
@@ -1296,8 +1278,7 @@
 //                             variant="outline"
 //                             onClick={() => setSelectedApp(driver)}
 //                           >
-//                             <Eye className="w-4 h-4 mr-1" />
-//                             View
+//                             <Eye className="w-4 h-4 mr-1" /> View
 //                           </Button>
 //                           <Button
 //                             size="sm"
@@ -1310,8 +1291,7 @@
 //                               )
 //                             }
 //                           >
-//                             <Trash2 className="w-4 h-4 mr-1" />
-//                             Delete
+//                             <Trash2 className="w-4 h-4 mr-1" /> Delete
 //                           </Button>
 //                         </TableCell>
 //                       </TableRow>
@@ -1372,8 +1352,7 @@
 //                             variant="outline"
 //                             onClick={() => setSelectedApp(biz)}
 //                           >
-//                             <Eye className="w-4 h-4 mr-1" />
-//                             View
+//                             <Eye className="w-4 h-4 mr-1" /> View
 //                           </Button>
 //                           <Button
 //                             size="sm"
@@ -1381,16 +1360,14 @@
 //                             className="text-green-600 border-green-600"
 //                             onClick={() => handleApproveShipper(biz.id)}
 //                           >
-//                             <Check className="w-4 h-4 mr-1" />
-//                             Approve
+//                             <Check className="w-4 h-4 mr-1" /> Approve
 //                           </Button>
 //                           <Button
 //                             size="sm"
 //                             variant="destructive"
 //                             onClick={() => handleRejectShipper(biz.id)}
 //                           >
-//                             <X className="w-4 h-4 mr-1" />
-//                             Reject
+//                             <X className="w-4 h-4 mr-1" /> Reject
 //                           </Button>
 //                           <Button
 //                             size="sm"
@@ -1399,8 +1376,7 @@
 //                               confirmDelete("business", biz.id, biz.companyName)
 //                             }
 //                           >
-//                             <Trash2 className="w-4 h-4 mr-1" />
-//                             Delete
+//                             <Trash2 className="w-4 h-4 mr-1" /> Delete
 //                           </Button>
 //                         </TableCell>
 //                       </TableRow>
@@ -1459,8 +1435,7 @@
 //                             variant="outline"
 //                             onClick={() => setSelectedApp(biz)}
 //                           >
-//                             <Eye className="w-4 h-4 mr-1" />
-//                             View
+//                             <Eye className="w-4 h-4 mr-1" /> View
 //                           </Button>
 //                           <Button
 //                             size="sm"
@@ -1469,8 +1444,7 @@
 //                               confirmDelete("business", biz.id, biz.companyName)
 //                             }
 //                           >
-//                             <Trash2 className="w-4 h-4 mr-1" />
-//                             Delete
+//                             <Trash2 className="w-4 h-4 mr-1" /> Delete
 //                           </Button>
 //                         </TableCell>
 //                       </TableRow>
@@ -1532,8 +1506,7 @@
 //                                 variant="outline"
 //                                 onClick={() => setSelectedApp(b)}
 //                               >
-//                                 <Eye className="w-4 h-4 mr-1" />
-//                                 View
+//                                 <Eye className="w-4 h-4 mr-1" /> View
 //                               </Button>
 //                               <Button
 //                                 size="sm"
@@ -1546,8 +1519,7 @@
 //                                   )
 //                                 }
 //                               >
-//                                 <Trash2 className="w-4 h-4 mr-1" />
-//                                 Delete
+//                                 <Trash2 className="w-4 h-4 mr-1" /> Delete
 //                               </Button>
 //                             </TableCell>
 //                           </TableRow>
@@ -1613,7 +1585,6 @@
 //         {/* ── Quick Quotes ─────────────────────────────────────────────────── */}
 //         {currentView === "quickQuotes" && (
 //           <>
-//             {/* ── Edit Modal ── */}
 //             <Dialog
 //               open={!!editingQuote}
 //               onOpenChange={(o) => !o && setEditingQuote(null)}
@@ -1624,10 +1595,8 @@
 //                     Edit Quick Quote
 //                   </DialogTitle>
 //                 </DialogHeader>
-
 //                 {editingQuote && (
 //                   <div className="space-y-5 py-2 max-h-[70vh] overflow-y-auto pr-2">
-//                     {/* Read-only summary */}
 //                     <div className="grid grid-cols-2 gap-3 bg-slate-50 rounded-xl p-4 text-sm">
 //                       <div>
 //                         <p className="text-xs font-bold text-[#134467]/50 uppercase tracking-wide mb-1">
@@ -1722,8 +1691,6 @@
 //                         </div>
 //                       </div>
 //                     </div>
-
-//                     {/* Editable fields */}
 //                     <div className="space-y-1">
 //                       <Label className="font-semibold text-[#134467]">
 //                         Status
@@ -1745,7 +1712,6 @@
 //                         <option value="lost">🔴 Lost</option>
 //                       </select>
 //                     </div>
-
 //                     <div className="space-y-1">
 //                       <Label className="font-semibold text-[#134467]">
 //                         Admin Price Quote (£)
@@ -1764,13 +1730,12 @@
 //                         }
 //                       />
 //                     </div>
-
 //                     <div className="space-y-1">
 //                       <Label className="font-semibold text-[#134467]">
 //                         Admin Notes
 //                       </Label>
 //                       <Textarea
-//                         placeholder="Internal notes about this quote..."
+//                         placeholder="e.g. Contacted via phone, awaiting confirmation..."
 //                         rows={3}
 //                         value={quoteEditForm.adminNotes}
 //                         onChange={(e) =>
@@ -1783,7 +1748,6 @@
 //                     </div>
 //                   </div>
 //                 )}
-
 //                 <DialogFooter className="gap-2">
 //                   <DialogClose asChild>
 //                     <Button variant="outline">Cancel</Button>
@@ -1798,7 +1762,6 @@
 //               </DialogContent>
 //             </Dialog>
 
-//             {/* ── Table ── */}
 //             <Card>
 //               <CardHeader>
 //                 <CardTitle>Quick Quotes ({quickQuotes.length})</CardTitle>
@@ -1875,7 +1838,6 @@
 //                                 {q.contact?.phone ?? "—"}
 //                               </p>
 //                             </TableCell>
-
 //                             <TableCell>{q.distanceMiles} mi</TableCell>
 //                             <TableCell className="text-sm">
 //                               {q.suggestedVehicle}
@@ -2009,7 +1971,7 @@
 //           </Card>
 //         )}
 
-//         {/* ── CMS Tables: Services / Sectors / Locations / Landing Pages / FAQs */}
+//         {/* ── CMS Tables: Services / Sectors / Locations / Landing Pages / FAQs / Blogs */}
 //         {(
 //           [
 //             "services",
@@ -2017,6 +1979,7 @@
 //             "locations",
 //             "landingPages",
 //             "faqs",
+//             "blogs",
 //           ] as DashboardView[]
 //         ).map((view) => {
 //           if (currentView !== view) return null;
@@ -2026,6 +1989,7 @@
 //             locations,
 //             landingPages,
 //             faqs,
+//             blogs, // ✅ NEW
 //           };
 //           const data = dataMap[view];
 //           const labelMap: Record<string, string> = {
@@ -2034,6 +1998,7 @@
 //             locations: "Location",
 //             landingPages: "Landing Page",
 //             faqs: "FAQ",
+//             blogs: "Blog Post", // ✅ NEW
 //           };
 //           return (
 //             <Card key={view}>
@@ -2047,6 +2012,7 @@
 //                     {view === "landingPages" &&
 //                       "Manage Location × Service SEO landing pages"}
 //                     {view === "faqs" && "Manage shared FAQ library"}
+//                     {view === "blogs" && "Manage blog posts and articles"}
 //                   </CardDescription>
 //                 </div>
 //                 <Button onClick={openCreateForm}>+ Add {labelMap[view]}</Button>
@@ -2071,6 +2037,18 @@
 //                           <TableHead>Status</TableHead>
 //                           <TableHead>Actions</TableHead>
 //                         </>
+//                       ) : view === "blogs" ? (
+//                         // ✅ NEW — Blog columns
+//                         <>
+//                           <TableHead>Title</TableHead>
+//                           <TableHead>Slug</TableHead>
+//                           <TableHead>Category</TableHead>
+//                           <TableHead>Author</TableHead>
+//                           <TableHead>Featured</TableHead>
+//                           <TableHead>Published</TableHead>
+//                           <TableHead>Status</TableHead>
+//                           <TableHead>Actions</TableHead>
+//                         </>
 //                       ) : (
 //                         <>
 //                           <TableHead>Name</TableHead>
@@ -2085,7 +2063,7 @@
 //                     {data.length === 0 ? (
 //                       <TableRow>
 //                         <TableCell
-//                           colSpan={5}
+//                           colSpan={8}
 //                           className="text-center py-8 text-muted-foreground"
 //                         >
 //                           No {labelMap[view].toLowerCase()}s found. Click "+ Add{" "}
@@ -2106,6 +2084,38 @@
 //                               <TableCell className="font-mono text-xs text-blue-600">
 //                                 /locations/{item.locationSlug}/
 //                                 {item.serviceSlug}
+//                               </TableCell>
+//                             </>
+//                           ) : view === "blogs" ? (
+//                             // ✅ NEW — Blog row cells
+//                             <>
+//                               <TableCell className="font-medium max-w-xs truncate">
+//                                 {item.title}
+//                               </TableCell>
+//                               <TableCell className="font-mono text-sm text-muted-foreground">
+//                                 {item.slug}
+//                               </TableCell>
+//                               <TableCell>
+//                                 <Badge variant="outline" className="text-xs">
+//                                   {item.category ?? "—"}
+//                                 </Badge>
+//                               </TableCell>
+//                               <TableCell className="text-sm">
+//                                 {item.authorName ?? "—"}
+//                               </TableCell>
+//                               <TableCell>
+//                                 {item.isFeatured ? (
+//                                   <Badge className="bg-yellow-100 text-yellow-800 text-xs">
+//                                     Featured
+//                                   </Badge>
+//                                 ) : (
+//                                   <span className="text-muted-foreground text-xs">
+//                                     —
+//                                   </span>
+//                                 )}
+//                               </TableCell>
+//                               <TableCell className="text-xs text-muted-foreground">
+//                                 {item.publishedDate ?? "—"}
 //                               </TableCell>
 //                             </>
 //                           ) : (
@@ -2166,16 +2176,18 @@
 //                                 confirmDelete(
 //                                   view === "landingPages"
 //                                     ? "landingPage"
-//                                     : view.replace(/s$/, ""),
+//                                     : view === "blogs"
+//                                       ? "blog"
+//                                       : view.replace(/s$/, ""),
 //                                   item.id,
-//                                   item.name ??
+//                                   item.title ??
+//                                     item.name ??
 //                                     item.question ??
 //                                     `${item.locationSlug}/${item.serviceSlug}`,
 //                                 )
 //                               }
 //                             >
-//                               <Trash2 className="w-4 h-4 mr-1" />
-//                               Delete
+//                               <Trash2 className="w-4 h-4 mr-1" /> Delete
 //                             </Button>
 //                           </TableCell>
 //                         </TableRow>
@@ -2188,7 +2200,6 @@
 //           );
 //         })}
 //       </main>
-
 //       {/* ── Detail View Dialog ───────────────────────────────────────────── */}
 //       <Dialog
 //         open={!!selectedApp}
@@ -2591,7 +2602,6 @@
 //                 Close
 //               </Button>
 //             </DialogClose>
-//             {/* Driver approve/reject/delete */}
 //             {selectedApp &&
 //               !("companyName" in selectedApp) &&
 //               !("mode" in selectedApp) && (
@@ -2604,8 +2614,7 @@
 //                           handleReject((selectedApp as DriverApplication).id)
 //                         }
 //                       >
-//                         <X className="w-4 h-4 mr-1" />
-//                         Reject
+//                         <X className="w-4 h-4 mr-1" /> Reject
 //                       </Button>
 //                       <Button
 //                         variant="outline"
@@ -2614,8 +2623,7 @@
 //                           handleApprove((selectedApp as DriverApplication).id)
 //                         }
 //                       >
-//                         <Check className="w-4 h-4 mr-1" />
-//                         Approve
+//                         <Check className="w-4 h-4 mr-1" /> Approve
 //                       </Button>
 //                     </>
 //                   )}
@@ -2629,12 +2637,10 @@
 //                       )
 //                     }
 //                   >
-//                     <Trash2 className="w-4 h-4 mr-1" />
-//                     Delete
+//                     <Trash2 className="w-4 h-4 mr-1" /> Delete
 //                   </Button>
 //                 </>
 //               )}
-//             {/* Business approve/reject/delete */}
 //             {selectedApp && "companyName" in selectedApp && (
 //               <>
 //                 {(selectedApp as BusinessRegistration).status === "pending" && (
@@ -2647,8 +2653,7 @@
 //                         )
 //                       }
 //                     >
-//                       <X className="w-4 h-4 mr-1" />
-//                       Reject
+//                       <X className="w-4 h-4 mr-1" /> Reject
 //                     </Button>
 //                     <Button
 //                       variant="outline"
@@ -2659,8 +2664,7 @@
 //                         )
 //                       }
 //                     >
-//                       <Check className="w-4 h-4 mr-1" />
-//                       Approve
+//                       <Check className="w-4 h-4 mr-1" /> Approve
 //                     </Button>
 //                   </>
 //                 )}
@@ -2674,8 +2678,7 @@
 //                     )
 //                   }
 //                 >
-//                   <Trash2 className="w-4 h-4 mr-1" />
-//                   Delete
+//                   <Trash2 className="w-4 h-4 mr-1" /> Delete
 //                 </Button>
 //               </>
 //             )}
@@ -2789,6 +2792,7 @@ interface DriverApplication {
   vehicleInsuranceUrl?: string;
   publicLiabilityInsuranceUrl?: string;
   goodsInTransitInsuranceUrl?: string;
+  documentsUploaded?: boolean;
 }
 
 interface BusinessRegistration {
@@ -3485,6 +3489,23 @@ export default function AdminDashboardPage() {
       fetchAllData();
     } catch (error: any) {
       toast.error(error.message ?? "Failed to reject business.");
+    }
+  };
+
+  const handleDocsReceived = async (id: string) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/api/drivers/${id}/documents-received`,
+        {
+          method: "POST",
+        },
+      );
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message ?? "Failed to update.");
+      toast.success("Documents marked as received!");
+      fetchCMSData(); // refresh driver list
+    } catch (error: any) {
+      toast.error(error.message ?? "Failed to update documents status.");
     }
   };
 
@@ -5191,6 +5212,54 @@ export default function AdminDashboardPage() {
                   >
                     Documents
                   </h3>
+                  {/* ✅ ADD THIS BLOCK — just insert above the existing DetailRow lines */}
+                  <div className="flex items-center justify-between mb-3 p-3 rounded-lg bg-slate-50 border">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-slate-600">
+                        Signed Documents:
+                      </span>
+                      {(selectedApp as DriverApplication).documentsUploaded ? (
+                        <Badge className="bg-green-100 text-green-800">
+                          <Check className="w-3 h-3 mr-1" /> Received
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-yellow-100 text-yellow-800">
+                          <Hourglass className="w-3 h-3 mr-1" /> Awaiting from
+                          Driver
+                        </Badge>
+                      )}
+                    </div>
+                    {!(selectedApp as DriverApplication).documentsUploaded && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-blue-600 border-blue-600"
+                        onClick={() =>
+                          handleDocsReceived(
+                            (selectedApp as DriverApplication).id,
+                          )
+                        }
+                      >
+                        <Check className="w-4 h-4 mr-1" /> Mark as Received
+                      </Button>
+                    )}
+                  </div>
+                  {/* ─────────────────────────────────────────────────────────── */}
+                  {/* ✅ YOUR EXISTING CODE — leave completely unchanged below */}
+                  {(selectedApp as DriverApplication).drivingLicenseUrl && (
+                    <DetailRow
+                      label="Driving License"
+                      value={
+                        <FilePreview
+                          url={
+                            (selectedApp as DriverApplication)
+                              .drivingLicenseUrl!
+                          }
+                        />
+                      }
+                    />
+                  )}
+                  // ... rest of your existing document rows stay as-is
                   {(selectedApp as DriverApplication).drivingLicenseUrl && (
                     <DetailRow
                       label="Driving License"
