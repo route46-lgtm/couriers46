@@ -254,40 +254,141 @@ export default function BecomeDriverPage() {
       }
     }
 
-    // STEP 3
     else if (currentStep === 3) {
-      isValid = await form.trigger(step3Fields);
-      fieldsValidated = isValid;
+  isValid = await form.trigger(step3Fields);
+  fieldsValidated = isValid;
 
-      if (isValid && !isSubmitting && !submitted) {
-        setIsSubmitting(true);
+  if (isValid && !isSubmitting && !submitted) {
+    setIsSubmitting(true);
+    try {
+      const allData = form.getValues();
+      allData.utrNumber = allData.utrNumber.replace(/\s/g, '');
 
-        try {
-          const allData = form.getValues();
-          allData.utrNumber = allData.utrNumber.replace(/\s/g, "");
+      // ── Step A: Submit form data → get driverId ───────────────────────
+      const applyRes = await fetch(`${apiUrl}/api/drivers/apply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(allData),
+      });
+      const applyResult = await applyRes.json();
+      if (!applyRes.ok) throw new Error(applyResult.message || 'Failed to submit application.');
 
-          const response = await fetch(`${apiUrl}/api/drivers/apply`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(allData),
-          });
+      const driverId = applyResult.driverId;
 
-          const result = await response.json();
+      // ── Helpers ───────────────────────────────────────────────────────
+      const toBase64 = (file: File): Promise<string> =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
 
-          if (!response.ok) {
-            throw new Error(result.message || "Failed to submit application.");
-          }
+      const fileTypeMap: Record<string, string> = {
+        drivingLicense:           'driving-license',
+        vehicleInsurance:         'vehicle-insurance',
+        publicLiabilityInsurance: 'public-liability',
+        goodsInTransitInsurance:  'goods-transit',
+        rightToWorkDoc:           'right-to-work',
+      };
 
-          toast.success("Driver application submitted successfully!");
-          setSubmitted(true);
-          setTimeout(() => navigate("/driver-thank-you"), 1500);
-        } catch (error: any) {
-          console.error("Submission Error:", error);
-          toast.error(error.message || "Submission failed.");
-          setIsSubmitting(false);
-        }
+      const fileMap: Record<string, File | null> = {
+        drivingLicense:           selectedFiles.drivingLicense,
+        vehicleInsurance:         selectedFiles.vehicleInsurance,
+        publicLiabilityInsurance: selectedFiles.publicLiabilityInsurance,
+        goodsInTransitInsurance:  selectedFiles.goodsInTransitInsurance,
+        rightToWorkDoc:           selectedFiles.rightToWorkDoc,
+      };
+
+      // ── Step B: Upload each file as base64 JSON ───────────────────────
+      const uploadedUrls: Record<string, string> = {}; // ✅ declared ONCE
+
+      for (const [fieldName, file] of Object.entries(fileMap)) {
+        if (!file) continue;
+
+        const base64Data = await toBase64(file);
+
+        const uploadRes = await fetch(`${apiUrl}/api/drivers/${driverId}/upload-file`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName:    file.name,
+            fileData:    base64Data,
+            contentType: file.type,
+            fileType:    fileTypeMap[fieldName],
+          }),
+        });
+
+        const uploadResult = await uploadRes.json();
+        if (!uploadRes.ok) throw new Error(`Failed to upload ${fieldName}: ${uploadResult.message}`);
+
+        uploadedUrls[fieldName] = Array.isArray(uploadResult.url)
+          ? uploadResult.url[0]
+          : uploadResult.url;
       }
+
+      // ── Step C: Save all URLs to Firestore ────────────────────────────
+      const filesRes = await fetch(`${apiUrl}/api/drivers/${driverId}/files`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          drivingLicenseUrl:            uploadedUrls.drivingLicense,
+          rightToWorkDocUrl:            uploadedUrls.rightToWorkDoc,
+          vehicleInsuranceUrl:          uploadedUrls.vehicleInsurance,
+          publicLiabilityInsuranceUrl:  uploadedUrls.publicLiabilityInsurance,
+          goodsInTransitInsuranceUrl:   uploadedUrls.goodsInTransitInsurance,
+        }),
+      });
+      const filesResult = await filesRes.json();
+      if (!filesRes.ok) throw new Error(filesResult.message || 'Failed to save document URLs.');
+
+      toast.success('Driver application submitted successfully!');
+      setSubmitted(true);
+      setTimeout(() => navigate('/driver-thank-you'), 1500);
+
+    } catch (error: any) {
+      console.error('Submission Error:', error);
+      toast.error(error.message || 'Submission failed.');
+    } finally {
+      setIsSubmitting(false);
     }
+  }
+}
+
+    // STEP 3
+    // else if (currentStep === 3) {
+    //   isValid = await form.trigger(step3Fields);
+    //   fieldsValidated = isValid;
+
+    //   if (isValid && !isSubmitting && !submitted) {
+    //     setIsSubmitting(true);
+
+    //     try {
+    //       const allData = form.getValues();
+    //       allData.utrNumber = allData.utrNumber.replace(/\s/g, "");
+
+    //       const response = await fetch(`${apiUrl}/api/drivers/apply`, {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify(allData),
+    //       });
+
+    //       const result = await response.json();
+
+    //       if (!response.ok) {
+    //         throw new Error(result.message || "Failed to submit application.");
+    //       }
+
+    //       toast.success("Driver application submitted successfully!");
+    //       setSubmitted(true);
+    //       setTimeout(() => navigate("/driver-thank-you"), 1500);
+    //     } catch (error: any) {
+    //       console.error("Submission Error:", error);
+    //       toast.error(error.message || "Submission failed.");
+    //       setIsSubmitting(false);
+    //     }
+    //   }
+    // }
 
     if (!fieldsValidated) {
       toast.error("Please check the form for errors and try again.");
@@ -764,7 +865,7 @@ export default function BecomeDriverPage() {
                           onChange={(e) => {
                             const file = e.target.files?.[0] || null;
                             if (file) {
-                              const maxSize = 1 * 1024 * 1024; // 1MB
+                              const maxSize = 5 * 1024 * 1024; // 1MB
                               if (file.size > maxSize) {
                                 toast.error(
                                   `Driving License is too large (${(
@@ -838,7 +939,7 @@ export default function BecomeDriverPage() {
                             const file = e.target.files?.[0] || null;
 
                             if (file) {
-                              const maxSize = 1 * 1024 * 1024; // 1MB
+                              const maxSize = 5 * 1024 * 1024; // 1MB
                               if (file.size > maxSize) {
                                 toast.error(
                                   `Vehicle Insurance is too large (${(
@@ -907,7 +1008,7 @@ export default function BecomeDriverPage() {
                             const file = e.target.files?.[0] || null;
 
                             if (file) {
-                              const maxSize = 1 * 1024 * 1024; // 1MB
+                              const maxSize = 5 * 1024 * 1024; // 1MB
                               if (file.size > maxSize) {
                                 toast.error(
                                   `Public Liability Insurance is too large (${(
@@ -976,7 +1077,7 @@ export default function BecomeDriverPage() {
                             const file = e.target.files?.[0] || null;
 
                             if (file) {
-                              const maxSize = 1 * 1024 * 1024; // 1MB
+                              const maxSize = 5 * 1024 * 1024; // 1MB
                               if (file.size > maxSize) {
                                 toast.error(
                                   `Goods In Transit Insurance is too large (${(
@@ -1116,7 +1217,7 @@ export default function BecomeDriverPage() {
                         onChange={(e) => {
                           const file = e.target.files?.[0] || null;
                           if (file) {
-                            const maxSize = 1 * 1024 * 1024; // 1MB
+                            const maxSize = 5 * 1024 * 1024; // 1MB
                             if (file.size > maxSize) {
                               toast.error(
                                 `Right to Work document is too large (${(
