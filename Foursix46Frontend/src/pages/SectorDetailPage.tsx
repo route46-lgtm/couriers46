@@ -1128,6 +1128,29 @@ const DedicatedCourierNetwork = () => (
 /* ─────────────────────────────────────────────────────────────────────────────
    MAIN PAGE
 ───────────────────────────────────────────────────────────────────────────── */
+// Add this export to SectorDetailPage.tsx
+export async function loader({ params }: { params: Record<string, string> }) {
+  const slug = params.slug;
+  if (!slug) return { sector: null, allFaqs: [] };
+  try {
+    const [sectorRes, faqsRes] = await Promise.all([
+      fetch(`${apiUrl}/api/sectors/${slug}`),
+      fetch(`${apiUrl}/api/faqs`),
+    ]);
+    const sectorData = sectorRes.ok ? await sectorRes.json() : null;
+    const faqsData = faqsRes.ok ? await faqsRes.json() : [];
+    return {
+      sector: sectorData?.data || sectorData || null,
+      allFaqs: Array.isArray(faqsData?.data)
+        ? faqsData.data
+        : Array.isArray(faqsData)
+          ? faqsData
+          : [],
+    };
+  } catch {
+    return { sector: null, allFaqs: [] };
+  }
+}
 export default function SectorDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();

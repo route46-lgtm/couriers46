@@ -787,6 +787,33 @@ const DedicatedCourierNetwork = () => (
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // MAIN PAGE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Add this export to LocationServicePage.tsx
+export async function loader({ params }: { params: Record<string, string> }) {
+  const { locationSlug, serviceSlug } = params;
+  if (!locationSlug || !serviceSlug)
+    return { location: null, service: null, allFaqs: [] };
+  try {
+    const [locationRes, serviceRes, faqsRes] = await Promise.all([
+      fetch(`${apiUrl}/api/locations/${locationSlug}`),
+      fetch(`${apiUrl}/api/services/${serviceSlug}`),
+      fetch(`${apiUrl}/api/faqs`),
+    ]);
+    const locationData = locationRes.ok ? await locationRes.json() : null;
+    const serviceData = serviceRes.ok ? await serviceRes.json() : null;
+    const faqsData = faqsRes.ok ? await faqsRes.json() : [];
+    return {
+      location: locationData?.data || locationData || null,
+      service: serviceData?.data || serviceData || null,
+      allFaqs: Array.isArray(faqsData?.data)
+        ? faqsData.data
+        : Array.isArray(faqsData)
+          ? faqsData
+          : [],
+    };
+  } catch {
+    return { location: null, service: null, allFaqs: [] };
+  }
+}
 export default function LocationServicePage() {
   const { locationSlug, serviceSlug } = useParams();
   const navigate = useNavigate();
