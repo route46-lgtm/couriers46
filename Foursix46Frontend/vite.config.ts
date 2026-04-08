@@ -119,14 +119,8 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // ── Force vite-react-ssg to use the project's own react-helmet-async
-      //    instead of its internal nested copy — prevents dual-instance crash ──
-      'react-helmet-async': path.resolve(
-        __dirname,
-        'node_modules/react-helmet-async',
-      ),
     },
-    // ── Deduplicate to guarantee a single instance across all bundles ──
+    // Deduplicate to guarantee a single instance across all bundles
     dedupe: [
       'react',
       'react-dom',
@@ -135,8 +129,7 @@ export default defineConfig(({ mode }) => ({
     ],
   },
 
-  // ── SSR/SSG: bundle CJS packages instead of externalizing them ────────────
-  // Prevents "Named export not found" errors for CommonJS modules in Node ESM
+  // Bundle CJS packages instead of externalizing — prevents Node ESM named-export errors
   ssr: {
     noExternal: [
       'react-helmet-async',
@@ -150,31 +143,59 @@ export default defineConfig(({ mode }) => ({
     includedRoutes: async (paths: string[]) => {
       try {
         const [services, sectors, locations, landings, blogs] = await Promise.all([
-          fetch(`${API_URL}/api/services`).then(r => r.json()).catch(() => []),
-          fetch(`${API_URL}/api/sectors`).then(r => r.json()).catch(() => []),
-          fetch(`${API_URL}/api/locations`).then(r => r.json()).catch(() => []),
-          fetch(`${API_URL}/api/location-services`).then(r => r.json()).catch(() => []),
-          fetch(`${API_URL}/api/blog`).then(r => r.json()).catch(() => []),
+          fetch(`${API_URL}/api/services`).then(r => r.json()).catch(() => ({ data: [] })),
+          fetch(`${API_URL}/api/sectors`).then(r => r.json()).catch(() => ({ data: [] })),
+          fetch(`${API_URL}/api/locations`).then(r => r.json()).catch(() => ({ data: [] })),
+          fetch(`${API_URL}/api/location-services`).then(r => r.json()).catch(() => ({ data: [] })),
+          fetch(`${API_URL}/api/blog`).then(r => r.json()).catch(() => ({ data: [] })),
         ])
 
-        // ── Normalise API responses — handles both [] and { data: [] } shapes ──
+        // Normalise all possible API shapes: [], { data: [] }, { data: { data: [] } }
         const toArr = (res: any): any[] => {
           if (Array.isArray(res)) return res
-          if (res && Array.isArray(res.data)) return res.data
+          if (res?.data && Array.isArray(res.data)) return res.data
+          if (res?.data?.data && Array.isArray(res.data.data)) return res.data.data
           return []
         }
 
+        // Only keep slugs that are non-empty plain strings (no slashes, no spaces)
+        const validSlug = (s: any): s is string =>
+          typeof s === 'string' && s.length > 0 && !s.includes('/')
+
+        const serviceRoutes = toArr(services)
+          .filter(s => validSlug(s.slug))
+          .map(s => `/services/${s.slug}`)
+
+        const sectorRoutes = toArr(sectors)
+          .filter(s => validSlug(s.slug))
+          .map(s => `/sectors/${s.slug}`)
+
+        const locationRoutes = toArr(locations)
+          .filter(l => validSlug(l.slug))
+          .map(l => `/locations/${l.slug}`)
+
+        const landingRoutes = toArr(landings)
+          .filter(l => validSlug(l.locationSlug) && validSlug(l.serviceSlug))
+          .map(l => `/locations/${l.locationSlug}/${l.serviceSlug}`)
+
+        const blogRoutes = toArr(blogs)
+          .filter(b => validSlug(b.slug))
+          .map(b => `/blog/${b.slug}`)
+
         const allRoutes = [
           ...paths,
-          ...toArr(services).map((s: any)  => `/services/${s.slug}`),
-          ...toArr(sectors).map((s: any)   => `/sectors/${s.slug}`),
-          ...toArr(locations).map((l: any) => `/locations/${l.slug}`),
-          ...toArr(landings).map((l: any)  => `/locations/${l.locationSlug}/${l.serviceSlug}`),
-          ...toArr(blogs).map((b: any)     => `/blog/${b.slug}`),
+          ...serviceRoutes,
+          ...sectorRoutes,
+          ...locationRoutes,
+          ...landingRoutes,
+          ...blogRoutes,
         ]
 
-        // ── Deduplicate and strip any empty/undefined routes ──
-        return [...new Set(allRoutes.filter(Boolean))]
+        // Deduplicate and strip any empty/undefined entries
+        const unique = [...new Set(allRoutes.filter(Boolean))]
+
+        console.log(`[SSG] Total routes to render: ${unique.length}`)
+        return unique
       } catch (err) {
         console.error('[SSG] Failed to fetch dynamic routes:', err)
         return paths
