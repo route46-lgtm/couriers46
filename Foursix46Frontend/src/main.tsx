@@ -31,15 +31,38 @@
 //   createRoot(root).render(<App />);
 // }, 400);
 // src/main.tsx
+// import { ViteReactSSG } from "vite-react-ssg";
+// import "./index.css";
+// import { routes } from "./routes";
+// // ❌ Removed: import App from "./App.tsx" — App is never consumed here
+// // ❌ Removed: export default RootLayout  — belongs in App.tsx only
+
+// export const createRoot = ViteReactSSG({ routes }, ({ isClient }) => {
+//   if (isClient) {
+//     // ── Catch hydration/runtime errors early ─────────────────────────────
+//     window.addEventListener("error", (e) => {
+//       console.error("[APP ERROR]", e.message, e.error);
+//     });
+
+//     window.addEventListener("unhandledrejection", (e) => {
+//       console.error("[UNHANDLED PROMISE]", e.reason);
+//     });
+
+//     // ── Fade out the loading overlay once React hydrates ──────────────────
+//     const overlay = document.getElementById("loading-overlay");
+//     if (overlay) {
+//       overlay.style.opacity = "0";
+//       setTimeout(() => overlay.remove(), 300);
+//     }
+//   }
+// });
+
 import { ViteReactSSG } from "vite-react-ssg";
 import "./index.css";
 import { routes } from "./routes";
-// ❌ Removed: import App from "./App.tsx" — App is never consumed here
-// ❌ Removed: export default RootLayout  — belongs in App.tsx only
 
 export const createRoot = ViteReactSSG({ routes }, ({ isClient }) => {
   if (isClient) {
-    // ── Catch hydration/runtime errors early ─────────────────────────────
     window.addEventListener("error", (e) => {
       console.error("[APP ERROR]", e.message, e.error);
     });
@@ -48,7 +71,6 @@ export const createRoot = ViteReactSSG({ routes }, ({ isClient }) => {
       console.error("[UNHANDLED PROMISE]", e.reason);
     });
 
-    // ── Fade out the loading overlay once React hydrates ──────────────────
     const overlay = document.getElementById("loading-overlay");
     if (overlay) {
       overlay.style.opacity = "0";

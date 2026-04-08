@@ -15,12 +15,16 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
   ].filter(Boolean),
 
-  // ── SSG: skip admin routes (Firebase Analytics uses `window`, crashes Node) ──
+  // ── ssgOptions is the CORRECT place for includedRoutes ───────────────────
   ssgOptions: {
     includedRoutes(paths: string[]) {
-      // vite-react-ssg paths have NO leading slash — e.g. "admin/login" not "/admin/login"
+      // vite-react-ssg may emit paths with OR without leading slash
+      // e.g. "admin/login" or "/admin/login" — filter both
       return paths.filter(
-        (p) => !p.startsWith("admin") && !p.startsWith("/admin"),
+        (p) => p !== "admin/login"
+              && p !== "/admin/login"
+              && p !== "admin/dashboard"
+              && p !== "/admin/dashboard",
       );
     },
   },
