@@ -38,6 +38,16 @@ import { routes } from "./routes";
 
 export const createRoot = ViteReactSSG({ routes }, ({ isClient }) => {
   if (isClient) {
+    // ── Catch hydration/runtime errors early ─────────────────────────────
+    window.addEventListener("error", (e) => {
+      console.error("[APP ERROR]", e.message, e.error);
+    });
+
+    window.addEventListener("unhandledrejection", (e) => {
+      console.error("[UNHANDLED PROMISE]", e.reason);
+    });
+
+    // ── Fade out SSG placeholder once React hydrates ──────────────────────
     const root = document.getElementById("root")!;
     const placeholder = root.firstElementChild;
 
