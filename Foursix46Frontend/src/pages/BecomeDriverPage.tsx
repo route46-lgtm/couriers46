@@ -254,8 +254,7 @@ export default function BecomeDriverPage() {
       }
     }
 
-    // STEP 3 — submit
-else if (currentStep === 3) {
+    else if (currentStep === 3) {
   isValid = await form.trigger(step3Fields);
   fieldsValidated = isValid;
 
@@ -265,7 +264,7 @@ else if (currentStep === 3) {
       const allData = form.getValues();
       allData.utrNumber = allData.utrNumber.replace(/\s/g, '');
 
-      // ── Step A: Submit form data → get driverId back ──────────────────
+      // ── Step A: Submit form data → get driverId ───────────────────────
       const applyRes = await fetch(`${apiUrl}/api/drivers/apply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -276,44 +275,68 @@ else if (currentStep === 3) {
 
       const driverId = applyResult.driverId;
 
-      // ── Step B: Upload each file to backend ───────────────────────────
-      const fileMap: Record<string, File | null> = {
-        drivingLicense: selectedFiles.drivingLicense,
-        vehicleInsurance: selectedFiles.vehicleInsurance,
-        publicLiabilityInsurance: selectedFiles.publicLiabilityInsurance,
-        goodsInTransitInsurance: selectedFiles.goodsInTransitInsurance,
-        rightToWorkDoc: selectedFiles.rightToWorkDoc,
+      // ── Helpers ───────────────────────────────────────────────────────
+      const toBase64 = (file: File): Promise<string> =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+      const fileTypeMap: Record<string, string> = {
+        drivingLicense:           'driving-license',
+        vehicleInsurance:         'vehicle-insurance',
+        publicLiabilityInsurance: 'public-liability',
+        goodsInTransitInsurance:  'goods-transit',
+        rightToWorkDoc:           'right-to-work',
       };
 
-      const uploadedUrls: Record<string, string> = {};
+      const fileMap: Record<string, File | null> = {
+        drivingLicense:           selectedFiles.drivingLicense,
+        vehicleInsurance:         selectedFiles.vehicleInsurance,
+        publicLiabilityInsurance: selectedFiles.publicLiabilityInsurance,
+        goodsInTransitInsurance:  selectedFiles.goodsInTransitInsurance,
+        rightToWorkDoc:           selectedFiles.rightToWorkDoc,
+      };
+
+      // ── Step B: Upload each file as base64 JSON ───────────────────────
+      const uploadedUrls: Record<string, string> = {}; // ✅ declared ONCE
 
       for (const [fieldName, file] of Object.entries(fileMap)) {
         if (!file) continue;
 
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('fieldName', fieldName);
+        const base64Data = await toBase64(file);
 
         const uploadRes = await fetch(`${apiUrl}/api/drivers/${driverId}/upload-file`, {
           method: 'POST',
-          body: formData, // ← multipart, no Content-Type header needed
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName:    file.name,
+            fileData:    base64Data,
+            contentType: file.type,
+            fileType:    fileTypeMap[fieldName],
+          }),
         });
+
         const uploadResult = await uploadRes.json();
         if (!uploadRes.ok) throw new Error(`Failed to upload ${fieldName}: ${uploadResult.message}`);
 
-        uploadedUrls[fieldName] = uploadResult.url; // signed URL returned by backend
+        uploadedUrls[fieldName] = Array.isArray(uploadResult.url)
+          ? uploadResult.url[0]
+          : uploadResult.url;
       }
 
-      // ── Step C: Save all URLs to Firestore via /files endpoint ────────
+      // ── Step C: Save all URLs to Firestore ────────────────────────────
       const filesRes = await fetch(`${apiUrl}/api/drivers/${driverId}/files`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          drivingLicenseUrl: uploadedUrls.drivingLicense,
-          rightToWorkDocUrl: uploadedUrls.rightToWorkDoc,
-          vehicleInsuranceUrl: uploadedUrls.vehicleInsurance,
-          publicLiabilityInsuranceUrl: uploadedUrls.publicLiabilityInsurance,
-          goodsInTransitInsuranceUrl: uploadedUrls.goodsInTransitInsurance,
+          drivingLicenseUrl:            uploadedUrls.drivingLicense,
+          rightToWorkDocUrl:            uploadedUrls.rightToWorkDoc,
+          vehicleInsuranceUrl:          uploadedUrls.vehicleInsurance,
+          publicLiabilityInsuranceUrl:  uploadedUrls.publicLiabilityInsurance,
+          goodsInTransitInsuranceUrl:   uploadedUrls.goodsInTransitInsurance,
         }),
       });
       const filesResult = await filesRes.json();
