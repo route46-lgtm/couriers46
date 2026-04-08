@@ -5204,129 +5204,64 @@ export default function AdminDashboardPage() {
                     value={(selectedApp as DriverApplication).rightToWorkCode}
                   />
                   <h3
-                    className="text-lg font-extrabold mt-4 mb-2 uppercase tracking-wide"
-                    style={{
-                      color: "#48AEDD",
-                      borderBottom: "2px solid #F1C40F",
-                    }}
-                  >
-                    Documents
-                  </h3>
-                  {/* ✅ ADD THIS BLOCK — just insert above the existing DetailRow lines */}
-                  <div className="flex items-center justify-between mb-3 p-3 rounded-lg bg-slate-50 border">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-slate-600">
-                        Signed Documents:
-                      </span>
-                      {(selectedApp as DriverApplication).documentsUploaded ? (
-                        <Badge className="bg-green-100 text-green-800">
-                          <Check className="w-3 h-3 mr-1" /> Received
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-yellow-100 text-yellow-800">
-                          <Hourglass className="w-3 h-3 mr-1" /> Awaiting from
-                          Driver
-                        </Badge>
-                      )}
-                    </div>
-                    {!(selectedApp as DriverApplication).documentsUploaded && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-blue-600 border-blue-600"
-                        onClick={() =>
-                          handleDocsReceived(
-                            (selectedApp as DriverApplication).id,
-                          )
-                        }
-                      >
-                        <Check className="w-4 h-4 mr-1" /> Mark as Received
-                      </Button>
-                    )}
-                  </div>
-                  {/* ─────────────────────────────────────────────────────────── */}
-                  {/* ✅ YOUR EXISTING CODE — leave completely unchanged below */}
-                  {(selectedApp as DriverApplication).drivingLicenseUrl && (
-                    <DetailRow
-                      label="Driving License"
-                      value={
-                        <FilePreview
-                          url={
-                            (selectedApp as DriverApplication)
-                              .drivingLicenseUrl!
-                          }
-                        />
-                      }
-                    />
-                  )}
-                  // ... rest of your existing document rows stay as-is
-                  {(selectedApp as DriverApplication).drivingLicenseUrl && (
-                    <DetailRow
-                      label="Driving License"
-                      value={
-                        <FilePreview
-                          url={
-                            (selectedApp as DriverApplication)
-                              .drivingLicenseUrl!
-                          }
-                        />
-                      }
-                    />
-                  )}
-                  {(selectedApp as DriverApplication).rightToWorkDocUrl && (
-                    <DetailRow
-                      label="Right to Work"
-                      value={
-                        <FilePreview
-                          url={
-                            (selectedApp as DriverApplication)
-                              .rightToWorkDocUrl!
-                          }
-                        />
-                      }
-                    />
-                  )}
-                  {(selectedApp as DriverApplication).vehicleInsuranceUrl && (
-                    <DetailRow
-                      label="Vehicle Insurance (H&R)"
-                      value={
-                        <FilePreview
-                          url={
-                            (selectedApp as DriverApplication)
-                              .vehicleInsuranceUrl!
-                          }
-                        />
-                      }
-                    />
-                  )}
-                  {(selectedApp as DriverApplication)
-                    .publicLiabilityInsuranceUrl && (
-                    <DetailRow
-                      label="Public Liability Insurance"
-                      value={
-                        <FilePreview
-                          url={
-                            (selectedApp as DriverApplication)
-                              .publicLiabilityInsuranceUrl!
-                          }
-                        />
-                      }
-                    />
-                  )}
-                  {(selectedApp as DriverApplication)
-                    .goodsInTransitInsuranceUrl && (
-                    <DetailRow
-                      label="Goods In Transit Insurance"
-                      value={
-                        <FilePreview
-                          url={
-                            (selectedApp as DriverApplication)
-                              .goodsInTransitInsuranceUrl!
-                          }
-                        />
-                      }
-                    />
-                  )}
+  className="text-lg font-extrabold mt-4 mb-2 uppercase tracking-wide"
+  style={{ color: "#48AEDD", borderBottom: "2px solid #F1C40F" }}
+>
+  Documents
+</h3>
+
+{/* Check if ANY document URL exists */}
+{!(selectedApp as DriverApplication).drivingLicenseUrl &&
+ !(selectedApp as DriverApplication).rightToWorkDocUrl &&
+ !(selectedApp as DriverApplication).vehicleInsuranceUrl &&
+ !(selectedApp as DriverApplication).publicLiabilityInsuranceUrl &&
+ !(selectedApp as DriverApplication).goodsInTransitInsuranceUrl ? (
+  // ✅ Empty state — shown when driver hasn't uploaded anything yet
+  <div className="flex items-center gap-3 p-4 rounded-lg bg-yellow-50 border border-yellow-200 mb-3">
+    <Hourglass className="w-5 h-5 text-yellow-600 flex-shrink-0" />
+    <div>
+      <p className="text-sm font-semibold text-yellow-800">No documents uploaded yet</p>
+      <p className="text-xs text-yellow-700 mt-0.5">
+        The driver has not uploaded any documents. They will be shared via the approval email.
+      </p>
+    </div>
+  </div>
+) : (
+  // ✅ Show available documents
+  <>
+    {(selectedApp as DriverApplication).drivingLicenseUrl && (
+      <DetailRow
+        label="Driving License"
+        value={<FilePreview url={(selectedApp as DriverApplication).drivingLicenseUrl!} />}
+      />
+    )}
+    {(selectedApp as DriverApplication).rightToWorkDocUrl && (
+      <DetailRow
+        label="Right to Work"
+        value={<FilePreview url={(selectedApp as DriverApplication).rightToWorkDocUrl!} />}
+      />
+    )}
+    {(selectedApp as DriverApplication).vehicleInsuranceUrl && (
+      <DetailRow
+        label="Vehicle Insurance"
+        value={<FilePreview url={(selectedApp as DriverApplication).vehicleInsuranceUrl!} />}
+      />
+    )}
+    {(selectedApp as DriverApplication).publicLiabilityInsuranceUrl && (
+      <DetailRow
+        label="Public Liability Insurance"
+        value={<FilePreview url={(selectedApp as DriverApplication).publicLiabilityInsuranceUrl!} />}
+      />
+    )}
+    {(selectedApp as DriverApplication).goodsInTransitInsuranceUrl && (
+      <DetailRow
+        label="Goods In Transit Insurance"
+        value={<FilePreview url={(selectedApp as DriverApplication).goodsInTransitInsuranceUrl!} />}
+      />
+    )}
+  </>
+)}
+                  
                   <h3
                     className="text-lg font-extrabold mt-4 mb-2 uppercase tracking-wide"
                     style={{
