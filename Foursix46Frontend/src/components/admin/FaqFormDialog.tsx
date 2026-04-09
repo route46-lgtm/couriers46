@@ -709,7 +709,7 @@ export function FaqFormDialog({ open, editingItem, onClose, onSave }: Props) {
 
           {/* Tags */}
           <TagInput
-            label="Tags (for filtering & grouping)"
+            label="Tags/FAQ Categories"
             values={form.tags}
             onChange={(v) => update({ tags: v })}
             placeholder="e.g. pricing, insurance, tracking"
