@@ -571,6 +571,10 @@ import { HelmetProvider } from "react-helmet-async";
 import { Navigation } from "@/components/Navigation";
 import { Chatbot } from "@/components/Chatbot";
 import ScrollToTop from "@/components/ScrollToTop";
+import { useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+
+const BASE_URL = "https://www.route46couriers.co.uk";
 
 const queryClient = new QueryClient();
 
@@ -681,18 +685,37 @@ export const RootLayout = () => (
 );
 
 // ── Public Layout — Navigation sidebar + content offset ──────────────────────
-export const PublicLayout = () => (
-  <PageErrorBoundary>
-    <div className="min-h-screen">
-      <Navigation />
-      <main className="pt-20 pb-24 lg:pt-0 lg:pb-0 lg:mr-72">
-        <Suspense fallback={<PageLoader />}>
-          <Outlet />
-        </Suspense>
-      </main>
-    </div>
-  </PageErrorBoundary>
-);
+// export const PublicLayout = () => (
+//   <PageErrorBoundary>
+//     <div className="min-h-screen">
+//       <Navigation />
+//       <main className="pt-20 pb-24 lg:pt-0 lg:pb-0 lg:mr-72">
+//         <Suspense fallback={<PageLoader />}>
+//           <Outlet />
+//         </Suspense>
+//       </main>
+//     </div>
+//   </PageErrorBoundary>
+// );
+export const PublicLayout = () => {
+  const { pathname } = useLocation();
+
+  return (
+    <PageErrorBoundary>
+      <Helmet>
+        <link rel="canonical" href={`${BASE_URL}${pathname}`} />
+      </Helmet>
+      <div className="min-h-screen">
+        <Navigation />
+        <main className="pt-20 pb-24 lg:pt-0 lg:pb-0 lg:mr-72">
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
+        </main>
+      </div>
+    </PageErrorBoundary>
+  );
+};
 
 // ── Full-bleed Layout — Navigation only, page controls own spacing ────────────
 export const FullBleedLayout = () => (
