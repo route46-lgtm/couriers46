@@ -177,7 +177,7 @@ export default defineConfig(({ mode }) => ({
           console.error(`[SSG] ❌ ${url} returned HTTP ${res.status}`);
           return null;
         }
-        const data = await res.json();
+        const data: any = await res.json();
         const items = data?.data ?? data ?? [];
         console.log(`[SSG] ✅ ${url} → ${items.length} items`);
         return data;
@@ -192,7 +192,7 @@ export default defineConfig(({ mode }) => ({
       safeFetch(`${apiUrl}/api/sectors`),
       safeFetch(`${apiUrl}/api/locations`),
       safeFetch(`${apiUrl}/api/blog`),   // ✅ fixed: /api/blog not /api/blogs
-    ]).then(([services, sectors, locations, blogs]) => {
+    ]).then(([services, sectors, locations, blogs]: [any, any, any, any]) => {
       const svcs = services?.data  || services  || [];
       const scts = sectors?.data   || sectors   || [];
       const locs = locations?.data || locations || [];

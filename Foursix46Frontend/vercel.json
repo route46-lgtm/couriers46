@@ -1,13 +1,15 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
   "routes": [
     {
       "src": "/sitemap.xml",
       "dest": "https://europe-west2-foursix46-production-4a43f.cloudfunctions.net/api/sitemap.xml"
     },
     {
-      "src": "/admin/(.*)",
+      "src": "/admin(.*)",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/send-parcel(.*)",
       "dest": "/index.html"
     },
     {
