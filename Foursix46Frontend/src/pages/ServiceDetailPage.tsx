@@ -1272,7 +1272,7 @@ export default function ServiceDetailPage() {
 
   const heroImage =
     !imgError && service.heroImage ? service.heroImage : "/route462.jpeg";
-  const canonicalUrl = `https://www.route46couriers.co.uk/services/${service.slug}`;
+  const canonicalUrl = `https://www.route46couriers.co.uk/services/${slug}`;
   const vehicleTypes: string[] = Array.isArray(service.vehicleTypes)
     ? service.vehicleTypes
     : [];
