@@ -1397,6 +1397,7 @@ export function BlogFormDialog({
     try {
       const cleanBlocks = contentBlocks.map(({ _id, ...rest }) => rest);
       await onSave({
+        ...(isEdit && editingItem?.id ? { id: editingItem.id } : {}),
         title: title.trim(),
         slug: slug.trim(),
         status,
