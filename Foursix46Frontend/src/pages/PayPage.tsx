@@ -342,7 +342,7 @@ export default function PayPage() {
             phone: payment.phone?.trim(),
             netAmount: net,
             vatEnabled,
-            vatRate,
+            vatRate: vatEnabled ? vatRate : 0,
             reference: payment.reference.trim(),
           }),
         },
