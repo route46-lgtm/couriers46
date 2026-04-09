@@ -567,6 +567,8 @@ export function FaqFormDialog({ open, editingItem, onClose, onSave }: Props) {
     const currentForm = formRef.current;
     const save = onSaveRef.current;
 
+    console.log("[handleSave] currentForm:", currentForm);
+
     if (!currentForm.question.trim()) {
       alert("Question is required.");
       return;

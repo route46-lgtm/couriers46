@@ -3559,19 +3559,31 @@ export default function AdminDashboardPage() {
       successLabel: string,
     ) =>
     async (data: any) => {
-      // ✅ Use data.id from the dialog payload — zero closure dependency
+      // ✅ Use data.id from the dialog payload — zero closure dependency on editingItem
       const isEdit = !!data.id;
       const url = isEdit ? updateEndpoint(data.id) : createEndpoint;
 
-      // ✅ Strip id from the body — don't save it as a Firestore/DB field
+      // ✅ Strip id from body — send only the actual fields to the API
       const { id, ...body } = data;
+
+      // ✅ Debug log — open DevTools Console, confirm tags & sortOrder are correct HERE
+      console.log("[makeSaveHandler]", {
+        isEdit,
+        url,
+        body, // ← Check: does body have your updated tags & sortOrder?
+      });
 
       const res = await fetch(url, {
         method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+
       const result = await res.json();
+
+      // ✅ Debug log — confirm what the API actually returned
+      console.log("[makeSaveHandler] API response:", res.status, result);
+
       if (!res.ok) throw new Error(result.message ?? "Save failed");
 
       toast.success(
