@@ -9,7 +9,8 @@
     {
       "source": "/admin/:path*",
       "destination": "/"
-    }
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
