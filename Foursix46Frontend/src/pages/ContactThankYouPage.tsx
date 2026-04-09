@@ -77,7 +77,10 @@ export default function ContactThankYouPage() {
               >
                 <p>
                   We appreciate you contacting{" "}
-                  <span className="font-bold text-[#48AEDD]">FourSix46</span>.
+                  <span className="font-bold text-[#48AEDD]">
+                    Route46 Couriers
+                  </span>
+                  .
                 </p>
                 <p>
                   Our team has received your message and will get back to you
@@ -106,10 +109,10 @@ export default function ContactThankYouPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="mailto:Operations@foursix46.com"
+                  href="mailto:operations@route46couriers.co.uk"
                   className="inline-flex items-center gap-2 text-[#48AEDD] font-bold hover:underline"
                 >
-                  <Mail className="w-5 h-5" /> Operations@foursix46.com
+                  <Mail className="w-5 h-5" /> operations@route46couriers.co.uk
                 </a>
               </div>
             </div>
