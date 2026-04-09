@@ -1,153 +1,225 @@
-import fs from 'fs';
-import path from 'path';
+// scripts/inject-seo.mjs
+// Post-build SSG SEO injector
+// Fixes: title, description, canonical, og:*, twitter:*, preload — for every page in dist/
+// Run: node scripts/inject-seo.mjs   (called automatically from "build" script in package.json)
 
-const DIST = path.resolve('dist');
-const BASE_URL = 'https://www.route46couriers.co.uk';
+import { readFileSync, writeFileSync, readdirSync } from 'fs'
+import { join, relative } from 'path'
+import { fileURLToPath } from 'url'
 
-const SKIP_ROUTES = ['/admin', '/send-parcel'];
+const __dirname  = fileURLToPath(new URL('.', import.meta.url))
+const DIST       = join(__dirname, '../dist')
+const BASE_URL   = 'https://www.route46couriers.co.uk'
 
-function shouldSkip(route) {
-  return SKIP_ROUTES.some(s => route.startsWith(s));
-}
+// Routes to skip entirely (no canonical, no SEO injection)
+const SKIP_PREFIXES = ['/admin', '/send-parcel', '/pay']
 
-function normalisePath(route) {
-  return route.endsWith('/') && route !== '/' ? route.slice(0, -1) : route;
-}
+const counts = { injected: 0, replaced: 0, skipped: 0, total: 0 }
 
-function extractHydrationData(html) {
-  // Pulls the JSON from window.staticRouterHydrationData = JSON.parse('...')
-  const match = html.match(/window\.staticRouterHydrationData\s*=\s*JSON\.parse\('([\s\S]*?)'\)/);
-  if (!match) return null;
-  try {
-    const raw = match[1].replace(/\\'/g, "'").replace(/\\n/g, '');
-    return JSON.parse(raw);
-  } catch {
-    return null;
+// ─── File helpers ────────────────────────────────────────────────────────────
+
+function walk(dir, out = []) {
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, e.name)
+    e.isDirectory() ? walk(p, out) : e.name.endsWith('.html') && out.push(p)
   }
+  return out
 }
 
-function getPageMeta(hydrationData) {
-  if (!hydrationData?.loaderData) return null;
-  // loaderData has numeric keys — grab the first one
-  const firstKey = Object.keys(hydrationData.loaderData)[0];
-  const loaderEntry = hydrationData.loaderData[firstKey];
-  // Could be { service }, { location }, { sector }, { post }, etc.
-  const entity = loaderEntry?.service || loaderEntry?.location || loaderEntry?.sector || loaderEntry?.post || null;
-  if (!entity) return null;
-  return {
-    title:       entity.seoTitle || entity.name || null,
-    description: entity.seoDescription || null,
-    ogImage:     entity.ogImage || null,
-    noindex:     entity.noindex || false,
-  };
+function routeFrom(file) {
+  const rel = relative(DIST, file).replace(/\\/g, '/')
+  const r   = '/' + rel.replace(/\/index\.html$/, '').replace(/\.html$/, '').replace(/\/$/, '')
+  return r === '' ? '/' : r
 }
 
-function injectHeadTags(html, route, meta) {
-  const canonical = `${BASE_URL}${route}`;
-  const tags = [];
+// ─── Data extraction from hydration JSON ─────────────────────────────────────
+//
+// vite-react-ssg writes window.staticRouterHydrationData = JSON.parse('...')
+// at the bottom of every SSG page. We pull seoTitle, seoDescription,
+// canonicalUrl, ogImage, noindex from that serialised JSON.
 
-  // Title
-  if (meta?.title) {
-    tags.push(`  <title>${meta.title} | FourSix46®</title>`);
+function extractField(html, field) {
+  const re = new RegExp(`"${field}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`)
+  const m  = html.match(re)
+  if (!m) return null
+  try   { return JSON.parse(`"${m[1]}"`) }
+  catch { return m[1].replace(/\\u003c/g, '<').replace(/\\u003e/g, '>').replace(/\\"/g, '"') }
+}
+
+function extractBoolField(html, field) {
+  const re = new RegExp(`"${field}"\\s*:\\s*(true|false)`)
+  const m  = html.match(re)
+  return m ? m[1] === 'true' : false
+}
+
+// Grab the first hero image (large, S3 or absolute URL) from the rendered body
+function extractHeroImage(html) {
+  // Match src on the hero <img> that also carries object-cover / absolute classes
+  const m = html.match(
+    /<img[^>]+src=["'](https:\/\/[^"']+\.(?:webp|jpg|jpeg|png))["'][^>]*class=["'][^"']*(?:absolute|object-cover)[^"']*["']/i
+  ) || html.match(
+    /<img[^>]+class=["'][^"']*(?:absolute|object-cover)[^"']*["'][^>]+src=["'](https:\/\/[^"']+\.(?:webp|jpg|jpeg|png))["']/i
+  )
+  return m?.[1] ?? null
+}
+
+// ─── Strip Helmet-commented blocks ───────────────────────────────────────────
+//
+// vite-react-ssg + react-helmet-async sometimes outputs SEO tags wrapped in
+// HTML comments instead of live tags, e.g.:
+//   <!-- <title>...</title>
+//        <meta name="description" content="...">
+//        <meta name="author" content="..."> -->
+// This function removes those dead comment blocks from <head>.
+
+function stripCommentedSeoBlocks(html) {
+  // Any HTML comment block that contains <title> or an SEO <meta> tag
+  return html.replace(
+    /<!--(?:(?!-->)[\s\S])*?<(?:title|meta[^>]*(?:name|property)\s*=\s*["'](?:description|author|og:|twitter:))[^]*?-->/gi,
+    ''
+  )
+}
+
+// ─── Tag upsert helper ────────────────────────────────────────────────────────
+
+function upsert(html, pattern, tag) {
+  return pattern.test(html)
+    ? html.replace(pattern, tag)
+    : html.replace('</head>', `  ${tag}\n</head>`)
+}
+
+function esc(s) { return s?.replace(/"/g, '&quot;') ?? '' }
+
+// ─── Core processor ──────────────────────────────────────────────────────────
+
+function processFile(filePath) {
+  const route = routeFrom(filePath)
+
+  if (SKIP_PREFIXES.some(p => route.startsWith(p))) {
+    console.log(`[seo] ⏭  skip       ${route}`)
+    counts.skipped++
+    return
   }
 
-  // Description
-  if (meta?.description) {
-    tags.push(`  <meta name="description" content="${meta.description}" />`);
+  let html     = readFileSync(filePath, 'utf-8')
+  const before = html
+
+  // ── Extract SEO data from hydration JSON ──────────────────────────────
+  const seoTitle    = extractField(html, 'seoTitle')       || extractField(html, 'heroTitle')
+  const seoDesc     = extractField(html, 'seoDescription')
+  const canonicalRaw= extractField(html, 'canonicalUrl')
+  const ogImageRaw  = extractField(html, 'ogImage')
+  const noindex     = extractBoolField(html, 'noindex')
+
+  const canonical   = canonicalRaw || `${BASE_URL}${route === '/' ? '' : route}`
+  const heroImg     = extractHeroImage(html)
+  const ogImage     = ogImageRaw || heroImg || `${BASE_URL}/route46logo.png`
+
+  // ── Step 1: Remove Helmet-commented SEO blocks ────────────────────────
+  html = stripCommentedSeoBlocks(html)
+
+  // ── Step 2: Title ─────────────────────────────────────────────────────
+  if (seoTitle) {
+    html = upsert(html, /<title>[^<]*<\/title>/i, `<title>${esc(seoTitle)}</title>`)
   }
 
-  // Canonical
-  if (html.includes('<link rel="canonical"')) {
-    html = html.replace(/<link rel="canonical"[^>]*>/g,
-      `<link rel="canonical" href="${canonical}" />`);
+  // ── Step 3: Meta description ──────────────────────────────────────────
+  if (seoDesc) {
+    html = upsert(html,
+      /<meta[^>]+name=["']description["'][^>]*>/i,
+      `<meta name="description" content="${esc(seoDesc)}">`
+    )
+  }
+
+  // ── Step 4: Robots ────────────────────────────────────────────────────
+  html = upsert(html,
+    /<meta[^>]+name=["']robots["'][^>]*>/i,
+    noindex
+      ? `<meta name="robots" content="noindex,nofollow">`
+      : `<meta name="robots" content="index, follow">`
+  )
+
+  // ── Step 5: Canonical ─────────────────────────────────────────────────
+  html = upsert(html,
+    /<link[^>]+rel=["']canonical["'][^>]*>/i,
+    `<link rel="canonical" href="${canonical}">`
+  )
+
+  // ── Step 6: Open Graph ────────────────────────────────────────────────
+  if (seoTitle) {
+    html = upsert(html,
+      /<meta[^>]+property=["']og:title["'][^>]*>/i,
+      `<meta property="og:title" content="${esc(seoTitle)}">`
+    )
+  }
+  if (seoDesc) {
+    html = upsert(html,
+      /<meta[^>]+property=["']og:description["'][^>]*>/i,
+      `<meta property="og:description" content="${esc(seoDesc)}">`
+    )
+  }
+  html = upsert(html,
+    /<meta[^>]+property=["']og:url["'][^>]*>/i,
+    `<meta property="og:url" content="${canonical}">`
+  )
+  html = upsert(html,
+    /<meta[^>]+property=["']og:image["'][^>]*>/i,
+    `<meta property="og:image" content="${ogImage}">`
+  )
+
+  // ── Step 7: Twitter Card ──────────────────────────────────────────────
+  if (seoTitle) {
+    html = upsert(html,
+      /<meta[^>]+name=["']twitter:title["'][^>]*>/i,
+      `<meta name="twitter:title" content="${esc(seoTitle)}">`
+    )
+  }
+  if (seoDesc) {
+    html = upsert(html,
+      /<meta[^>]+name=["']twitter:description["'][^>]*>/i,
+      `<meta name="twitter:description" content="${esc(seoDesc)}">`
+    )
+  }
+  html = upsert(html,
+    /<meta[^>]+name=["']twitter:image["'][^>]*>/i,
+    `<meta name="twitter:image" content="${ogImage}">`
+  )
+
+  // ── Step 8: Fix <link rel="preload"> to match actual hero image ───────
+  // index.html ships with route462.jpeg as a placeholder preload.
+  // For SSG pages the real hero is a .webp from S3 — fix it.
+  if (heroImg) {
+    html = html.replace(
+      /<link[^>]+rel=["']preload["'][^>]+as=["']image["'][^>]*>/i,
+      `<link rel="preload" as="image" href="${heroImg}" fetchpriority="high">`
+    )
+  }
+
+  // ── Write back if changed ─────────────────────────────────────────────
+  if (html !== before) {
+    writeFileSync(filePath, html, 'utf-8')
+
+    const hadCanonical = /<link[^>]+rel=["']canonical["'][^>]*>/i.test(before)
+    if (hadCanonical) {
+      console.log(`[seo] ✏️  replaced   ${route}${seoTitle ? `  →  "${seoTitle.slice(0, 55)}"` : ''}`)
+      counts.replaced++
+    } else {
+      console.log(`[seo] ✅ injected   ${route}${seoTitle ? `  →  "${seoTitle.slice(0, 55)}"` : ''}`)
+      counts.injected++
+    }
   } else {
-    tags.push(`  <link rel="canonical" href="${canonical}" />`);
+    console.log(`[seo] ✓  no-change  ${route}`)
   }
 
-  // OG tags
-  if (meta?.title) {
-    if (html.includes('property="og:title"')) {
-      html = html.replace(/(<meta property="og:title"[^>]*content=")[^"]*(")/,
-        `$1${meta.title} | FourSix46®$2`);
-    } else {
-      tags.push(`  <meta property="og:title" content="${meta.title} | FourSix46®" />`);
-    }
-  }
-
-  if (meta?.description) {
-    if (html.includes('property="og:description"')) {
-      html = html.replace(/(<meta property="og:description"[^>]*content=")[^"]*(")/,
-        `$1${meta.description}$2`);
-    } else {
-      tags.push(`  <meta property="og:description" content="${meta.description}" />`);
-    }
-  }
-
-  if (meta?.ogImage) {
-    if (html.includes('property="og:image"')) {
-      html = html.replace(/(<meta property="og:image"[^>]*content=")[^"]*(")/,
-        `$1${meta.ogImage}$2`);
-    } else {
-      tags.push(`  <meta property="og:image" content="${meta.ogImage}" />`);
-    }
-  }
-
-  // OG URL
-  if (html.includes('property="og:url"')) {
-    html = html.replace(/(<meta property="og:url"[^>]*content=")[^"]*(")/,
-      `$1${canonical}$2`);
-  } else {
-    tags.push(`  <meta property="og:url" content="${canonical}" />`);
-  }
-
-  // noindex
-  if (meta?.noindex) {
-    if (!html.includes('name="robots"')) {
-      tags.push(`  <meta name="robots" content="noindex,nofollow" />`);
-    }
-  }
-
-  if (tags.length > 0) {
-    html = html.replace('</head>', tags.join('\n') + '\n</head>');
-  }
-
-  return html;
+  counts.total++
 }
 
-function walkDir(dir, base = '') {
-  let results = [];
-  for (const entry of fs.readdirSync(dir)) {
-    const full = path.join(dir, entry);
-    const stat = fs.statSync(full);
-    if (stat.isDirectory()) {
-      results = results.concat(walkDir(full, `${base}/${entry}`));
-    } else if (entry === 'index.html') {
-      results.push({ file: full, route: normalisePath(base || '/') });
-    }
-  }
-  return results;
-}
+// ─── Run ─────────────────────────────────────────────────────────────────────
 
-const pages = walkDir(DIST);
-let injected = 0, skipped = 0;
+const files     = walk(DIST)
+counts.total    = files.length
+files.forEach(processFile)
 
-for (const { file, route } of pages) {
-  if (shouldSkip(route)) {
-    console.log(`[seo] ⏭  skipped   ${route}`);
-    skipped++;
-    continue;
-  }
-
-  let html = fs.readFileSync(file, 'utf8');
-  const hydration = extractHydrationData(html);
-  const meta = getPageMeta(hydration);
-
-  html = injectHeadTags(html, route, meta);
-  fs.writeFileSync(file, html, 'utf8');
-
-  const label = meta?.title ? `"${meta.title.slice(0, 40)}"` : '(no CMS data — canonical only)';
-  console.log(`[seo] ✅ injected  ${route}  →  ${label}`);
-  injected++;
-}
-
-console.log(`\n[seo] Done — injected:${injected}  skipped:${skipped}  total:${pages.length}`);
+console.log(
+  `\n[seo] Done ─── injected: ${counts.injected}  replaced: ${counts.replaced}  skipped: ${counts.skipped}  total: ${counts.total}`
+)
