@@ -754,7 +754,7 @@ export default function FaqPage() {
 
         const active = data
           .filter((f) => f.status === "published")
-          .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+          .sort((a, b) => Number(a.sortOrder ?? 0) - Number(b.sortOrder ?? 0));
 
         setAllFaqs(active);
       } catch (err) {
@@ -811,7 +811,7 @@ export default function FaqPage() {
         icon,
         color,
         questions: [...faqs].sort(
-          (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0),
+          (a, b) => Number(a.sortOrder ?? 0) - Number(b.sortOrder ?? 0),
         ),
       });
     });
@@ -827,7 +827,7 @@ export default function FaqPage() {
         icon: HelpCircle,
         color: "#134467",
         questions: [...generalFaqs].sort(
-          (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0),
+          (a, b) => Number(a.sortOrder ?? 0) - Number(b.sortOrder ?? 0),
         ),
       });
     }
