@@ -1,0 +1,767 @@
+import { jsx, jsxs } from "react/jsx-runtime";
+import React__default, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, Timer, Globe, Zap, MapPin, Truck, CheckCircle2, ArrowRight, Clock, Navigation, Network } from "lucide-react";
+import { Helmet } from "react-helmet-async";
+import { c as cn } from "../../main.mjs";
+import { F as Footer } from "./Footer-BW1VuM-V.js";
+import { B as BlockRenderer } from "./BlockRenderer-DefJOWpD.js";
+import { A as Accordion, a as AccordionItem, b as AccordionTrigger, c as AccordionContent } from "./accordion-BG3FU_wB.js";
+import "vite-react-ssg";
+import "@radix-ui/react-toast";
+import "class-variance-authority";
+import "clsx";
+import "tailwind-merge";
+import "next-themes";
+import "sonner";
+import "@radix-ui/react-tooltip";
+import "@tanstack/react-query";
+import "@radix-ui/react-accordion";
+const apiUrl = void 0;
+const fadeUp = "animate-in fade-in slide-in-from-bottom-5 duration-700 ease-out";
+const HOW_IT_WORKS_STEPS = [
+  {
+    n: 1,
+    title: "Request a Quote",
+    desc: "Submit pickup and delivery details online."
+  },
+  {
+    n: 2,
+    title: "Courier Assigned",
+    desc: "A professional driver is dispatched quickly."
+  },
+  {
+    n: 3,
+    title: "Collection",
+    desc: "Goods or documents are collected securely."
+  },
+  {
+    n: 4,
+    title: "Direct Delivery",
+    desc: "Items are transported directly to the destination."
+  },
+  {
+    n: 5,
+    title: "Confirmation",
+    desc: "Delivery confirmation and proof of delivery provided."
+  }
+];
+const HowOurNetworkWorks = () => /* @__PURE__ */ jsxs("section", { className: "py-20 sm:py-24 bg-[#134467] relative overflow-hidden", children: [
+  /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 w-[500px] h-[500px] bg-[#48AEDD]/10 rounded-full blur-3xl pointer-events-none" }),
+  /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#E53935]/10 rounded-full blur-3xl pointer-events-none" }),
+  /* @__PURE__ */ jsxs("div", { className: "relative z-10 max-w-6xl mx-auto px-5 sm:px-6", children: [
+    /* @__PURE__ */ jsxs("div", { className: "text-center mb-14", children: [
+      /* @__PURE__ */ jsx("span", { className: "inline-block text-[11px] font-black uppercase tracking-[0.2em] bg-[#F5EB18] text-[#134467] px-5 py-2 rounded-full mb-4 shadow-sm", children: "Our Process" }),
+      /* @__PURE__ */ jsx("h2", { className: "text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight", children: "How Our Courier Network Works" })
+    ] }),
+    /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-4", children: HOW_IT_WORKS_STEPS.map(({ n, title, desc }, i) => /* @__PURE__ */ jsxs("div", { className: "relative group", children: [
+      i < HOW_IT_WORKS_STEPS.length - 1 && /* @__PURE__ */ jsx("div", { className: "hidden lg:block absolute top-7 left-[65%] w-full h-px bg-gradient-to-r from-white/25 to-transparent z-0" }),
+      /* @__PURE__ */ jsxs("div", { className: "relative z-10 flex flex-col items-center text-center gap-3", children: [
+        /* @__PURE__ */ jsx("div", { className: "w-14 h-14 rounded-full bg-[#E53935] flex items-center justify-center shadow-xl shadow-red-900/40 group-hover:scale-110 group-hover:bg-[#c0392b] transition-all duration-300", children: /* @__PURE__ */ jsxs("span", { className: "text-white font-black text-sm tracking-wide", children: [
+          "0",
+          n
+        ] }) }),
+        /* @__PURE__ */ jsx("h3", { className: "text-white font-black text-sm leading-snug tracking-wide", children: title }),
+        /* @__PURE__ */ jsx("p", { className: "text-white/50 text-xs leading-relaxed font-medium", children: desc })
+      ] })
+    ] }, n)) })
+  ] })
+] });
+const WHY_CHOOSE_CARDS = [
+  {
+    Icon: Clock,
+    label: "Available 24/7",
+    title: "24/7 Courier Support",
+    desc: "Our courier operations run 24 hours a day, 7 days a week to handle urgent deliveries whenever they arise. Whether you need late-night document transport or early morning collections, our dedicated courier network is always ready to respond."
+  },
+  {
+    Icon: Zap,
+    label: "Same Day Transport",
+    title: "Same Day Courier Delivery",
+    desc: "Route46 Couriers provides reliable same day courier services across the UK. Our dedicated drivers collect your shipment and transport it directly to the destination without unnecessary stops or hub delays."
+  },
+  {
+    Icon: Globe,
+    label: "Nationwide Coverage",
+    title: "Across the UK Mainland",
+    desc: "Our courier network covers cities, towns, and business districts across the UK mainland. From London and Birmingham to Cardiff, Manchester, and beyond, we ensure dependable transport wherever your delivery needs to go."
+  },
+  {
+    Icon: Timer,
+    label: "Rapid Dispatch",
+    title: "Collection Within 60 Minutes",
+    desc: "For urgent deliveries, our courier drivers can often collect shipments within 60 minutes depending on location and availability. This rapid response ensures time-sensitive documents, parcels, or goods move immediately."
+  },
+  {
+    Icon: Navigation,
+    label: "Real-Time Visibility",
+    title: "Live GPS Delivery Tracking",
+    desc: "Every delivery is supported by real-time tracking and delivery confirmation. Our system provides visibility from collection to delivery, ensuring transparency and confidence for both businesses and individual customers."
+  },
+  {
+    Icon: Network,
+    label: "Specialist Deliveries",
+    title: "Industries & Courier Services",
+    desc: "Route46 Couriers supports a wide range of industries including legal, medical, corporate, aviation, and e-commerce. From passport deliveries and legal documents to urgent parcels and specialist freight, our services are designed to meet diverse business needs."
+  }
+];
+const WhyChooseSection = () => /* @__PURE__ */ jsx("section", { className: "bg-slate-50/80 py-20 sm:py-24 border-t border-slate-100", children: /* @__PURE__ */ jsxs("div", { className: "max-w-6xl mx-auto px-5 sm:px-6", children: [
+  /* @__PURE__ */ jsxs("div", { className: "text-center mb-14", children: [
+    /* @__PURE__ */ jsx("span", { className: "inline-block text-[11px] font-black uppercase tracking-[0.2em] bg-[#F5EB18] text-[#134467] px-5 py-2 rounded-full mb-5 shadow-sm", children: "Why Route46" }),
+    /* @__PURE__ */ jsx("h2", { className: "text-3xl sm:text-4xl lg:text-5xl font-black text-[#134467] tracking-tight leading-tight mb-4", children: "Why Choose Route46 Couriers" }),
+    /* @__PURE__ */ jsx("p", { className: "text-[#134467]/55 text-base font-medium max-w-2xl mx-auto leading-[1.85]", children: "Fast, secure and professional courier solutions across the UK mainland for urgent documents, parcels, pallets and specialist deliveries." })
+  ] }),
+  /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6", children: WHY_CHOOSE_CARDS.map(({ Icon, label, title, desc }, i) => /* @__PURE__ */ jsxs(
+    "div",
+    {
+      className: cn(
+        "bg-white p-8 rounded-3xl border border-slate-100",
+        "hover:shadow-2xl hover:-translate-y-2 hover:border-[#48AEDD]/25 transition-all duration-300 group",
+        fadeUp
+      ),
+      style: { animationDelay: `${i * 80}ms` },
+      children: [
+        /* @__PURE__ */ jsx("div", { className: "w-12 h-12 rounded-2xl bg-gradient-to-br from-[#134467]/5 to-[#48AEDD]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300", children: /* @__PURE__ */ jsx(Icon, { className: "w-6 h-6 text-[#48AEDD]" }) }),
+        /* @__PURE__ */ jsx("span", { className: "text-[10px] font-black uppercase tracking-[0.18em] text-[#E53935] mb-2.5 block", children: label }),
+        /* @__PURE__ */ jsx("h3", { className: "font-black text-[17px] text-[#134467] mb-3 leading-snug tracking-tight group-hover:text-[#E53935] transition-colors duration-200", children: title }),
+        /* @__PURE__ */ jsx("p", { className: "text-[#134467]/58 text-[13.5px] leading-[1.85] font-medium", children: desc })
+      ]
+    },
+    title
+  )) })
+] }) });
+const DedicatedCourierNetwork = () => /* @__PURE__ */ jsx("div", { className: "bg-[#134467]/5 border-y border-[#134467]/10 py-8 sm:py-10", children: /* @__PURE__ */ jsx("div", { className: "max-w-3xl mx-auto px-5 sm:px-6 text-center", children: /* @__PURE__ */ jsx("p", { className: "text-[#134467] font-semibold text-base sm:text-lg leading-[1.85]", children: "Route46 Couriers provides reliable same-day transport across the UK with access to thousands of verified drivers and vehicles through our extended courier network, ensuring fast collection, secure handling, and true nationwide delivery coverage." }) }) });
+async function entry() {
+  try {
+    const res = await fetch(`${apiUrl}/api/locations`);
+    const data = await res.json();
+    const items = Array.isArray(data == null ? void 0 : data.data) ? data.data : Array.isArray(data) ? data : [];
+    return items.map((s) => ({ slug: s.slug }));
+  } catch {
+    return [];
+  }
+}
+async function loader({ params }) {
+  const slug = params.slug;
+  if (!slug) return { location: null, allFaqs: [] };
+  try {
+    const [locationRes, faqsRes] = await Promise.all([
+      fetch(`${apiUrl}/api/locations/${slug}`),
+      fetch(`${apiUrl}/api/faqs`)
+    ]);
+    const locationData = locationRes.ok ? await locationRes.json() : null;
+    const faqsData = faqsRes.ok ? await faqsRes.json() : [];
+    return {
+      location: (locationData == null ? void 0 : locationData.data) || locationData || null,
+      allFaqs: Array.isArray(faqsData == null ? void 0 : faqsData.data) ? faqsData.data : Array.isArray(faqsData) ? faqsData : []
+    };
+  } catch {
+    return { location: null, allFaqs: [] };
+  }
+}
+function LocationDetailPage() {
+  var _a;
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const [location, setLocation] = useState(null);
+  const [faqs, setFaqs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [imgError, setImgError] = useState(false);
+  useEffect(() => {
+    if (!slug) return;
+    (async () => {
+      var _a2;
+      try {
+        setLoading(true);
+        const res = await fetch(`${apiUrl}/api/locations/${slug}`);
+        if (!res.ok) throw new Error("Not found");
+        const json = await res.json();
+        const data = json.data || json;
+        setLocation(data);
+        try {
+          const faqRes = await fetch(`${apiUrl}/api/faqs`);
+          if (faqRes.ok) {
+            const allFaqs = await faqRes.json();
+            const all = allFaqs.data || allFaqs || [];
+            setFaqs(
+              ((_a2 = data.faqIds) == null ? void 0 : _a2.length) ? all.filter((f) => data.faqIds.includes(f.id)) : []
+            );
+          }
+        } catch {
+          setFaqs([]);
+        }
+      } catch {
+        setLocation(null);
+        setFaqs([]);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [slug]);
+  if (loading) {
+    return /* @__PURE__ */ jsx("div", { className: "min-h-screen flex items-center justify-center bg-white", children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center gap-5", children: [
+      /* @__PURE__ */ jsxs("div", { className: "relative w-16 h-16", children: [
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 rounded-full border-4 border-[#134467]/10" }),
+        /* @__PURE__ */ jsx("div", { className: "absolute inset-0 rounded-full border-4 border-t-[#E53935] border-r-[#48AEDD] border-b-[#F5EB18] border-l-transparent animate-spin" })
+      ] }),
+      /* @__PURE__ */ jsx("p", { className: "text-[#134467]/50 text-sm font-semibold tracking-widest uppercase", children: "Loading location details..." })
+    ] }) });
+  }
+  if (!location || location.status !== "published") {
+    return /* @__PURE__ */ jsxs("div", { className: "min-h-screen flex flex-col items-center justify-center gap-6 bg-slate-50 px-5 text-center antialiased", children: [
+      /* @__PURE__ */ jsx("div", { className: "w-24 h-24 rounded-full bg-[#48AEDD]/10 flex items-center justify-center", children: /* @__PURE__ */ jsx("span", { className: "text-4xl font-black text-[#48AEDD] tracking-tight", children: "404" }) }),
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("h1", { className: "text-2xl font-black text-[#134467] tracking-tight", children: "Location Not Found" }),
+        /* @__PURE__ */ jsx("p", { className: "text-[#134467]/50 mt-2 font-medium text-sm", children: "This location doesn't exist or may have been removed." })
+      ] }),
+      /* @__PURE__ */ jsxs(
+        "button",
+        {
+          onClick: () => navigate("/locations"),
+          className: "flex items-center gap-2 bg-[#134467] text-white px-6 py-3 rounded-xl font-black text-sm tracking-wide hover:bg-[#134467]/90 transition",
+          children: [
+            /* @__PURE__ */ jsx(ArrowLeft, { size: 16 }),
+            " Back to Locations"
+          ]
+        }
+      )
+    ] });
+  }
+  const heroImage = !imgError && location.heroImage ? location.heroImage : "/FourSix_truckimage.jpg";
+  const canonicalUrl = `https://www.route46couriers.co.uk/locations/${location.slug}`;
+  const baseUrl = "https://www.route46couriers.co.uk";
+  let postcodes = [];
+  if (Array.isArray(location.postcodeCoverage)) {
+    postcodes = location.postcodeCoverage.map((p) => p.trim()).filter(Boolean);
+  } else if (typeof location.postcodeCoverage === "string") {
+    postcodes = location.postcodeCoverage.split(",").map((p) => p.trim()).filter(Boolean);
+  }
+  const recommendedServices = location.recommendedServices || [];
+  const nearbyAreas = location.nearbyAreas || [];
+  return /* @__PURE__ */ jsxs("div", { className: "min-h-screen bg-white selection:bg-[#E53935] selection:text-white antialiased", children: [
+    /* @__PURE__ */ jsxs(Helmet, { children: [
+      /* @__PURE__ */ jsxs("title", { children: [
+        location.seoTitle || location.name,
+        " | FourSix46®"
+      ] }),
+      /* @__PURE__ */ jsx("meta", { name: "description", content: location.seoDescription || "" }),
+      /* @__PURE__ */ jsx("link", { rel: "canonical", href: canonicalUrl }),
+      /* @__PURE__ */ jsx(
+        "meta",
+        {
+          property: "og:title",
+          content: location.seoTitle || location.name
+        }
+      ),
+      /* @__PURE__ */ jsx(
+        "meta",
+        {
+          property: "og:description",
+          content: location.seoDescription || ""
+        }
+      ),
+      /* @__PURE__ */ jsx("meta", { property: "og:url", content: canonicalUrl }),
+      /* @__PURE__ */ jsx("meta", { property: "og:type", content: "website" }),
+      /* @__PURE__ */ jsx(
+        "meta",
+        {
+          property: "og:image",
+          content: location.ogImage || "https://www.route46couriers.co.uk/og-default.jpg"
+        }
+      ),
+      location.noindex && /* @__PURE__ */ jsx("meta", { name: "robots", content: "noindex,nofollow" }),
+      /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "CourierService",
+        "@id": canonicalUrl,
+        name: `FourSix46® ${location.name}`,
+        description: location.seoDescription,
+        url: canonicalUrl,
+        image: location.ogImage || heroImage,
+        areaServed: {
+          "@type": "Place",
+          name: location.name,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: location.name,
+            addressCountry: "GB"
+          }
+        },
+        provider: {
+          "@type": "Organization",
+          name: "FourSix46®",
+          url: baseUrl
+        }
+      }) }),
+      /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "@id": "https://www.route46couriers.co.uk/#business",
+        name: "FourSix46® Couriers",
+        url: "https://www.route46couriers.co.uk",
+        telephone: "+447393363802",
+        image: location.ogImage || "https://www.route46couriers.co.uk/og-default.jpg",
+        description: location.seoDescription || "",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: location.name,
+          addressCountry: "GB",
+          addressRegion: location.country || "England"
+        },
+        areaServed: { "@type": "Place", name: location.name },
+        sameAs: [
+          "https://www.instagram.com/route46couriers/",
+          "https://www.facebook.com/route46couriers/",
+          "https://www.linkedin.com/company/foursix46-couriers/"
+        ]
+      }) }),
+      /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: baseUrl },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Locations",
+            item: `${baseUrl}/locations`
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: location.name,
+            item: canonicalUrl
+          }
+        ]
+      }) }),
+      faqs.length > 0 && /* @__PURE__ */ jsx("script", { type: "application/ld+json", children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: { "@type": "Answer", text: faq.answer }
+        }))
+      }) })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { className: "relative min-h-[70vh] sm:min-h-[88vh] flex items-end overflow-hidden bg-[#0d2d47]", children: [
+      /* @__PURE__ */ jsx(
+        "img",
+        {
+          src: heroImage,
+          alt: location.heroTitle || location.name,
+          referrerPolicy: "no-referrer",
+          onError: () => setImgError(true),
+          className: "absolute inset-0 w-full h-full object-cover object-center"
+        }
+      ),
+      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-[#0d2d47] via-[#0d2d47]/65 to-[#0d2d47]/15" }),
+      /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-r from-[#0d2d47]/85 via-[#0d2d47]/30 to-transparent" }),
+      /* @__PURE__ */ jsxs(
+        "button",
+        {
+          onClick: () => navigate("/locations"),
+          className: "absolute top-20 left-4 sm:left-6 z-20 flex items-center gap-2\n            text-white/90 hover:text-[#F5EB18] text-sm font-bold tracking-wide\n            bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full\n            border border-white/20 transition-all hover:bg-white/20",
+          children: [
+            /* @__PURE__ */ jsx(ArrowLeft, { size: 15 }),
+            /* @__PURE__ */ jsx("span", { children: "All Locations" })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxs("div", { className: "relative z-10 w-full max-w-5xl mx-auto px-5 sm:px-8 pb-20 sm:pb-24 pt-36 sm:pt-32", children: [
+        /* @__PURE__ */ jsx("div", { className: cn("mb-5", fadeUp), children: /* @__PURE__ */ jsx("span", { className: "inline-block bg-[#F5EB18] text-[#134467] text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full shadow-sm", children: "Trusted UK Courier Network" }) }),
+        /* @__PURE__ */ jsx(
+          "h1",
+          {
+            className: cn(
+              "text-4xl sm:text-5xl lg:text-[4.5rem] font-black text-white",
+              "leading-[1.04] tracking-tight mb-5 max-w-3xl",
+              fadeUp
+            ),
+            children: location.heroTitle || location.name
+          }
+        ),
+        location.heroSubtitle && /* @__PURE__ */ jsx(
+          "p",
+          {
+            className: cn(
+              "text-base sm:text-lg text-white/75 max-w-2xl mb-8 leading-[1.85] font-medium",
+              fadeUp
+            ),
+            children: location.heroSubtitle
+          }
+        ),
+        /* @__PURE__ */ jsxs("div", { className: cn("flex flex-wrap gap-2 sm:gap-3 mb-9", fadeUp), children: [
+          /* @__PURE__ */ jsx(
+            HeroChip,
+            {
+              icon: /* @__PURE__ */ jsx(Timer, { className: "w-4 h-4 text-[#F5EB18]" }),
+              label: "60 Min Collection"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            HeroChip,
+            {
+              icon: /* @__PURE__ */ jsx(Globe, { className: "w-4 h-4 text-[#48AEDD]" }),
+              label: "UK Mainland Coverage"
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            HeroChip,
+            {
+              icon: /* @__PURE__ */ jsx(Zap, { className: "w-4 h-4 text-[#E53935]" }),
+              label: "Same Day Delivery"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            onClick: () => navigate("/quick-quote"),
+            className: "inline-flex items-center gap-3 bg-[#E53935] hover:bg-[#c0392b]\n              active:scale-95 text-white font-black uppercase tracking-wide\n              px-8 sm:px-10 py-4 sm:py-5 rounded-2xl text-base sm:text-lg\n              shadow-xl shadow-red-900/40 transition-all hover:scale-105\n              w-full sm:w-auto justify-center",
+            children: "Get a Quote"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 right-0 z-10 pointer-events-none", children: /* @__PURE__ */ jsx(
+        "svg",
+        {
+          viewBox: "0 0 1440 56",
+          xmlns: "http://www.w3.org/2000/svg",
+          preserveAspectRatio: "none",
+          className: "w-full h-10 sm:h-14",
+          children: /* @__PURE__ */ jsx(
+            "path",
+            {
+              d: "M0 56L1440 56L1440 20C1200 56 960 0 720 20C480 40 240 0 0 20Z",
+              fill: "white"
+            }
+          )
+        }
+      ) })
+    ] }),
+    location.intro && /* @__PURE__ */ jsxs("section", { className: "max-w-3xl mx-auto py-16 sm:py-20 px-5 sm:px-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 mb-6", children: [
+        /* @__PURE__ */ jsx("div", { className: "w-1.5 h-10 rounded-full bg-gradient-to-b from-[#E53935] to-[#48AEDD]" }),
+        /* @__PURE__ */ jsx("span", { className: "text-[11px] font-black uppercase tracking-[0.2em] text-[#48AEDD]", children: "About This Location" })
+      ] }),
+      /* @__PURE__ */ jsx(
+        "div",
+        {
+          dangerouslySetInnerHTML: { __html: location.intro },
+          className: "text-lg sm:text-xl text-[#134467]/80 leading-[1.85]\n              prose prose-lg max-w-none\n              prose-p:text-[#134467]/75 prose-p:leading-[1.85] prose-p:font-medium\n              prose-strong:text-[#134467] prose-strong:font-black\n              prose-a:text-[#E53935] prose-a:no-underline hover:prose-a:underline"
+        }
+      )
+    ] }),
+    ((_a = location.contentBlocks) == null ? void 0 : _a.length) > 0 && /* @__PURE__ */ jsx("section", { children: /* @__PURE__ */ jsx(BlockRenderer, { blocks: location.contentBlocks }) }),
+    /* @__PURE__ */ jsx(HowOurNetworkWorks, {}),
+    /* @__PURE__ */ jsx(WhyChooseSection, {}),
+    postcodes.length > 0 && /* @__PURE__ */ jsx("section", { className: "py-16 sm:py-20 bg-white border-t border-slate-100", children: /* @__PURE__ */ jsxs("div", { className: "max-w-6xl mx-auto px-5 sm:px-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "mb-10 sm:mb-12", children: [
+        /* @__PURE__ */ jsx("span", { className: "inline-block text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-3 shadow-sm bg-[#48AEDD]/10 text-[#48AEDD]", children: "Coverage" }),
+        /* @__PURE__ */ jsx("h2", { className: "text-2xl sm:text-3xl font-black text-[#134467] tracking-tight leading-tight mb-2", children: "Postcode Coverage" }),
+        /* @__PURE__ */ jsx("p", { className: "text-[#134467]/55 text-sm font-medium max-w-xl leading-[1.85]", children: "We provide courier collections and deliveries across the following postcode areas." })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4", children: postcodes.map((code, i) => /* @__PURE__ */ jsx(
+        "div",
+        {
+          className: "bg-white border border-slate-100 hover:border-[#48AEDD]/50\n                    p-4 sm:p-5 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all\n                    font-mono font-bold text-[#134467] text-center\n                    border-l-4 border-l-[#48AEDD]",
+          children: /* @__PURE__ */ jsx("span", { className: "block text-sm sm:text-base uppercase tracking-widest", children: code })
+        },
+        i
+      )) }),
+      location.serviceRadiusMiles && /* @__PURE__ */ jsxs("p", { className: "text-center mt-8 text-sm text-[#134467]/55 font-medium", children: [
+        "Service radius: approximately ",
+        location.serviceRadiusMiles,
+        " ",
+        "miles"
+      ] })
+    ] }) }),
+    nearbyAreas.length > 0 && /* @__PURE__ */ jsx("section", { className: "py-16 sm:py-20 bg-slate-50 border-t border-slate-100", children: /* @__PURE__ */ jsxs("div", { className: "max-w-6xl mx-auto px-5 sm:px-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "mb-10 sm:mb-12", children: [
+        /* @__PURE__ */ jsx("span", { className: "inline-block text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-3 shadow-sm bg-[#134467]/8 text-[#134467]", children: "Nearby Coverage" }),
+        /* @__PURE__ */ jsx("h2", { className: "text-2xl sm:text-3xl font-black text-[#134467] tracking-tight leading-tight mb-2", children: "We Also Serve" }),
+        /* @__PURE__ */ jsxs("p", { className: "text-[#134467]/55 text-sm font-medium max-w-xl leading-[1.85]", children: [
+          "Our courier network extends to surrounding towns and areas near",
+          " ",
+          location.name,
+          "."
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4", children: nearbyAreas.map((area, i) => /* @__PURE__ */ jsxs(
+        "div",
+        {
+          className: "bg-white border border-slate-100 hover:border-[#48AEDD]/40\n                    p-4 sm:p-5 rounded-2xl hover:shadow-md hover:-translate-y-0.5\n                    transition-all flex items-center gap-3\n                    border-l-4 border-l-[#134467]",
+          children: [
+            /* @__PURE__ */ jsx(MapPin, { className: "w-4 h-4 text-[#48AEDD] flex-shrink-0" }),
+            /* @__PURE__ */ jsx("span", { className: "font-bold text-[#134467] text-sm capitalize tracking-wide truncate", children: area })
+          ]
+        },
+        i
+      )) })
+    ] }) }),
+    location.mapEmbedUrl && /* @__PURE__ */ jsx("section", { className: "py-16 sm:py-20 bg-white border-t border-slate-100", children: /* @__PURE__ */ jsxs("div", { className: "max-w-6xl mx-auto px-5 sm:px-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "mb-10 sm:mb-12", children: [
+        /* @__PURE__ */ jsx("span", { className: "inline-block text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-3 shadow-sm bg-[#48AEDD]/10 text-[#48AEDD]", children: "Service Area" }),
+        /* @__PURE__ */ jsx("h2", { className: "text-2xl sm:text-3xl font-black text-[#134467] tracking-tight leading-tight", children: "Coverage Map" })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "rounded-2xl overflow-hidden shadow-xl border border-slate-200/50", children: /* @__PURE__ */ jsx(
+        "iframe",
+        {
+          src: location.mapEmbedUrl,
+          width: "100%",
+          height: "450",
+          loading: "lazy",
+          title: `${location.name} courier service area`,
+          className: "w-full",
+          style: { border: 0 }
+        }
+      ) })
+    ] }) }),
+    recommendedServices.length > 0 && /* @__PURE__ */ jsx(
+      CardsHub,
+      {
+        eyebrow: "Express Delivery Across the UK",
+        title: "Same Day Courier Services",
+        subtitle: "Explore our specialist courier services designed for urgent deliveries, confidential documents, and time-critical logistics across the UK.",
+        items: recommendedServices,
+        basePath: `/locations/${slug}`,
+        navigate,
+        accentColor: "#48AEDD",
+        badgeLabel: "Courier Service",
+        FallbackIcon: Truck,
+        fallbackGradient: "from-[#134467] via-[#1a5280] to-[#48AEDD]",
+        entityType: "service",
+        bg: "bg-slate-50"
+      }
+    ),
+    faqs.length > 0 && /* @__PURE__ */ jsx("section", { className: "py-20 sm:py-24 bg-white border-t border-slate-100", children: /* @__PURE__ */ jsxs("div", { className: "max-w-3xl mx-auto px-5 sm:px-6", children: [
+      /* @__PURE__ */ jsxs("div", { className: "text-center mb-12", children: [
+        /* @__PURE__ */ jsx("span", { className: "inline-block bg-[#134467]/5 text-[#134467] text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full border border-[#134467]/10 mb-5", children: "Got Questions?" }),
+        /* @__PURE__ */ jsx("h2", { className: "text-3xl sm:text-4xl font-black text-[#134467] tracking-tight leading-tight", children: location.faqHeading || `${location.name} FAQs` }),
+        /* @__PURE__ */ jsxs("p", { className: "mt-3 text-[#134467]/50 text-sm font-medium", children: [
+          "Everything you need to know about courier services in",
+          " ",
+          location.name,
+          "."
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx(Accordion, { type: "single", collapsible: true, className: "space-y-3", children: faqs.map((faq, i) => /* @__PURE__ */ jsxs(
+        AccordionItem,
+        {
+          value: `faq-${i}`,
+          className: cn(
+            "border border-slate-100 rounded-2xl overflow-hidden bg-white transition-all shadow-sm",
+            "data-[state=open]:border-[#48AEDD] data-[state=open]:shadow-md data-[state=open]:ring-1 data-[state=open]:ring-[#48AEDD]/20"
+          ),
+          children: [
+            /* @__PURE__ */ jsx(AccordionTrigger, { className: "px-5 sm:px-6 py-5 text-left font-bold text-[#134467] hover:no-underline text-[15px] sm:text-base tracking-tight", children: /* @__PURE__ */ jsxs("span", { className: "flex items-center gap-3", children: [
+              /* @__PURE__ */ jsx("span", { className: "w-7 h-7 rounded-full bg-[#48AEDD]/10 text-[#48AEDD] text-xs font-black flex items-center justify-center flex-shrink-0 tracking-wide", children: String(i + 1).padStart(2, "0") }),
+              faq.question
+            ] }) }),
+            /* @__PURE__ */ jsx(AccordionContent, { className: "px-5 sm:px-6 pb-6 pt-4 border-t border-slate-50", children: /* @__PURE__ */ jsx(
+              "div",
+              {
+                dangerouslySetInnerHTML: { __html: faq.answer },
+                className: "prose prose-sm max-w-none\n                        prose-p:text-slate-600 prose-p:leading-[1.85] prose-p:font-medium\n                        prose-strong:text-[#134467] prose-strong:font-black\n                        prose-ul:text-slate-600 prose-li:marker:text-[#E53935]\n                        prose-a:text-[#E53935] prose-a:no-underline hover:prose-a:underline"
+              }
+            ) })
+          ]
+        },
+        faq.id || i
+      )) })
+    ] }) }),
+    /* @__PURE__ */ jsx(DedicatedCourierNetwork, {}),
+    /* @__PURE__ */ jsxs("section", { className: "bg-[#134467] py-20 sm:py-24 relative overflow-hidden", children: [
+      /* @__PURE__ */ jsx("div", { className: "absolute top-0 right-0 w-[500px] h-[500px] bg-[#48AEDD]/10 rounded-full blur-3xl pointer-events-none" }),
+      /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#E53935]/10 rounded-full blur-3xl pointer-events-none" }),
+      /* @__PURE__ */ jsxs("div", { className: "relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-6", children: [
+        /* @__PURE__ */ jsx("div", { className: "flex flex-wrap items-center justify-center gap-5 mb-10", children: [
+          "Same Day Dispatch",
+          "UK Mainland Coverage",
+          "60 Min Collection",
+          "24/7 Support"
+        ].map((t) => /* @__PURE__ */ jsxs(
+          "span",
+          {
+            className: "flex items-center gap-1.5 text-white/70 text-sm font-semibold",
+            children: [
+              /* @__PURE__ */ jsx(CheckCircle2, { className: "w-4 h-4 text-[#F5EB18] flex-shrink-0" }),
+              t
+            ]
+          },
+          t
+        )) }),
+        /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-center gap-2 mb-4", children: [
+          /* @__PURE__ */ jsx(MapPin, { className: "w-5 h-5 text-[#48AEDD]" }),
+          /* @__PURE__ */ jsx("span", { className: "text-[#48AEDD] text-sm font-bold uppercase tracking-widest", children: location.name })
+        ] }),
+        /* @__PURE__ */ jsxs("h2", { className: "text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight mb-4", children: [
+          "Need a Same Day Courier in ",
+          location.name,
+          "?"
+        ] }),
+        /* @__PURE__ */ jsx("p", { className: "text-white/60 text-base sm:text-lg mb-10 max-w-xl mx-auto leading-[1.85] font-medium", children: "Get an instant quote — same-day dispatch available across the UK mainland." }),
+        /* @__PURE__ */ jsxs(
+          "button",
+          {
+            onClick: () => navigate("/quick-quote"),
+            className: "inline-flex items-center gap-3 bg-[#E53935] hover:bg-[#c0392b]\n              active:scale-95 text-white font-black uppercase tracking-wide\n              px-10 sm:px-14 py-4 sm:py-5 rounded-2xl text-base sm:text-lg\n              shadow-2xl shadow-red-900/40 transition-all hover:scale-105\n              w-full sm:w-auto justify-center",
+            children: [
+              "Get a Quote",
+              /* @__PURE__ */ jsx(ArrowRight, { className: "w-5 h-5" })
+            ]
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx(Footer, {})
+  ] });
+}
+function HeroChip({ icon, label }) {
+  return /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5", children: [
+    /* @__PURE__ */ jsx("span", { className: "flex-shrink-0", children: icon }),
+    /* @__PURE__ */ jsx("span", { className: "text-white font-bold text-xs sm:text-sm tracking-wide", children: label })
+  ] });
+}
+const CardItem = ({
+  item,
+  basePath,
+  navigate,
+  accentColor,
+  badgeLabel,
+  FallbackIcon,
+  fallbackGradient,
+  index,
+  entityType
+}) => {
+  const [cardImgError, setCardImgError] = React__default.useState(false);
+  const [fullData, setFullData] = React__default.useState(null);
+  const [fetching, setFetching] = React__default.useState(false);
+  const itemSlug = typeof item === "string" ? item : item.slug;
+  const name = typeof item === "string" ? item.replace(/-/g, " ") : item.name;
+  const hasInlineImage = !!((item == null ? void 0 : item.heroImage) || (item == null ? void 0 : item.featuredImage) || (item == null ? void 0 : item.image));
+  React__default.useEffect(() => {
+    if (hasInlineImage || !itemSlug || fetching) return;
+    setFetching(true);
+    const endpoint = entityType === "sector" ? `${apiUrl}/api/sectors/${itemSlug}` : entityType === "location" ? `${apiUrl}/api/locations/${itemSlug}` : `${apiUrl}/api/services/${itemSlug}`;
+    fetch(endpoint).then((r) => r.ok ? r.json() : null).then((data) => {
+      if (data) setFullData(data.data || data);
+    }).catch(() => {
+    }).finally(() => setFetching(false));
+  }, [itemSlug]);
+  const src = fullData || item;
+  const rawImage = (src == null ? void 0 : src.heroImage) || (src == null ? void 0 : src.featuredImage) || (src == null ? void 0 : src.image) || null;
+  const image = cardImgError ? null : rawImage;
+  const description = (src == null ? void 0 : src.heroSubtitle) || (src == null ? void 0 : src.seoDescription) || (src == null ? void 0 : src.description) || null;
+  const ctaLabel = entityType === "sector" ? "Explore Sector" : entityType === "location" ? "View Location" : "View Service";
+  return /* @__PURE__ */ jsxs(
+    "div",
+    {
+      onClick: () => navigate(`${basePath}/${itemSlug}`),
+      className: cn(
+        "cursor-pointer group bg-white border border-slate-100 rounded-2xl p-3",
+        "hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
+        fadeUp
+      ),
+      style: { animationDelay: `${index * 60}ms` },
+      children: [
+        /* @__PURE__ */ jsx("div", { className: "relative rounded-xl overflow-hidden h-48", children: fetching && !image ? /* @__PURE__ */ jsx("div", { className: "w-full h-full bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 animate-pulse" }) : image ? /* @__PURE__ */ jsx(
+          "img",
+          {
+            src: image,
+            alt: name,
+            className: "w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out",
+            onError: () => setCardImgError(true)
+          }
+        ) : /* @__PURE__ */ jsx(
+          "div",
+          {
+            className: cn(
+              "w-full h-full bg-gradient-to-br flex items-center justify-center",
+              fallbackGradient
+            ),
+            children: /* @__PURE__ */ jsx(FallbackIcon, { className: "w-14 h-14 text-white/20" })
+          }
+        ) }),
+        /* @__PURE__ */ jsxs("div", { className: "px-2 pt-4 pb-2", children: [
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 mb-1.5", children: [
+            /* @__PURE__ */ jsx(
+              FallbackIcon,
+              {
+                className: "w-[18px] h-[18px] flex-shrink-0",
+                style: { color: accentColor }
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "h3",
+              {
+                className: "font-black text-[15px] text-[#134467] leading-snug tracking-tight capitalize\n            group-hover:text-[#E53935] transition-colors duration-200",
+                children: name
+              }
+            )
+          ] }),
+          description && /* @__PURE__ */ jsx("p", { className: "text-[#134467]/55 text-[13px] font-medium leading-[1.7] line-clamp-2 mt-1 mb-3", children: description }),
+          /* @__PURE__ */ jsxs(
+            "div",
+            {
+              className: "flex items-center gap-1.5 mt-2",
+              style: { color: accentColor },
+              children: [
+                /* @__PURE__ */ jsx("span", { className: "text-[12px] font-black uppercase tracking-[0.1em]", children: ctaLabel }),
+                /* @__PURE__ */ jsx(ArrowRight, { className: "w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" })
+              ]
+            }
+          )
+        ] })
+      ]
+    }
+  );
+};
+const CardsHub = ({
+  eyebrow,
+  title,
+  subtitle,
+  items,
+  basePath,
+  navigate,
+  accentColor,
+  badgeLabel,
+  FallbackIcon,
+  fallbackGradient,
+  entityType,
+  bg = "bg-white"
+}) => /* @__PURE__ */ jsx("section", { className: cn("py-16 sm:py-20 border-t border-slate-100", bg), children: /* @__PURE__ */ jsxs("div", { className: "max-w-6xl mx-auto px-5 sm:px-6", children: [
+  /* @__PURE__ */ jsxs("div", { className: "mb-10 sm:mb-12", children: [
+    /* @__PURE__ */ jsx(
+      "span",
+      {
+        className: "inline-block text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-3 shadow-sm",
+        style: { background: `${accentColor}18`, color: accentColor },
+        children: eyebrow
+      }
+    ),
+    /* @__PURE__ */ jsx("h2", { className: "text-2xl sm:text-3xl font-black text-[#134467] tracking-tight leading-tight mb-2", children: title }),
+    /* @__PURE__ */ jsx("p", { className: "text-[#134467]/55 text-sm sm:text-base font-medium max-w-2xl leading-[1.85]", children: subtitle })
+  ] }),
+  /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6", children: items.map((item, i) => /* @__PURE__ */ jsx(
+    CardItem,
+    {
+      item,
+      basePath,
+      navigate,
+      accentColor,
+      badgeLabel,
+      FallbackIcon,
+      fallbackGradient,
+      entityType,
+      index: i
+    },
+    `${typeof item === "string" ? item : item.slug}-${i}`
+  )) })
+] }) });
+export {
+  LocationDetailPage as default,
+  entry,
+  loader
+};

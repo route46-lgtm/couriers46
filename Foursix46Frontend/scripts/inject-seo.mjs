@@ -352,7 +352,7 @@ const API       = 'https://europe-west2-foursix46-production-4a43f.cloudfunction
 const SKIP   = ['/admin', '/send-parcel', '/pay']
 const counts = { ok: 0, fallback: 0, skipped: 0, noData: 0, total: 0 }
 
-// ─── HTTP fetch ──────────────────────────────────────────────────────────────
+// ─── HTTP FETCH ──────────────────────────────────────────────────────────────
 function get(url) {
   return new Promise((resolve) => {
     const mod = url.startsWith('https') ? https : http
@@ -361,7 +361,6 @@ function get(url) {
         return resolve(get(res.headers.location))
       }
       if (res.statusCode !== 200) {
-        console.error(`  [FETCH ERROR] HTTP ${res.statusCode} — ${url}`)
         res.resume()
         return resolve(null)
       }
@@ -372,16 +371,15 @@ function get(url) {
         try {
           resolve(JSON.parse(body))
         } catch {
-          console.error(`  [JSON ERROR] Parse failed — ${url}`)
           resolve(null)
         }
       })
     })
-    req.on('error', e => { console.error(`  [REQ ERROR] ${url}: ${e.message}`); resolve(null) })
+    req.on('error', () => resolve(null))
   })
 }
 
-// ─── Utilities ────────────────────────────────────────────────────────────────
+// ─── UTILS ──────────────────────────────────────────────────────────────────
 function walk(dir, out = []) {
   if (!existsSync(dir)) return out
   for (const e of readdirSync(dir, { withFileTypes: true })) {
@@ -410,59 +408,51 @@ function asList(r) {
   if (!r) return []
   if (Array.isArray(r)) return r
   if (r.data && Array.isArray(r.data)) return r.data
-  for (const v of Object.values(r)) if (Array.isArray(v)) return v
   return []
 }
 
-function asItem(r) {
-  if (!r) return null
-  if (r.data && typeof r.data === 'object' && !Array.isArray(r.data)) return r.data
-  return r
-}
-
-// ─── Build Map ────────────────────────────────────────────────────────────────
+// ─── MAP BUILDER ────────────────────────────────────────────────────────────
 async function buildMap() {
   const map = new Map()
-  console.log(`\n[SEO_MAP] Fetching from API: ${API}`)
+  console.log(`\n[INIT] Fetching API data...`)
 
-  const [svcsRaw, sctsRaw, locsRaw, blogsRaw] = await Promise.all([
+  const [svcsR, sctsR, locsR, blogsR] = await Promise.all([
     get(`${API}/services`),
     get(`${API}/sectors`),
     get(`${API}/locations`),
     get(`${API}/blog`),
   ])
 
-  const svcs  = asList(svcsRaw).filter(i => i.slug)
-  const scts  = asList(sctsRaw).filter(i => i.slug)
-  const locs  = asList(locsRaw).filter(i => i.slug)
-  const blogs = asList(blogsRaw).filter(i => i.slug)
+  const svcs  = asList(svcsR).filter(i => i.slug)
+  const scts  = asList(sctsR).filter(i => i.slug)
+  const locs  = asList(locsR).filter(i => i.slug)
+  const blogs = asList(blogsR).filter(i => i.slug)
 
-  console.log(`[SEO_MAP] Found: SVCS(${svcs.length}) SCTS(${scts.length}) LOCS(${locs.length}) BLOGS(${blogs.length})`)
+  console.log(`[DATA] Found: ${svcs.length} services, ${scts.length} sectors, ${locs.length} locations, ${blogs.length} blogs`)
 
-  const fetchAll = (type, items) =>
-    Promise.all(items.map(i => get(`${API}/${type}/${i.slug}`).then(asItem)))
+  const fetchAll = (type, items) => 
+    Promise.all(items.map(i => get(`${API}/${type}/${i.slug}`)))
 
   const [svcItems, sctItems, locItems, blogItems] = await Promise.all([
-    fetchAll('services',  svcs),
-    fetchAll('sectors',   scts),
+    fetchAll('services', svcs),
+    fetchAll('sectors', scts),
     fetchAll('locations', locs),
-    fetchAll('blog',      blogs),
+    fetchAll('blog', blogs),
   ])
 
-  const add = (route, item) => {
-    if (!item) return
+  const add = (route, raw) => {
+    if (!raw) return
+    const item = raw.data || raw
     const title = item.seoTitle || item.heroTitle || item.name || item.title
-    const desc  = item.seoDescription || item.heroSubtitle || item.description
+    if (!title) return
 
-    if (title) {
-      map.set(route, {
-        seoTitle: title,
-        seoDesc: desc,
-        canonical: item.canonicalUrl || `${BASE_URL}${route}`,
-        ogImage: item.ogImage || item.heroImage || `${BASE_URL}/route46logo.png`,
-        noindex: item.noindex === true
-      })
-    }
+    map.set(route, {
+      seoTitle: title,
+      seoDesc: item.seoDescription || item.heroSubtitle || item.description || '',
+      canonical: item.canonicalUrl || `${BASE_URL}${route}`,
+      ogImage: item.ogImage || item.heroImage || `${BASE_URL}/route46logo.png`,
+      noindex: item.noindex === true
+    })
   }
 
   svcItems.forEach((item, i) => add(`/services/${svcs[i].slug}`, item))
@@ -470,16 +460,13 @@ async function buildMap() {
   locItems.forEach((item, i) => add(`/locations/${locs[i].slug}`, item))
   blogItems.forEach((item, i) => add(`/blog/${blogs[i].slug}`, item))
 
-  // Logic for Loc x Svc combos
+  // Combos
   for (const loc of locs) {
     for (const svc of svcs) {
       const key = `/locations/${loc.slug}/${svc.slug}`
-      if (map.has(key)) continue
-      const svcName = svc.name || svc.slug
-      const locName = loc.name || loc.slug
       map.set(key, {
-        seoTitle: `${svcName} in ${locName} | Route46 Couriers`,
-        seoDesc: `Professional ${svcName} covering ${locName} and surrounding areas.`,
+        seoTitle: `${svc.name || 'Courier'} in ${loc.name || 'UK'} | Route46 Couriers`,
+        seoDesc: `Professional transport services in ${loc.name}. Fast and secure.`,
         canonical: `${BASE_URL}${key}`,
         ogImage: `${BASE_URL}/route46logo.png`,
         noindex: false
@@ -490,89 +477,72 @@ async function buildMap() {
   return map
 }
 
-// ─── HTML Processing ──────────────────────────────────────────────────────────
-function stripTags(html) {
-  // More aggressive regex to catch tags with any attributes or formatting
-  return html
-    .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, '')
-    .replace(/<meta[^>]+(?:name|property)=["'](?:description|robots|og:|twitter:)[^>]*\/?>/gi, '')
-    .replace(/<link[^>]+rel=["']canonical["'][^>]*\/?>/gi, '')
-    .replace(//gi, '') // Clean vite-ssg artifacts
-}
-
-function buildBlock(entry) {
-  return `
-  <title>${esc(entry.seoTitle)}</title>
-  <meta name="description" content="${esc(entry.seoDesc)}">
-  <meta name="robots" content="${entry.noindex ? 'noindex,nofollow' : 'index, follow'}">
-  <link rel="canonical" href="${entry.canonical}">
-  <meta property="og:title" content="${esc(entry.seoTitle)}">
-  <meta property="og:description" content="${esc(entry.seoDesc)}">
-  <meta property="og:url" content="${entry.canonical}">
-  <meta property="og:image" content="${entry.ogImage}">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="${esc(entry.seoTitle)}">
-  <meta name="twitter:description" content="${esc(entry.seoDesc)}">
-  <meta name="twitter:image" content="${entry.ogImage}">
-  `
-}
-
+// ─── PROCESSING ─────────────────────────────────────────────────────────────
 function processFile(filePath, map) {
   const route = routeFrom(filePath)
   counts.total++
 
   if (SKIP.some(p => route.startsWith(p))) {
+    console.log(`[-] Skipping: ${route}`)
     counts.skipped++
     return
   }
 
   let html = readFileSync(filePath, 'utf-8')
   let entry = map.get(route)
-  let mode = 'API'
+  let source = 'API'
 
   if (!entry) {
+    source = 'FALLBACK'
     const tMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
-    if (tMatch) {
-      entry = {
-        seoTitle: tMatch[1].trim(),
-        seoDesc: "Professional same day courier services UK.",
-        canonical: `${BASE_URL}${route === '/' ? '' : route}`,
-        ogImage: `${BASE_URL}/route46logo.png`,
-        noindex: false
-      }
-      mode = 'FALLBACK'
-    } else {
-      counts.noData++
-      return
+    entry = {
+      seoTitle: tMatch ? tMatch[1].trim() : 'Route46 Couriers',
+      seoDesc: 'Professional same day courier services.',
+      canonical: `${BASE_URL}${route === '/' ? '' : route}`,
+      ogImage: `${BASE_URL}/route46logo.png`,
+      noindex: false
     }
   }
 
-  const cleanHtml = stripTags(html)
-  const seoBlock = buildBlock(entry)
-  
-  // Inject at the top of <head> to ensure it's the first thing parsers see
-  const finalHtml = cleanHtml.replace(/(<head[^>]*>)/i, `$1${seoBlock}`)
+  // 1. Remove ALL existing SEO tags
+  const cleanHtml = html
+    .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, '')
+    .replace(/<meta[^>]+(?:name|property)=["'](?:description|robots|og:|twitter:)[^>]*\/?>/gi, '')
+    .replace(/<link[^>]+rel=["']canonical["'][^>]*\/?>/gi, '')
 
+  // 2. Prepare block
+  const seoBlock = `
+  <title>${esc(entry.seoTitle)}</title>
+  <meta name="description" content="${esc(entry.seoDesc)}">
+  <link rel="canonical" href="${entry.canonical}">
+  <meta property="og:title" content="${esc(entry.seoTitle)}">
+  <meta property="og:description" content="${esc(entry.seoDesc)}">
+  <meta property="og:image" content="${entry.ogImage}">
+  <meta property="og:url" content="${entry.canonical}">
+  <meta name="robots" content="${entry.noindex ? 'noindex,nofollow' : 'index, follow'}">
+  `
+
+  // 3. Inject
+  const finalHtml = cleanHtml.replace(/(<head[^>]*>)/i, `$1${seoBlock}`)
+  
   writeFileSync(filePath, finalHtml, 'utf-8')
-  console.log(`[${mode}] ${route.padEnd(35)} -> ${entry.seoTitle.slice(0, 40)}...`)
-  mode === 'API' ? counts.ok++ : counts.fallback++
+  console.log(`[${source}] ${route.padEnd(35)} | ${entry.seoTitle.slice(0, 30)}...`)
+  
+  source === 'API' ? counts.ok++ : counts.fallback++
 }
 
-// ─── Run ──────────────────────────────────────────────────────────────────────
+// ─── RUN ────────────────────────────────────────────────────────────────────
 async function run() {
   const map = await buildMap()
   const files = walk(DIST)
-  console.log(`\n[PROCESS] Injecting into ${files.length} files...\n`)
   
+  console.log(`\n[RUN] Injecting into ${files.length} files...\n`)
   files.forEach(f => processFile(f, map))
 
-  console.log('\n' + '='.repeat(40))
-  console.log(`  COMPLETED`)
-  console.log(`  Injected (API): ${counts.ok}`)
-  console.log(`  Fallback:       ${counts.fallback}`)
-  console.log(`  Skipped:        ${counts.skipped}`)
-  console.log('='.repeat(40) + '\n')
+  console.log(`\nDONE: ${counts.ok} API, ${counts.fallback} Fallback, ${counts.skipped} Skipped\n`)
 }
 
-run().catch(console.error)
+run().catch(err => {
+  console.error('[FATAL ERROR]', err)
+  process.exit(1)
+})
