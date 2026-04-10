@@ -258,8 +258,7 @@ function walk(dir, out = []) {
 
 
 // ─── routeFrom ────────────────────────────────────────────────────────────────
-// BUG 1 (fixed): bare 'index.html' at dist root was producing '/index'
-// because /\/index\.html$/ requires a leading slash.
+// FIX: bare 'index.html' at dist root produced '/index' with the old regex.
 function routeFrom(file) {
   const rel = relative(DIST, file).replace(/\\/g, '/')
   if (rel === 'index.html') return '/'
@@ -269,10 +268,6 @@ function routeFrom(file) {
 
 
 // ─── API route map ────────────────────────────────────────────────────────────
-// BUG 2 (fixed): window.staticRouterHydrationData is absent — only
-// window.__staticRouterHydrationData (with double underscores) is injected,
-// and its loaderData is null for every route. The API fetch is the
-// primary+reliable SEO source; hydration is kept as a best-effort fallback.
 async function buildRouteMap() {
   const map = new Map()
 
@@ -348,20 +343,12 @@ async function buildRouteMap() {
 
 
 // ─── Hydration data extraction ────────────────────────────────────────────────
-// BUG 4 (fixed): The actual SSG output uses window.__staticRouterHydrationData
-// (double underscores), not window.staticRouterHydrationData. The old regexes
-// never matched so the fallback was always silently skipping.
-// Now we match BOTH forms: (?:__)?staticRouterHydrationData handles:
-//   window.staticRouterHydrationData   ← react-router v6 older format
-//   window.__staticRouterHydrationData ← current vite-react-ssg format
-//
-// The injected format in this project is always double-quoted JSON:
-//   window.__staticRouterHydrationData = JSON.parse("{\"loaderData\":{...}}")
-// so Pattern 2 (double-quoted) is what actually fires here.
+// FIX: vite-react-ssg now uses window.__staticRouterHydrationData (double
+// underscores). (?:__)?  makes the prefix optional so both forms are matched.
 function extractHydrationData(html) {
   let parsed = null
 
-  // Pattern 1: single-quoted → JSON.parse('{"key":"val"}')
+  // Pattern 1: single-quoted
   const m1 = html.match(
     /window\.(?:__)?staticRouterHydrationData\s*=\s*JSON\.parse\('((?:[^'\\]|\\.)*)'\)/s
   )
@@ -369,8 +356,7 @@ function extractHydrationData(html) {
     try { parsed = JSON.parse(m1[1]) } catch (_) {}
   }
 
-  // Pattern 2: double-quoted → JSON.parse("{\"key\":\"val\"}")
-  // This is what vite-react-ssg currently injects.
+  // Pattern 2: double-quoted (what vite-react-ssg currently injects)
   if (!parsed) {
     const m2 = html.match(
       /window\.(?:__)?staticRouterHydrationData\s*=\s*JSON\.parse\("((?:[^"\\]|\\.)*)"\)/s
@@ -384,7 +370,7 @@ function extractHydrationData(html) {
 }
 
 
-// Recursively find the first object that looks like a page's SEO data
+// Recursively find the first object with seoTitle + seoDescription
 function findPageSeoData(obj, depth = 0) {
   if (!obj || typeof obj !== 'object' || Array.isArray(obj) || depth > 8) return null
   if ((obj.seoTitle || obj.heroTitle) && obj.seoDescription) return obj
@@ -396,7 +382,28 @@ function findPageSeoData(obj, depth = 0) {
 }
 
 
-// Grab the first absolute-URL hero image rendered in the body
+// ─── FIX: extract existing <title> and <meta name="description"> from HTML ───
+// Used as final fallback for static routes (/, /about, /contact, /privacy …)
+// so their OG and Twitter tags are always synced — even when no API data exists.
+// This also fixes the truncated og:description ("...") that comes from the
+// index.html template fallback block: the full description is always in the
+// <meta name="description"> tag, so we read that and use it everywhere.
+function extractExistingMeta(html) {
+  // <title>…</title>
+  const titleM = html.match(/<title[^>]*>([^<]+)<\/title>/i)
+  const title  = titleM ? titleM[1].trim() : null
+
+  // <meta name="description" content="…"> — attribute order may vary
+  const descM =
+    html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["'][^>]*>/i) ||
+    html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+name=["']description["'][^>]*>/i)
+  const desc = descM ? descM[1].trim() : null
+
+  return { title, desc }
+}
+
+
+// Grab the first absolute-URL hero image in the rendered body
 function extractHeroImage(html) {
   const m =
     html.match(
@@ -419,10 +426,8 @@ function stripCommentedSeoBlocks(html) {
 
 
 // ─── upsertTag ────────────────────────────────────────────────────────────────
-// BUG 3 (fixed): the old upsert() used a non-global regex so only the FIRST
-// matching tag was removed. index.html has two <meta property="og:image"> tags;
-// the second was always left stale. upsertTag() strips ALL matching tags
-// globally before inserting the single correct one before </head>.
+// FIX: removes ALL matching tags globally (not just the first) before inserting
+// one clean copy before </head>. Prevents stale duplicate tags.
 function upsertTag(html, pattern, tag) {
   const globalPattern = new RegExp(pattern.source, 'gi')
   const stripped = html.replace(globalPattern, '')
@@ -446,30 +451,34 @@ function processFile(filePath, routeMap) {
   let html     = readFileSync(filePath, 'utf-8')
   const before = html
 
-  // Priority: API route map → hydration JSON → leave as-is
-  const apiData   = routeMap.get(route)
-  const hydration = extractHydrationData(html)
-  const hydraPage = hydration ? findPageSeoData(hydration) : null
+  // ── Resolve SEO data: API → hydration → existing HTML ─────────────────
+  const apiData        = routeMap.get(route)
+  const hydration      = extractHydrationData(html)
+  const hydraPage      = hydration ? findPageSeoData(hydration) : null
+  // FIX: always read the existing <title>/<meta description> as final fallback.
+  // This ensures static pages (/, /about etc.) keep their OG tags in sync with
+  // the real <title> and fixes truncated og:description in the template block.
+  const { title: htmlTitle, desc: htmlDesc } = extractExistingMeta(html)
 
-  const seoTitle  = apiData?.seoTitle       || hydraPage?.seoTitle       || hydraPage?.heroTitle || null
-  const seoDesc   = apiData?.seoDescription || hydraPage?.seoDescription                         || null
+  const seoTitle  = apiData?.seoTitle       || hydraPage?.seoTitle       || hydraPage?.heroTitle || htmlTitle || null
+  const seoDesc   = apiData?.seoDescription || hydraPage?.seoDescription                         || htmlDesc  || null
   const canonical = apiData?.canonicalUrl   || hydraPage?.canonicalUrl
     || `${BASE_URL}${route === '/' ? '' : route}`
   const heroImg   = extractHeroImage(html)
   const ogImage   = apiData?.ogImage || hydraPage?.ogImage || heroImg || `${BASE_URL}/route46logo.png`
   const noindex   = apiData?.noindex === true || hydraPage?.noindex === true
 
+  const sourceLabel = apiData ? 'api' : hydraPage ? 'hydration' : htmlTitle ? 'html-fallback' : 'none'
+
   if (!seoTitle) {
-    // For static routes (/, /about, /contact etc.) this is expected —
-    // their titles already exist in index.html and are left unchanged.
-    console.log(`[seo] ⚠️  no-data   ${route}  (no seoTitle — title unchanged)`)
+    console.log(`[seo] ⚠️  no-data   ${route}  (no seoTitle anywhere — title unchanged)`)
     counts.noData++
   }
 
   // ── Step 1: Strip commented-out Helmet SEO blocks ─────────────────────
   html = stripCommentedSeoBlocks(html)
 
-  // ── Step 2: Title — strip ALL existing <title> tags, insert one ───────
+  // ── Step 2: Title — strip ALL existing, insert one ────────────────────
   if (seoTitle) {
     html = html.replace(/<title[^>]*>[^<]*<\/title>/gi, '')
     html = html.replace('</head>', `  <title>${esc(seoTitle)}</title>\n</head>`)
@@ -550,10 +559,10 @@ function processFile(filePath, routeMap) {
     writeFileSync(filePath, html, 'utf-8')
     const hadCanonical = /<link[^>]+rel=["']canonical["'][^>]*>/i.test(before)
     if (hadCanonical) {
-      console.log(`[seo] ✏️  replaced   ${route}${seoTitle ? `\n          title: "${seoTitle.trim()}"` : ''}`)
+      console.log(`[seo] ✏️  replaced   ${route}  [${sourceLabel}]${seoTitle ? `\n          title: "${seoTitle.trim()}"` : ''}`)
       counts.replaced++
     } else {
-      console.log(`[seo] ✅ injected   ${route}${seoTitle ? `\n          title: "${seoTitle.trim()}"` : ''}`)
+      console.log(`[seo] ✅ injected   ${route}  [${sourceLabel}]${seoTitle ? `\n          title: "${seoTitle.trim()}"` : ''}`)
       counts.injected++
     }
   } else {
@@ -574,9 +583,8 @@ buildRouteMap().then((routeMap) => {
 
   if (counts.noData > 0) {
     console.log(`\n[seo] TIP: ${counts.noData} route(s) had no SEO data.`)
-    console.log(`      • Static routes (/, /about, /contact etc.) are expected no-data —`)
-    console.log(`        they keep the title/description from index.html as their fallback.`)
-    console.log(`      • For CMS routes, ensure the API returns seoTitle + seoDescription.`)
+    console.log(`      • This should now be 0 — every page falls back to its own <title>/<meta description>.`)
+    console.log(`      • If still > 0, the HTML file has no <title> tag at all.`)
     console.log(`      • VITE_API_URL is currently: ${API_URL || '(not set)'}`)
   }
 })
