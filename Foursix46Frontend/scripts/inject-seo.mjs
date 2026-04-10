@@ -257,24 +257,22 @@ function walk(dir, out = []) {
 }
 
 
-// ─── BUG 1 FIX: bare 'index.html' at dist root was producing '/index' ────────
-// The old regex /\/index\.html$/ requires a leading slash, so 'index.html'
-// (no leading slash) fell through to .replace(/\.html$/, '') → 'index' → '/index'.
+// ─── routeFrom ────────────────────────────────────────────────────────────────
+// BUG 1 (fixed): bare 'index.html' at dist root was producing '/index'
+// because /\/index\.html$/ requires a leading slash.
 function routeFrom(file) {
   const rel = relative(DIST, file).replace(/\\/g, '/')
-  if (rel === 'index.html') return '/'                            // ← explicit root guard
+  if (rel === 'index.html') return '/'
   const r = '/' + rel.replace(/\/index\.html$/, '').replace(/\.html$/, '').replace(/\/$/, '')
   return r === '' ? '/' : r
 }
 
 
-// ─── BUG 2 FIX: build API-backed route→SEO map at build time ─────────────────
-// vite-react-ssg no longer injects window.staticRouterHydrationData in this
-// project's SSG output (only window.VITEREACTSSGHASH appears). Because all
-// if (seoTitle) guards are skipped when hydration data is missing, the title,
-// description, og:title, og:description, twitter:title and twitter:description
-// were NEVER updated on any page. We now fetch the same API endpoints used in
-// vite.config.ts at build time and build a route → SEO map instead.
+// ─── API route map ────────────────────────────────────────────────────────────
+// BUG 2 (fixed): window.staticRouterHydrationData is absent — only
+// window.__staticRouterHydrationData (with double underscores) is injected,
+// and its loaderData is null for every route. The API fetch is the
+// primary+reliable SEO source; hydration is kept as a best-effort fallback.
 async function buildRouteMap() {
   const map = new Map()
 
@@ -286,10 +284,7 @@ async function buildRouteMap() {
   const safeFetch = async (url) => {
     try {
       const res = await fetch(url)
-      if (!res.ok) {
-        console.warn(`[seo] API ${url} → HTTP ${res.status}`)
-        return []
-      }
+      if (!res.ok) { console.warn(`[seo] API ${url} → HTTP ${res.status}`); return [] }
       const json = await res.json()
       return json?.data ?? json ?? []
     } catch (e) {
@@ -331,7 +326,7 @@ async function buildRouteMap() {
   addItems(locs, '/locations')
   addItems(blgs, '/blog')
 
-  // location × service combos — synthesise a title when no dedicated API data exists
+  // location × service combos
   for (const loc of locs) {
     for (const svc of svcs) {
       const key = `/locations/${loc.slug}/${svc.slug}`
@@ -352,24 +347,33 @@ async function buildRouteMap() {
 }
 
 
-// ─── Hydration data extraction (kept as secondary fallback) ───────────────────
+// ─── Hydration data extraction ────────────────────────────────────────────────
+// BUG 4 (fixed): The actual SSG output uses window.__staticRouterHydrationData
+// (double underscores), not window.staticRouterHydrationData. The old regexes
+// never matched so the fallback was always silently skipping.
+// Now we match BOTH forms: (?:__)?staticRouterHydrationData handles:
+//   window.staticRouterHydrationData   ← react-router v6 older format
+//   window.__staticRouterHydrationData ← current vite-react-ssg format
 //
-// vite-react-ssg may inject at bottom of page:
-//   window.staticRouterHydrationData = JSON.parse('...')   ← single-quoted
-//   window.staticRouterHydrationData = JSON.parse("...")   ← double-quoted
+// The injected format in this project is always double-quoted JSON:
+//   window.__staticRouterHydrationData = JSON.parse("{\"loaderData\":{...}}")
+// so Pattern 2 (double-quoted) is what actually fires here.
 function extractHydrationData(html) {
   let parsed = null
 
+  // Pattern 1: single-quoted → JSON.parse('{"key":"val"}')
   const m1 = html.match(
-    /window\.staticRouterHydrationData\s*=\s*JSON\.parse\('((?:[^'\\]|\\.)*)'\)/s
+    /window\.(?:__)?staticRouterHydrationData\s*=\s*JSON\.parse\('((?:[^'\\]|\\.)*)'\)/s
   )
   if (m1) {
     try { parsed = JSON.parse(m1[1]) } catch (_) {}
   }
 
+  // Pattern 2: double-quoted → JSON.parse("{\"key\":\"val\"}")
+  // This is what vite-react-ssg currently injects.
   if (!parsed) {
     const m2 = html.match(
-      /window\.staticRouterHydrationData\s*=\s*JSON\.parse\("((?:[^"\\]|\\.)*)"\)/s
+      /window\.(?:__)?staticRouterHydrationData\s*=\s*JSON\.parse\("((?:[^"\\]|\\.)*)"\)/s
     )
     if (m2) {
       try { parsed = JSON.parse(m2[1].replace(/\\"/g, '"')) } catch (_) {}
@@ -406,8 +410,6 @@ function extractHeroImage(html) {
 
 
 // Strip Helmet comment-wrapped SEO blocks
-// react-helmet-async + vite-react-ssg sometimes wraps injections in HTML comments:
-//   <!-- <title>…</title> <meta name="description" …> -->
 function stripCommentedSeoBlocks(html) {
   return html.replace(
     /<!--(?:(?!-->)[\s\S])*?<(?:title|meta[^>]*(?:name|property)\s*=\s*["'](?:description|author|og:|twitter:))[^]*?-->/gi,
@@ -416,10 +418,10 @@ function stripCommentedSeoBlocks(html) {
 }
 
 
-// ─── BUG 3 FIX: remove ALL existing occurrences then insert one fresh copy ───
-// The old upsert() used a non-global regex — String.replace(pattern) only
-// replaces the FIRST match. index.html has two <meta property="og:image"> tags;
-// the second was always left stale. This version strips ALL matching tags
+// ─── upsertTag ────────────────────────────────────────────────────────────────
+// BUG 3 (fixed): the old upsert() used a non-global regex so only the FIRST
+// matching tag was removed. index.html has two <meta property="og:image"> tags;
+// the second was always left stale. upsertTag() strips ALL matching tags
 // globally before inserting the single correct one before </head>.
 function upsertTag(html, pattern, tag) {
   const globalPattern = new RegExp(pattern.source, 'gi')
@@ -444,10 +446,10 @@ function processFile(filePath, routeMap) {
   let html     = readFileSync(filePath, 'utf-8')
   const before = html
 
-  // Priority order: API route map → hydration JSON → leave as-is
-  const apiData    = routeMap.get(route)
-  const hydration  = extractHydrationData(html)
-  const hydraPage  = hydration ? findPageSeoData(hydration) : null
+  // Priority: API route map → hydration JSON → leave as-is
+  const apiData   = routeMap.get(route)
+  const hydration = extractHydrationData(html)
+  const hydraPage = hydration ? findPageSeoData(hydration) : null
 
   const seoTitle  = apiData?.seoTitle       || hydraPage?.seoTitle       || hydraPage?.heroTitle || null
   const seoDesc   = apiData?.seoDescription || hydraPage?.seoDescription                         || null
@@ -458,7 +460,9 @@ function processFile(filePath, routeMap) {
   const noindex   = apiData?.noindex === true || hydraPage?.noindex === true
 
   if (!seoTitle) {
-    console.log(`[seo] ⚠️  no-data   ${route}  (no seoTitle found — title left as-is)`)
+    // For static routes (/, /about, /contact etc.) this is expected —
+    // their titles already exist in index.html and are left unchanged.
+    console.log(`[seo] ⚠️  no-data   ${route}  (no seoTitle — title unchanged)`)
     counts.noData++
   }
 
@@ -570,9 +574,9 @@ buildRouteMap().then((routeMap) => {
 
   if (counts.noData > 0) {
     console.log(`\n[seo] TIP: ${counts.noData} route(s) had no SEO data.`)
-    console.log(`      • Ensure API items return seoTitle + seoDescription fields.`)
+    console.log(`      • Static routes (/, /about, /contact etc.) are expected no-data —`)
+    console.log(`        they keep the title/description from index.html as their fallback.`)
+    console.log(`      • For CMS routes, ensure the API returns seoTitle + seoDescription.`)
     console.log(`      • VITE_API_URL is currently: ${API_URL || '(not set)'}`)
-    console.log(`      • Static routes (/, /about, /contact etc.) always show no-data — that's expected,`)
-    console.log(`        their titles come from index.html directly and are left unchanged.`)
   }
 })
