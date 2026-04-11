@@ -354,7 +354,7 @@ export default function LocationsPage() {
     <div className="min-h-screen bg-white font-sans">
       {/* ── SEO ── */}
       <Helmet>
-        <title>Locations We Serve | FourSix46®</title>
+        <title>Locations We Serve | Route46 Couriers</title>
         <meta
           name="description"
           content="Explore cities and regions where FourSix46® provides reliable same-day courier services across the UK mainland."

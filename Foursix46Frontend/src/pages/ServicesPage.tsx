@@ -146,7 +146,7 @@ export default function ServicesPage() {
     <div className="min-h-screen bg-white font-sans antialiased">
       {/* ── SEO ─────────────────────────────────────────────────────────── */}
       <Helmet>
-        <title>Our Services | Route46</title>
+        <title>Our Services | Route46 Couriers</title>
         <meta
           name="description"
           content="Explore Route46 courier services — same day, next day, nationwide and more."

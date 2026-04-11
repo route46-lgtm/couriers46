@@ -281,7 +281,7 @@ export default function SectorsPage() {
   return (
     <div className="min-h-screen bg-white font-sans">
       <Helmet>
-        <title>Industry Sectors | FourSix46®</title>
+        <title>Industry Sectors | Route46 Couriers</title>
         <meta
           name="description"
           content="Specialist courier services for dental, aerospace, medical and more industries across the UK."

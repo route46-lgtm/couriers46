@@ -1079,7 +1079,7 @@ export default function LocationServicePage() {
     <div className="min-h-screen bg-white pb-24 lg:pb-0 lg:mr-72">
       {/* ── SEO ── */}
       <Helmet>
-        <title>{page.seoTitle || page.heroTitle}</title>
+        <title>{page.seoTitle || page.heroTitle} | Route46 Couriers</title>
         <meta name="description" content={page.seoDescription || ""} />
         <link rel="canonical" href={canonicalUrl} />
         {page.noindex && <meta name="robots" content="noindex,nofollow" />}

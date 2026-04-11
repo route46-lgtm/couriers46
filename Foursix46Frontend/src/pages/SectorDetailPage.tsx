@@ -1264,7 +1264,7 @@ export default function SectorDetailPage() {
           SEO
       ══════════════════════════════════════════════════ */}
       <Helmet>
-        <title>{sector.seoTitle || sector.name} | FourSix46®</title>
+        <title>{sector.seoTitle || sector.name} | Route46 Couriers</title>
         <meta name="description" content={sector.seoDescription || ""} />
         <link rel="canonical" href={canonicalUrl} />
         <meta property="og:title" content={sector.seoTitle || sector.name} />

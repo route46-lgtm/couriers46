@@ -1289,7 +1289,7 @@ export default function ServiceDetailPage() {
           SEO — baked into static HTML by vite-react-ssg
       ══════════════════════════════════════════════════ */}
       <Helmet>
-        <title>{service.seoTitle || service.name} | FourSix46®</title>
+        <title>{service.seoTitle || service.name} | Route46 Couriers</title>
         <meta name="description" content={service.seoDescription || ""} />
         <link rel="canonical" href={canonicalUrl} />
         <meta property="og:title" content={service.seoTitle || service.name} />

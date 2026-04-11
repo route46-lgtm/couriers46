@@ -885,7 +885,7 @@ export default function FaqPage() {
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden font-sans selection:bg-[#E53935] selection:text-white">
       <Helmet>
-        <title>FAQs | FourSix46®</title>
+        <title>FAQs | Route46 Couriers</title>
         <meta
           name="description"
           content="Answers to common questions about FourSix46® courier services, booking, pricing, and policies."
@@ -893,10 +893,10 @@ export default function FaqPage() {
         <link rel="canonical" href="https://www.route46couriers.co.uk/faqs" />
         <meta name="robots" content="index, follow" />
 
-        <meta property="og:title" content="FAQs | FourSix46®" />
+        <meta property="og:title" content="FAQs | Route46 Couriers" />
         <meta
           property="og:description"
-          content="Answers to common questions about FourSix46® courier services, booking, pricing, and policies."
+          content="Answers to common questions about Route46 Couriers, booking, pricing, and policies."
         />
         <meta
           property="og:url"
@@ -914,10 +914,10 @@ export default function FaqPage() {
         <meta property="og:site_name" content="FourSix46 Couriers" />
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="FAQs | FourSix46®" />
+        <meta name="twitter:title" content="FAQs | Route46 Couriers" />
         <meta
           name="twitter:description"
-          content="Answers to common questions about FourSix46® courier services, booking, pricing, and policies."
+          content="Answers to common questions about Route46 Couriers, booking, pricing, and policies."
         />
         <meta
           name="twitter:image"

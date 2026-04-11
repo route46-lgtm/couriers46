@@ -692,7 +692,7 @@ export function LandingPageFormDialog({
                 <Input
                   value={form.seoTitle}
                   onChange={(e) => update({ seoTitle: e.target.value })}
-                  placeholder="Same Day Courier Cardiff | Route46 | FourSix46®"
+                  placeholder="Same Day Courier Cardiff | Route46 Couriers| FourSix46®"
                   maxLength={60}
                 />
               </div>
@@ -706,7 +706,7 @@ export function LandingPageFormDialog({
                 <Textarea
                   value={form.seoDescription}
                   onChange={(e) => update({ seoDescription: e.target.value })}
-                  placeholder="Fast same-day courier Cardiff. Route46 | FourSix46® collects within 60 minutes..."
+                  placeholder="Fast same-day courier Cardiff. Route46 Couriers | FourSix46® collects within 60 minutes..."
                   maxLength={160}
                   rows={3}
                 />

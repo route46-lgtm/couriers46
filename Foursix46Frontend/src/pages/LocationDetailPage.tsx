@@ -376,7 +376,7 @@ export default function LocationDetailPage() {
           SEO
       ══════════════════════════════════════════════════ */}
       <Helmet>
-        <title>{location.seoTitle || location.name} | FourSix46®</title>
+        <title>{location.seoTitle || location.name} | Route46 Couriers</title>
         <meta name="description" content={location.seoDescription || ""} />
         <link rel="canonical" href={canonicalUrl} />
         <meta

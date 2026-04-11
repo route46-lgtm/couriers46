@@ -1053,7 +1053,7 @@ export default function BlogPostPage() {
           SEO — baked into static HTML by vite-react-ssg
       ══════════════════════════════════════════════════ */}
       <Helmet>
-        <title>{post.seoTitle || post.title} | FourSix46® Blog</title>
+        <title>{post.seoTitle || post.title} | Route46 Couriers</title>
         <meta
           name="description"
           content={post.seoDescription || post.excerpt || ""}
@@ -1070,7 +1070,7 @@ export default function BlogPostPage() {
         />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:image" content={ogImage} />
-        <meta property="og:site_name" content="FourSix46® Couriers" />
+        <meta property="og:site_name" content="Route46 Couriers" />
         {post.publishedDate && (
           <meta
             property="article:published_time"
