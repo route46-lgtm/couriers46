@@ -742,7 +742,7 @@ export default function AboutPage() {
             <div className="relative overflow-hidden rounded-3xl group shadow-xl aspect-video md:aspect-auto">
               {/* Tweet image with float animation */}
               <a
-                href="https://x.com/46_d_c"
+                href="https://x.com/the46dc"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block w-full h-full"
@@ -757,7 +757,7 @@ export default function AboutPage() {
               <div className="absolute inset-0  opacity-60 group-hover:opacity-80 transition-opacity duration-700 rounded-3xl animate-pulse-slow pointer-events-none" />
               {/* Static X image on top right */}
               <a
-                href="https://x.com/46_d_c"
+                href="https://x.com/the46dc"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute top-6 right-10 w-10 h-10"
@@ -1114,14 +1114,18 @@ export default function AboutPage() {
             <div className="bg-white border border-slate-100 rounded-3xl p-8 sm:p-12 shadow-sm max-w-3xl mx-auto space-y-5">
               <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed">
                 Route46 Couriers is founded by{" "}
-                <strong className="text-[#134467]">Dinesh Koyyalamudi</strong>,
-                an entrepreneur focused on building structured business ventures
-                with long-term brand identity.
+                <strong className="text-[#134467]">
+                  <a href="https://46dc.com">Dinesh Koyyalamudi</a>
+                </strong>
+                , an entrepreneur focused on building structured business
+                ventures with long-term brand identity.
               </p>
               <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed">
-                Through FourSix46®, Dinesh Koyyalamudi is developing a
-                multi-industry brand ecosystem that combines logistics services,
-                digital platforms, and technology-driven business solutions.
+                Through FourSix46®,{" "}
+                <a href="https://46dc.com">Dinesh Koyyalamudi</a> is developing
+                a multi-industry brand ecosystem that combines logistics
+                services, digital platforms, and technology-driven business
+                solutions.
               </p>
               <div className="pl-6 border-l-4 border-[#48AEDD] mt-4">
                 <p className="text-[#134467]/80 font-medium leading-relaxed italic">
