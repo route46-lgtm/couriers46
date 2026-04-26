@@ -1114,18 +1114,24 @@ export default function AboutPage() {
             <div className="bg-white border border-slate-100 rounded-3xl p-8 sm:p-12 shadow-sm max-w-3xl mx-auto space-y-5">
               <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed">
                 Route46 Couriers is founded by{" "}
-                <strong className="text-[#134467]">
-                  <a href="https://46dc.com">Dinesh Koyyalamudi</a>
+                <strong>
+                  <a href="https://46dc.com" target="_blank">
+                    Dinesh Koyyalamudi
+                  </a>
                 </strong>
                 , an entrepreneur focused on building structured business
                 ventures with long-term brand identity.
               </p>
               <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed">
                 Through FourSix46®,{" "}
-                <a href="https://46dc.com">Dinesh Koyyalamudi</a> is developing
-                a multi-industry brand ecosystem that combines logistics
-                services, digital platforms, and technology-driven business
-                solutions.
+                <strong>
+                  <a href="https://46dc.com" target="_blank">
+                    Dinesh Koyyalamudi
+                  </a>
+                </strong>{" "}
+                is developing a multi-industry brand ecosystem that combines
+                logistics services, digital platforms, and technology-driven
+                business solutions.
               </p>
               <div className="pl-6 border-l-4 border-[#48AEDD] mt-4">
                 <p className="text-[#134467]/80 font-medium leading-relaxed italic">
