@@ -109,7 +109,7 @@ export default function RhaConditionsPage() {
             )}
           >
             RHA Conditions of Carriage{" "}
-            <span className="text-[#E53935]">(2024 Edition)</span>
+            <span className="text-[#E53935]">(2026 Edition)</span>
           </h1>
 
           <div
@@ -133,7 +133,7 @@ export default function RhaConditionsPage() {
           >
             Route46 Couriers is a trading name of FourSix46® Global Ltd. All
             carriage undertaken by Route46 Couriers is subject to the Road
-            Haulage Association (RHA) Conditions of Carriage 2024.
+            Haulage Association (RHA) Conditions of Carriage 2026.
           </p>
           <p
             className={cn(
@@ -245,8 +245,8 @@ export default function RhaConditionsPage() {
               <div className="flex flex-col sm:flex-row justify-center gap-6">
                 {/* Button 1 */}
                 <a
-                  href="/Documents/Conditions of Carriage 2024 - FourSix46® Global Ltd.pdf"
-                  download="Conditions of Carriage 2024 - FourSix46® Global Ltd.pdf"
+                  href="/Documents/Conditions of Carriage 2026.pdf"
+                  download="Conditions of Carriage 2026 - FourSix46® Global Ltd.pdf"
                   className="group flex items-center justify-center gap-3 bg-[#134467] text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#134467] transition-all duration-300 shadow-lg shadow-[#134467]/20 hover:-translate-y-1"
                 >
                   <Download className="w-5 h-5 text-[#F5EB18]" />
@@ -255,8 +255,8 @@ export default function RhaConditionsPage() {
 
                 {/* Button 2 */}
                 <a
-                  href="/Documents/Explanatory Notes COC 2024.pdf"
-                  download="Explanatory Notes COC 2024.pdf"
+                  href="/Documents/Explanatory Notes Conditions of Carriage 2026.pdf"
+                  download="Explanatory Notes Conditions of Carriage 2026.pdf"
                   className="group flex items-center justify-center gap-3 bg-white text-[#134467] border-2 border-slate-200 px-8 py-4 rounded-xl font-bold text-lg hover:border-[#134467] transition-all duration-300 hover:-translate-y-1"
                 >
                   <Download className="w-5 h-5 text-[#48AEDD]" />
@@ -266,7 +266,7 @@ export default function RhaConditionsPage() {
 
               <p className="mt-10 text-xs text-slate-400 font-medium">
                 By using our services, you agree to be bound by the RHA
-                Conditions of Carriage 2024.
+                Conditions of Carriage 2026.
               </p>
             </div>
           </div>
