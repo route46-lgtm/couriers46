@@ -11,6 +11,11 @@ import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { LoadingAnimation } from "@/components/shared/LoadingAnimation";
 
+const UK_POSTCODE_REGEX =
+  /^([Gg][Ii][Rr] ?0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+const UK_PHONE_REGEX = /^\+44\d{10}$/;
+
 export default function QuickQuotePage() {
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
@@ -42,6 +47,32 @@ export default function QuickQuotePage() {
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const fieldValidators: Record<string, (value: string) => string> = {
+    pickupName: (v) =>
+      v.trim().length < 3 ? "Pickup name must be at least 3 characters." : "",
+    pickupPostcode: (v) =>
+      !UK_POSTCODE_REGEX.test(v.trim())
+        ? "Enter a valid UK postcode (e.g. CF10 1AA)."
+        : "",
+    dropName: (v) =>
+      v.trim().length < 3 ? "Drop name must be at least 3 characters." : "",
+    dropPostcode: (v) =>
+      !UK_POSTCODE_REGEX.test(v.trim())
+        ? "Enter a valid UK postcode (e.g. CF10 1AA)."
+        : "",
+    contactName: (v) =>
+      v.trim().length < 3 ? "Name must be at least 3 characters." : "",
+    contactEmail: (v) =>
+      !EMAIL_REGEX.test(v.trim())
+        ? "Enter a valid email with a proper domain (e.g. name@example.com)."
+        : "",
+    contactPhone: (v) =>
+      !UK_PHONE_REGEX.test(v.trim())
+        ? "Phone number must start with +44 and contain exactly 10 digits."
+        : "",
+  };
 
   const handleChange = (e: any) => {
     const { name, value, type, checked } = e.target;
@@ -49,10 +80,31 @@ export default function QuickQuotePage() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+    // Clear the error as soon as the user edits the field again
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleBlur = (e: any) => {
+    const { name, value } = e.target;
+    const validate = fieldValidators[name];
+    if (!validate) return;
+    setErrors((prev) => ({ ...prev, [name]: validate(value) }));
   };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
+    const newErrors: Record<string, string> = {};
+    for (const [name, validate] of Object.entries(fieldValidators)) {
+      newErrors[name] = validate((form as any)[name]);
+    }
+    setErrors(newErrors);
+    if (Object.values(newErrors).some(Boolean)) {
+      toast.error("Please fix the highlighted fields below.");
+      return;
+    }
 
     if (!form.asap && !form.dropTime) {
       toast.error("Please select a drop time window or choose ASAP.");
@@ -122,20 +174,36 @@ export default function QuickQuotePage() {
               <Card className="p-6 space-y-4">
                 <h2 className="font-semibold text-lg text-[#134467]">Pickup</h2>
 
-                <Input
-                  name="pickupName"
-                  placeholder="Pickup Name"
-                  required
-                  value={form.pickupName}
-                  onChange={handleChange}
-                />
-                <Input
-                  name="pickupPostcode"
-                  placeholder="Pickup Postcode"
-                  required
-                  value={form.pickupPostcode}
-                  onChange={handleChange}
-                />
+                <div className="space-y-1">
+                  <Input
+                    name="pickupName"
+                    placeholder="Pickup Name"
+                    required
+                    value={form.pickupName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.pickupName && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.pickupName}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <Input
+                    name="pickupPostcode"
+                    placeholder="Pickup Postcode"
+                    required
+                    value={form.pickupPostcode}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.pickupPostcode && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.pickupPostcode}
+                    </p>
+                  )}
+                </div>
 
                 {/* Pickup Date — labelled */}
                 <div className="space-y-1">
@@ -197,20 +265,36 @@ export default function QuickQuotePage() {
               <Card className="p-6 space-y-4">
                 <h2 className="font-semibold text-lg text-[#134467]">Drop</h2>
 
-                <Input
-                  name="dropName"
-                  placeholder="Drop Name"
-                  required
-                  value={form.dropName}
-                  onChange={handleChange}
-                />
-                <Input
-                  name="dropPostcode"
-                  placeholder="Drop Postcode"
-                  required
-                  value={form.dropPostcode}
-                  onChange={handleChange}
-                />
+                <div className="space-y-1">
+                  <Input
+                    name="dropName"
+                    placeholder="Drop Name"
+                    required
+                    value={form.dropName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.dropName && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.dropName}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <Input
+                    name="dropPostcode"
+                    placeholder="Drop Postcode"
+                    required
+                    value={form.dropPostcode}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.dropPostcode && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.dropPostcode}
+                    </p>
+                  )}
+                </div>
 
                 {/* Drop Date — labelled */}
                 <div className="space-y-1">
@@ -343,29 +427,53 @@ export default function QuickQuotePage() {
                   Contact Details
                 </h2>
 
-                <Input
-                  name="contactName"
-                  placeholder="Your Name"
-                  required
-                  value={form.contactName}
-                  onChange={handleChange}
-                />
-                <Input
-                  type="email"
-                  name="contactEmail"
-                  placeholder="Email Address"
-                  required
-                  value={form.contactEmail}
-                  onChange={handleChange}
-                />
-                <Input
-                  type="tel"
-                  name="contactPhone"
-                  placeholder="Phone Number"
-                  required
-                  value={form.contactPhone}
-                  onChange={handleChange}
-                />
+                <div className="space-y-1">
+                  <Input
+                    name="contactName"
+                    placeholder="Your Name"
+                    required
+                    value={form.contactName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.contactName && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.contactName}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <Input
+                    type="email"
+                    name="contactEmail"
+                    placeholder="Email Address"
+                    required
+                    value={form.contactEmail}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.contactEmail && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.contactEmail}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <Input
+                    type="tel"
+                    name="contactPhone"
+                    placeholder="+44 7XXX XXXXXX"
+                    required
+                    value={form.contactPhone}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.contactPhone && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.contactPhone}
+                    </p>
+                  )}
+                </div>
               </Card>
 
               <Button

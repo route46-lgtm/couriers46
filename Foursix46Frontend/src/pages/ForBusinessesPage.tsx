@@ -847,7 +847,7 @@ import {
 
 // --- Zod Validation Schemas ---
 const step1Schema = z.object({
-  companyName: z.string().min(1, "Company name is required"),
+  companyName: z.string().min(3, "Company name must be at least 3 characters"),
   registrationNumber: z.string().regex(/^\d{8}$/, "Must be exactly 8 numbers"),
   vatNumber: z
     .string()
@@ -863,24 +863,45 @@ const step1Schema = z.object({
       },
     ),
   businessType: z.string().min(1, "Business type is required"),
-  companyAddress: z.string().min(1, "Company address is required"),
+  companyAddress: z
+    .string()
+    .min(5, "Company address must be at least 5 characters"),
 });
 
 const step2Schema = z.object({
-  contactFirstName: z.string().min(1, "First name is required"),
-  contactLastName: z.string().min(1, "Last name is required"),
-  contactEmail: z.string().email("Invalid email address"),
+  contactFirstName: z
+    .string()
+    .min(3, "First name must be at least 3 characters"),
+  contactLastName: z
+    .string()
+    .min(3, "Last name must be at least 3 characters"),
+  contactEmail: z
+    .string()
+    .email("Invalid email address")
+    .regex(
+      /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/,
+      "Enter a valid email with a proper domain (e.g. name@example.com)",
+    ),
   contactPhone: z
     .string()
     .min(13, "Phone number must start with +44 and contain exactly 10 digits"),
-  jobTitle: z.string().min(1, "Job title is required"),
+  jobTitle: z.string().min(3, "Job title must be at least 3 characters"),
 });
 
 const step3Schema = z.object({
   monthlyShipments: z.string().min(1, "Please select an option"),
-  parcelTypes: z.string().min(1, "Please list typical parcel types"),
-  deliveryAreas: z.string().min(1, "Please list primary delivery areas"),
-  specialRequirements: z.string().optional(),
+  parcelTypes: z
+    .string()
+    .min(5, "Please list typical parcel types (at least 5 characters)"),
+  deliveryAreas: z
+    .string()
+    .min(5, "Please list primary delivery areas (at least 5 characters)"),
+  specialRequirements: z
+    .string()
+    .optional()
+    .refine((val) => !val || val.length >= 5, {
+      message: "Special requirements must be at least 5 characters if provided",
+    }),
 });
 
 const step4Schema = z.object({

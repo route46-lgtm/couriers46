@@ -47,6 +47,7 @@ const ContactThankYouPage = lazy(() => import("@/pages/ContactThankYouPage"));
 const BookingThankYouPage = lazy(() => import("@/pages/BookingThankYouPage"));
 const BlogsPage = lazy(() => import("@/pages/BlogsPage"));
 const BlogPostPage = lazy(() => import("@/pages/BlogPostPage"));
+const CareersPage = lazy(() => import("@/pages/CareersPage"));
 const TestimonialsPage = lazy(() =>
   import("@/pages/TestimonialsPage").then((m) => ({
     default: m.TestimonialsPage,
@@ -112,6 +113,7 @@ export const routes: RouteRecord[] = [
           { path: "become-driver", element: s(BecomeDriverPage) },
           { path: "for-businesses", element: s(ForBusinessesPage) },
           { path: "testimonials", element: s(TestimonialsPage) },
+          { path: "careers", element: s(CareersPage) },
 
           { path: "blog", element: s(BlogsPage) },
           {

@@ -12,7 +12,8 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 // For local: Use file path or applicationDefault
 // Storage bucket name from Firebase config
 // Note: If bucket doesn't exist, enable Firebase Storage in Firebase Console
-const STORAGE_BUCKET = "foursix46-production-4a43f.appspot.com";
+const STORAGE_BUCKET =
+  process.env.STORAGE_BUCKET || "foursix46-production-4a43f.appspot.com";
 const PROJECT_ID = "foursix46-production-4a43f";
 
 try {
@@ -4052,6 +4053,7 @@ app.get("/sitemap.xml", async (req, res) => {
     u(`${BASE_URL}/for-businesses`,     "monthly", "0.7");
     u(`${BASE_URL}/become-driver`,      "monthly", "0.7");
     u(`${BASE_URL}/testimonials`,       "monthly", "0.6");
+    u(`${BASE_URL}/careers`,            "weekly",  "0.6");
     u(`${BASE_URL}/quick-quote`,        "monthly", "0.9");
     u(`${BASE_URL}/accredited-trusted`, "monthly", "0.5");
     u(`${BASE_URL}/rha-summary`,        "monthly", "0.5");
@@ -5406,6 +5408,130 @@ app.delete("/api/faqs/:id", async (req, res) => {
   } catch (error) {
     console.error("Error deleting FAQ:", error);
     res.status(500).json({ message: "Failed to delete FAQ." });
+  }
+});
+
+// =============================================
+// CAREERS — public + admin CRUD
+// =============================================
+
+// GET /api/careers — public, published only
+app.get("/api/careers", async (req, res) => {
+  try {
+    const snapshot = await db
+      .collection("careers")
+      .where("status", "==", "published")
+      .get(); // ← no .orderBy() here, sort in JS (same pattern as FAQs)
+
+    const careers = snapshot.docs
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
+      .sort((a, b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999));
+
+    res.json(careers);
+  } catch (err) {
+    console.error("GET /api/careers error:", err);
+    res.status(500).json({ message: "Failed to fetch careers", error: err.message });
+  }
+});
+
+// GET /api/admin/careers — admin, all statuses
+app.get("/api/admin/careers", async (req, res) => {
+  try {
+    const snapshot = await db
+      .collection("careers")
+      .orderBy("createdAt", "desc")
+      .get();
+
+    const careers = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.json(careers);
+  } catch (err) {
+    console.error("GET /api/admin/careers error:", err);
+    res.status(500).json({ message: "Failed to fetch careers" });
+  }
+});
+
+// POST /api/careers — admin: create a new job listing
+app.post("/api/careers", async (req, res) => {
+  try {
+    const { title, location, employmentType, description } = req.body;
+
+    if (!title || !location || !employmentType || !description) {
+      return res.status(400).json({
+        message: "Title, location, employment type, and description are required",
+      });
+    }
+
+    const docRef = await db.collection("careers").add({
+      ...req.body,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    res.json({ message: "Career listing created", id: docRef.id });
+  } catch (err) {
+    console.error("Error creating career listing:", err);
+    res.status(500).json({ message: "Failed to create career listing" });
+  }
+});
+
+// PUT /api/careers/:id — admin: update a job listing
+app.put("/api/careers/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const docRef = db.collection("careers").doc(id);
+
+    const existingDoc = await docRef.get();
+    if (!existingDoc.exists) {
+      return res.status(404).json({ message: "Career listing not found." });
+    }
+
+    const { title, location, employmentType, description, requirements, status, sortOrder } = req.body;
+
+    if (!title || !location || !employmentType || !description) {
+      return res.status(400).json({
+        message: "Title, location, employment type, and description are required.",
+      });
+    }
+
+    await docRef.update({
+      title,
+      location,
+      employmentType,
+      description,
+      ...(requirements !== undefined && { requirements }),
+      ...(status && { status }),
+      ...(sortOrder !== undefined && { sortOrder }),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    res.json({ message: "Career listing updated successfully." });
+  } catch (error) {
+    console.error("Error updating career listing:", error);
+    res.status(500).json({ message: "Failed to update career listing." });
+  }
+});
+
+// DELETE /api/careers/:id — admin: permanently delete a job listing
+app.delete("/api/careers/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ message: "Career listing ID is required." });
+
+    const docRef = db.collection("careers").doc(id);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ message: "Career listing not found." });
+    }
+
+    await docRef.delete();
+    res.json({ message: "Career listing deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting career listing:", error);
+    res.status(500).json({ message: "Failed to delete career listing." });
   }
 });
 

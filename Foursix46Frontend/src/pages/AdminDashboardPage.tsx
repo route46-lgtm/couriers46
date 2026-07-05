@@ -2756,6 +2756,7 @@ import { LocationFormDialog } from "@/components/admin/LocationFormDialog";
 import { LandingPageFormDialog } from "@/components/admin/LandingPageFormDialog";
 import { FaqFormDialog } from "@/components/admin/FaqFormDialog";
 import { BlogFormDialog } from "@/components/admin/BlogFormDialog"; // ✅ NEW
+import { CareerFormDialog } from "@/components/admin/CareerFormDialog";
 import { VatSettingsCard } from "@/components/admin/VatSettingsCard";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -2840,6 +2841,7 @@ type DashboardView =
   | "landingPages"
   | "faqs"
   | "blogs"
+  | "careers"
   | "quickQuotes"
   | "vatSettings"
   | "payments";
@@ -3059,6 +3061,7 @@ export default function AdminDashboardPage() {
   const [landingPages, setLandingPages] = useState<any[]>([]);
   const [faqs, setFaqs] = useState<any[]>([]);
   const [blogs, setBlogs] = useState<any[]>([]); // ✅ NEW
+  const [careers, setCareers] = useState<any[]>([]);
   const [quickQuotes, setQuickQuotes] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [drivers, setDrivers] = useState<any[]>([]);
@@ -3211,6 +3214,7 @@ export default function AdminDashboardPage() {
         landRes,
         faqRes,
         blogRes, // ✅ NEW
+        careerRes,
         qqRes,
         payRes,
       ] = await Promise.all([
@@ -3223,6 +3227,9 @@ export default function AdminDashboardPage() {
         fetch(`${apiUrl}/api/admin/blog`).catch(() => ({
           json: async () => [],
         })), // ✅ NEW
+        fetch(`${apiUrl}/api/admin/careers`).catch(() => ({
+          json: async () => [],
+        })),
         fetch(`${apiUrl}/api/admin/quick-quotes`).catch(() => ({
           json: async () => [],
         })),
@@ -3249,6 +3256,7 @@ export default function AdminDashboardPage() {
       setLandingPages(await landRes.json());
       setFaqs(await faqRes.json());
       setBlogs(await (blogRes as any).json()); // ✅ NEW
+      setCareers(await (careerRes as any).json());
       setQuickQuotes(await (qqRes as any).json());
       setPayments(await (payRes as any).json());
     } catch (err) {
@@ -3527,6 +3535,7 @@ export default function AdminDashboardPage() {
       landingPage: `${apiUrl}/api/location-services/${id}`,
       faq: `${apiUrl}/api/faqs/${id}`,
       blog: `${apiUrl}/api/blog/${id}`, // ✅ NEW
+      career: `${apiUrl}/api/careers/${id}`,
       quickQuote: `${apiUrl}/api/admin/quick-quotes/${id}`,
     };
     try {
@@ -3700,6 +3709,17 @@ export default function AdminDashboardPage() {
           "Blog post",
         )}
       />
+      {/* Careers */}
+      <CareerFormDialog
+        open={isFormOpen && currentView === "careers"}
+        editingItem={currentView === "careers" ? editingItem : null}
+        onClose={() => setIsFormOpen(false)}
+        onSave={makeSaveHandler(
+          `${apiUrl}/api/careers`,
+          (id) => `${apiUrl}/api/careers/${id}`,
+          "Career listing",
+        )}
+      />
 
       {currentView === "vatSettings" && <VatSettingsCard />}
       {/* ── Header ───────────────────────────────────────────────────────── */}
@@ -3798,6 +3818,7 @@ export default function AdminDashboardPage() {
             },
             { view: "faqs", label: "FAQs", count: faqs.length },
             { view: "blogs", label: "Blog Posts", count: blogs.length }, // ✅ NEW
+            { view: "careers", label: "Careers", count: careers.length },
             {
               view: "quickQuotes",
               label: "Quick Quotes",
@@ -4706,6 +4727,7 @@ export default function AdminDashboardPage() {
             "landingPages",
             "faqs",
             "blogs",
+            "careers",
           ] as DashboardView[]
         ).map((view) => {
           if (currentView !== view) return null;
@@ -4716,6 +4738,7 @@ export default function AdminDashboardPage() {
             landingPages,
             faqs,
             blogs, // ✅ NEW
+            careers,
           };
           const data = dataMap[view];
           const labelMap: Record<string, string> = {
@@ -4725,6 +4748,7 @@ export default function AdminDashboardPage() {
             landingPages: "Landing Page",
             faqs: "FAQ",
             blogs: "Blog Post", // ✅ NEW
+            careers: "Career Listing",
           };
           return (
             <Card key={view}>
@@ -4739,6 +4763,7 @@ export default function AdminDashboardPage() {
                       "Manage Location × Service SEO landing pages"}
                     {view === "faqs" && "Manage shared FAQ library"}
                     {view === "blogs" && "Manage blog posts and articles"}
+                    {view === "careers" && "Manage job openings shown on the Careers page"}
                   </CardDescription>
                 </div>
                 <Button onClick={openCreateForm}>+ Add {labelMap[view]}</Button>
@@ -4772,6 +4797,14 @@ export default function AdminDashboardPage() {
                           <TableHead>Author</TableHead>
                           <TableHead>Featured</TableHead>
                           <TableHead>Published</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </>
+                      ) : view === "careers" ? (
+                        <>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Location</TableHead>
+                          <TableHead>Type</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Actions</TableHead>
                         </>
@@ -4842,6 +4875,20 @@ export default function AdminDashboardPage() {
                               </TableCell>
                               <TableCell className="text-xs text-muted-foreground">
                                 {item.publishedDate ?? "—"}
+                              </TableCell>
+                            </>
+                          ) : view === "careers" ? (
+                            <>
+                              <TableCell className="font-medium max-w-xs truncate">
+                                {item.title}
+                              </TableCell>
+                              <TableCell className="text-sm text-muted-foreground">
+                                {item.location}
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="text-xs">
+                                  {item.employmentType ?? "—"}
+                                </Badge>
                               </TableCell>
                             </>
                           ) : (

@@ -42,6 +42,19 @@ export default function ContactPage() {
     null,
   );
   const [submitMessage, setSubmitMessage] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const fieldValidators: Record<string, (value: string) => string> = {
+    name: (v) => (v.trim().length < 3 ? "Name must be at least 3 characters" : ""),
+    email: (v) =>
+      !/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(v.trim())
+        ? "Enter a valid email with a proper domain (e.g. name@example.com)"
+        : "",
+    subject: (v) =>
+      v.trim().length < 3 ? "Subject must be at least 3 characters" : "",
+    message: (v) =>
+      v.trim().length < 10 ? "Message must be at least 10 characters" : "",
+  };
 
   // --- State for Custom Dropdown ---
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -77,6 +90,18 @@ export default function ContactPage() {
     if (submitStatus) {
       setSubmitStatus(null);
     }
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    const validate = fieldValidators[name];
+    if (!validate) return;
+    setErrors((prev) => ({ ...prev, [name]: validate(value) }));
   };
 
   const handleCustomSelect = (value: string) => {
@@ -95,23 +120,20 @@ export default function ContactPage() {
     e.preventDefault();
 
     // Basic validation
-    if (
-      !formData.name.trim() ||
-      !formData.email.trim() ||
-      !formData.senderType.trim() ||
-      !formData.subject.trim() ||
-      !formData.message.trim()
-    ) {
+    if (!formData.senderType.trim()) {
       setSubmitStatus("error");
-      setSubmitMessage("Please fill in all fields");
+      setSubmitMessage("Please select who is submitting");
       return;
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    const newErrors: Record<string, string> = {};
+    for (const [name, validate] of Object.entries(fieldValidators)) {
+      newErrors[name] = validate((formData as any)[name]);
+    }
+    setErrors(newErrors);
+    if (Object.values(newErrors).some(Boolean)) {
       setSubmitStatus("error");
-      setSubmitMessage("Please enter a valid email address");
+      setSubmitMessage("Please fix the highlighted fields below");
       return;
     }
 
@@ -360,6 +382,7 @@ export default function ContactPage() {
                           name="name"
                           value={formData.name}
                           onChange={handleInputChange}
+                          onBlur={handleBlur}
                           placeholder="John Doe"
                           disabled={isLoading}
                           required
@@ -367,6 +390,11 @@ export default function ContactPage() {
                           className="h-12 pl-12 rounded-xl border-none bg-slate-50 text-[#134467] placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-[#E53935]/100 focus-visible:bg-white transition-all duration-300 disabled:opacity-50"
                         />
                       </div>
+                      {errors.name && (
+                        <p className="text-sm font-medium text-destructive ml-1">
+                          {errors.name}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2 group">
                       <label
@@ -383,14 +411,20 @@ export default function ContactPage() {
                           type="email"
                           value={formData.email}
                           onChange={handleInputChange}
+                          onBlur={handleBlur}
                           placeholder="john@example.com"
                           disabled={isLoading}
                           required
                           aria-required="true"
-                          pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                          pattern="^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$"
                           className="h-12 pl-12 rounded-xl border-none bg-slate-50 text-[#134467] placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-[#E53935]/100 focus-visible:bg-white transition-all duration-300 disabled:opacity-50"
                         />
                       </div>
+                      {errors.email && (
+                        <p className="text-sm font-medium text-destructive ml-1">
+                          {errors.email}
+                        </p>
+                      )}
                     </div>
 
                     {/* CUSTOM DROPDOWN IMPLEMENTATION */}
@@ -459,6 +493,7 @@ export default function ContactPage() {
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         placeholder="What is this regarding?"
                         disabled={isLoading}
                         required
@@ -466,9 +501,14 @@ export default function ContactPage() {
                         className="h-12 pl-12 rounded-xl border-none bg-slate-50 text-[#134467] placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-[#E53935]/100 focus-visible:bg-white transition-all duration-300 disabled:opacity-50"
                       />
                     </div>
+                    {errors.subject && (
+                      <p className="text-sm font-medium text-destructive ml-1">
+                        {errors.subject}
+                      </p>
+                    )}
                   </div>
 
-                  <div className="space-y-2 group flex-1">
+                  <div className="space-y-2 group">
                     <label
                       htmlFor="message"
                       className="text-sm font-bold text-[#134467] ml-1 transition-colors group-focus-within:text-[#E53935]"
@@ -480,12 +520,18 @@ export default function ContactPage() {
                       name="message"
                       value={formData.message}
                       onChange={handleInputChange}
+                      onBlur={handleBlur}
                       placeholder="Tell us how we can help you..."
                       disabled={isLoading}
                       required
                       aria-required="true"
-                      className="rounded-xl border-none bg-slate-50 text-[#134467] placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-[#E53935]/100 focus-visible:bg-white transition-all duration-300 resize-none h-full min-h-[150px] p-4 text-base leading-relaxed disabled:opacity-50"
+                      className="rounded-xl border-none bg-slate-50 text-[#134467] placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-[#E53935]/100 focus-visible:bg-white transition-all duration-300 resize-none min-h-[150px] p-4 text-base leading-relaxed disabled:opacity-50"
                     />
+                    {errors.message && (
+                      <p className="text-sm font-medium text-destructive ml-1">
+                        {errors.message}
+                      </p>
+                    )}
                   </div>
 
                   <Button

@@ -709,6 +709,7 @@ import {
   MessageCircle,
   BookOpen,
   CreditCard,
+  Briefcase,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -755,6 +756,7 @@ const infoItems = [
   { id: "sectors", label: "Sectors", icon: Building2, path: "/sectors" },
   { id: "locations", label: "Locations", icon: MapPin, path: "/locations" },
   { id: "blogs", label: "Blogs", icon: BookOpen, path: "/blog" },
+  { id: "careers", label: "Careers", icon: Briefcase, path: "/careers" },
   {
     id: "testimonials",
     label: "Testimonials",

@@ -40,28 +40,65 @@ import { LoadingAnimation } from "@/components/shared/LoadingAnimation";
 
 // Step 1: Personal Information
 const step1Schema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  email: z.string().email("Invalid email address"),
+  firstName: z.string().min(3, "First name must be at least 3 letters"),
+  lastName: z.string().min(3, "Last name must be at least 3 letters"),
+  dateOfBirth: z
+    .string()
+    .min(1, "Date of birth is required")
+    .refine((val) => !isNaN(new Date(val).getTime()), {
+      message: "Enter a valid date",
+    })
+    .refine((val) => new Date(val).getTime() <= Date.now(), {
+      message: "Date of birth cannot be in the future",
+    })
+    .refine(
+      (val) => {
+        const dob = new Date(val);
+        const eighteenYearsAgo = new Date();
+        eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+        return dob <= eighteenYearsAgo;
+      },
+      { message: "You must be at least 18 years old" },
+    ),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .regex(
+      /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/,
+      "Enter a valid email with a proper domain (e.g. name@example.com)",
+    ),
   phone: z
     .string()
     .regex(
       /^\+44\d{10}$/,
       "Phone number must start with +44 and contain exactly 10 digits",
     ),
-  addressLine1: z.string().min(1, "Address line 1 is required"),
+  addressLine1: z
+    .string()
+    .min(5, "Address line 1 must be at least 5 characters"),
   addressLine2: z.string().optional(),
-  town: z.string().min(1, "Town/City is required"),
-  county: z.string().min(1, "County is required"),
-  postcode: z.string().min(1, "Postcode is required"),
+  town: z.string().min(2, "Town/City must be at least 2 characters"),
+  county: z.string().min(2, "County must be at least 2 characters"),
+  postcode: z
+    .string()
+    .min(1, "Postcode is required")
+    .regex(
+      /^([Gg][Ii][Rr] ?0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/,
+      "Enter a valid UK postcode (e.g. CF10 1AA)",
+    ),
 });
 
 // Step 2: Vehicle & Compliance
 const step2Schema = z.object({
   vehicleType: z.string().min(1, "Please select a vehicle type"),
-  registration: z.string().min(1, "Vehicle registration is required"),
-  makeModel: z.string().min(1, "Make & Model is required"),
+  registration: z
+    .string()
+    .min(1, "Vehicle registration is required")
+    .regex(
+      /^([A-Z]{2}[0-9]{2}\s?[A-Z]{3}|[A-Z][0-9]{1,3}\s?[A-Z]{3}|[A-Z]{3}\s?[0-9]{1,3}[A-Z]|[0-9]{1,4}\s?[A-Z]{1,3}|[A-Z]{1,3}\s?[0-9]{1,4})$/i,
+      "Enter a valid UK license plate (e.g. AB12 CDE)",
+    ),
+  makeModel: z.string().min(3, "Make & Model must be at least 3 characters"),
   dvlaCheckCode: z
     .string()
     .regex(
@@ -202,6 +239,9 @@ export default function BecomeDriverPage() {
     goodsInTransitInsurance: null,
     rightToWorkDoc: null,
   });
+  // Tracks whether the user has tried to leave Step 2, so file-upload
+  // errors only appear after a real attempt (not on first render).
+  const [fileUploadAttempted, setFileUploadAttempted] = useState(false);
 
   // Refactor handleNext
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -219,6 +259,7 @@ export default function BecomeDriverPage() {
     // STEP 2
     else if (currentStep === 2) {
       isValid = await form.trigger(step2Fields);
+      setFileUploadAttempted(true);
 
       const licenseUploaded = !!selectedFiles.drivingLicense;
       const vehicleInsuranceUploaded = !!selectedFiles.vehicleInsurance;
@@ -590,7 +631,11 @@ export default function BecomeDriverPage() {
                         <FormItem>
                           <FormLabel>Date of Birth *</FormLabel>
                           <FormControl>
-                            <Input type="date" {...field} />
+                            <Input
+                              type="date"
+                              max={new Date().toISOString().split("T")[0]}
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -799,6 +844,11 @@ export default function BecomeDriverPage() {
                                 inputMode="numeric"
                                 maxLength={4}
                                 {...field}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    e.target.value.replace(/\D/g, "").slice(0, 4),
+                                  )
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -923,6 +973,11 @@ export default function BecomeDriverPage() {
                             </div>
                           )}
                         </label>
+                        {fileUploadAttempted && !selectedFiles.drivingLicense && (
+                          <p className="text-sm font-medium text-destructive">
+                            Driving License is required
+                          </p>
+                        )}
                       </div>
 
                       <div className="col-span-1 space-y-2">
@@ -993,6 +1048,11 @@ export default function BecomeDriverPage() {
                             </div>
                           )}
                         </label>
+                        {fileUploadAttempted && !selectedFiles.vehicleInsurance && (
+                          <p className="text-sm font-medium text-destructive">
+                            Vehicle Insurance (Hire &amp; Reward) is required
+                          </p>
+                        )}
                       </div>
                       <div className="col-span-1 space-y-2">
                         <Label htmlFor="publicLiabilityInsurance">
@@ -1062,6 +1122,11 @@ export default function BecomeDriverPage() {
                             </div>
                           )}
                         </label>
+                        {fileUploadAttempted && !selectedFiles.publicLiabilityInsurance && (
+                          <p className="text-sm font-medium text-destructive">
+                            Public Liability Insurance is required
+                          </p>
+                        )}
                       </div>
                       <div className="col-span-1 space-y-2">
                         <Label htmlFor="goodsInTransitInsurance">
@@ -1131,6 +1196,11 @@ export default function BecomeDriverPage() {
                             </div>
                           )}
                         </label>
+                        {fileUploadAttempted && !selectedFiles.goodsInTransitInsurance && (
+                          <p className="text-sm font-medium text-destructive">
+                            Goods In Transit Insurance is required
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -1269,6 +1339,11 @@ export default function BecomeDriverPage() {
                           </div>
                         )}
                       </label>
+                      {fileUploadAttempted && !selectedFiles.rightToWorkDoc && (
+                        <p className="text-sm font-medium text-destructive">
+                          Right to Work Verification Document is required
+                        </p>
+                      )}
                     </div>
                     {/* DBS confirmation checkbox */}
                     <FormField

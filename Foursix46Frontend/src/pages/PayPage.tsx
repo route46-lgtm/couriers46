@@ -259,6 +259,9 @@ import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { useVatSettings } from "@/hooks/useVatSettings";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+const UK_PHONE_REGEX = /^\+44\d{10}$/;
+
 export default function PayPage() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL || "https://route46.couriers.uk";
@@ -284,6 +287,21 @@ export default function PayPage() {
     amountNet: "",
     reference: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const fieldValidators: Record<string, (value: string) => string> = {
+    name: (v) => (v.trim().length < 3 ? "Name must be at least 3 characters." : ""),
+    email: (v) =>
+      !EMAIL_REGEX.test(v.trim())
+        ? "Enter a valid email with a proper domain (e.g. name@example.com)."
+        : "",
+    phone: (v) =>
+      v.trim() && !UK_PHONE_REGEX.test(v.trim())
+        ? "Phone number must start with +44 and contain exactly 10 digits."
+        : "",
+    reference: (v) =>
+      v.trim().length < 5 ? "Payment reference must be at least 5 characters." : "",
+  };
 
   /* ─────────────────────────────────────────────────────────────────────────
      VAT CALCULATION
@@ -310,13 +328,30 @@ export default function PayPage() {
   ) => {
     const { name, value } = e.target;
     setPayment((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    const validate = fieldValidators[name];
+    if (!validate) return;
+    setErrors((prev) => ({ ...prev, [name]: validate(value) }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!payment.name || !payment.email || !payment.reference) {
-      toast.error("Please complete all required fields.");
+    const newErrors: Record<string, string> = {};
+    for (const [name, validate] of Object.entries(fieldValidators)) {
+      newErrors[name] = validate((payment as any)[name]);
+    }
+    setErrors(newErrors);
+    if (Object.values(newErrors).some(Boolean)) {
+      toast.error("Please fix the highlighted fields below.");
       return;
     }
     if (net < 1) {
@@ -422,27 +457,51 @@ export default function PayPage() {
               <Card className="p-6 space-y-4">
                 <h2 className="font-semibold text-lg">Customer Information</h2>
 
-                <Input
-                  name="name"
-                  placeholder="Full Name *"
-                  required
-                  value={payment.name}
-                  onChange={handleChange}
-                />
-                <Input
-                  name="email"
-                  type="email"
-                  placeholder="Email Address *"
-                  required
-                  value={payment.email}
-                  onChange={handleChange}
-                />
-                <Input
-                  name="phone"
-                  placeholder="Phone (Optional)"
-                  value={payment.phone}
-                  onChange={handleChange}
-                />
+                <div className="space-y-1">
+                  <Input
+                    name="name"
+                    placeholder="Full Name *"
+                    required
+                    value={payment.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.name && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.name}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <Input
+                    name="email"
+                    type="email"
+                    placeholder="Email Address *"
+                    required
+                    value={payment.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.email && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <Input
+                    name="phone"
+                    placeholder="Phone (Optional, e.g. +44 7XXX XXXXXX)"
+                    value={payment.phone}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.phone && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.phone}
+                    </p>
+                  )}
+                </div>
               </Card>
 
               {/* ── PAYMENT DETAILS ── */}
@@ -474,13 +533,21 @@ export default function PayPage() {
                   </div>
                 )}
 
-                <Textarea
-                  name="reference"
-                  required
-                  placeholder="Payment Reference (e.g. Quote Ref FSC-QQ-0007 or Job payment – London to Bristol) *"
-                  value={payment.reference}
-                  onChange={handleChange}
-                />
+                <div className="space-y-1">
+                  <Textarea
+                    name="reference"
+                    required
+                    placeholder="Payment Reference (e.g. Quote Ref FSC-QQ-0007 or Job payment – London to Bristol) *"
+                    value={payment.reference}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                  {errors.reference && (
+                    <p className="text-sm font-medium text-destructive">
+                      {errors.reference}
+                    </p>
+                  )}
+                </div>
               </Card>
 
               {/* ── BREAKDOWN ── */}
