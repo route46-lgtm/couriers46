@@ -5,6 +5,7 @@ const cors = require("cors");
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // Initialize Firebase Admin
@@ -15,6 +16,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const STORAGE_BUCKET =
   process.env.STORAGE_BUCKET || "foursix46-production-4a43f.appspot.com";
 const PROJECT_ID = "foursix46-production-4a43f";
+const DOCS_BASE = path.join(__dirname, "assets", "Documents");
 
 try {
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
@@ -1301,8 +1303,6 @@ const htmlContent = `
 </html>
 `;
 
-    const path = require("path");
-    const docsBase = path.join(__dirname, "../assets/Documents/");
     // Send email and wait (Vercel serverless may stop background work if not awaited)
     const emailOk = await sendApplicationEmail(
       driverData.email,
@@ -1313,17 +1313,17 @@ const htmlContent = `
       [
     {
       filename: "Driver Agreement.pdf",
-      path: path.join(docsBase, "ROUTE46 COURIERS – DRIVER AGREEMENT.pdf"),
+      path: path.join(DOCS_BASE, "ROUTE46 COURIERS – DRIVER AGREEMENT.pdf"),
       contentType: "application/pdf",
     },
     {
       filename: "Driver Policy Acknowledgement.pdf",
-      path: path.join(docsBase, "ROUTE46 COURIERS – DRIVER POLICY ACKNOWLEDGEMENT.pdf"),
+      path: path.join(DOCS_BASE, "ROUTE46 COURIERS – DRIVER POLICY ACKNOWLEDGEMENT.pdf"),
       contentType: "application/pdf",
     },
     {
       filename: "Driver Handbook.pdf",
-      path: path.join(docsBase, "ROUTE46 COURIERS – DRIVER HANDBOOK.pdf"),
+      path: path.join(DOCS_BASE, "ROUTE46 COURIERS – DRIVER HANDBOOK.pdf"),
       contentType: "application/pdf",
     },
   ]
@@ -1424,6 +1424,10 @@ const htmlContent = `
     // ✅ Upload file
     const file = bucket.file(storagePath);
 
+    // ✅ Firebase Storage download token — doesn't require signBlob IAM
+    // permission (unlike getSignedUrl) and never expires.
+    const downloadToken = crypto.randomUUID();
+
     await file.save(fileBuffer, {
       metadata: {
         contentType: contentType,
@@ -1431,15 +1435,12 @@ const htmlContent = `
           originalName: fileName,
           fileType,
           uploadedAt: new Date().toISOString(),
+          firebaseStorageDownloadTokens: downloadToken,
         },
       },
     });
 
-    // ✅ Signed URL (1 year)
-    const [signedUrl] = await file.getSignedUrl({
-      action: "read",
-      expires: Date.now() + 365 * 24 * 60 * 60 * 1000,
-    });
+    const downloadUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(storagePath)}?alt=media&token=${downloadToken}`;
 
     console.log(
       `✅ [Upload API] ${fileType} uploaded successfully`
@@ -1447,7 +1448,7 @@ const htmlContent = `
 
     return res.status(200).json({
       message: "File uploaded successfully.",
-      url: signedUrl,
+      url: downloadUrl,
       fileName: safeFileName,
       fileType,
     });
@@ -2114,12 +2115,12 @@ const htmlContent = `
       [
     {
       filename: "Shipper Agreement.pdf",
-      path: path.join(docsBase, "ROUTE46 COURIERS – SHIPPER AGREEMENT.pdf"),
+      path: path.join(DOCS_BASE, "ROUTE46 COURIERS – SHIPPER AGREEMENT.pdf"),
       contentType: "application/pdf",
     },
     {
       filename: "Shipper Policy Acknowledgement.pdf",
-      path: path.join(docsBase, "ROUTE46 COURIERS – SHIPPER POLICY ACKNOWLEDGEMENT.pdf"),
+      path: path.join(DOCS_BASE, "ROUTE46 COURIERS – SHIPPER POLICY ACKNOWLEDGEMENT.pdf"),
       contentType: "application/pdf",
     },
   ]
@@ -5431,6 +5432,23 @@ app.get("/api/careers", async (req, res) => {
   } catch (err) {
     console.error("GET /api/careers error:", err);
     res.status(500).json({ message: "Failed to fetch careers", error: err.message });
+  }
+});
+
+// GET /api/careers/:id — public, single job (published only)
+app.get("/api/careers/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const doc = await db.collection("careers").doc(id).get();
+
+    if (!doc.exists || doc.data().status !== "published") {
+      return res.status(404).json({ message: "Job listing not found" });
+    }
+
+    res.json({ id: doc.id, ...doc.data() });
+  } catch (err) {
+    console.error("GET /api/careers/:id error:", err);
+    res.status(500).json({ message: "Failed to fetch job listing", error: err.message });
   }
 });
 

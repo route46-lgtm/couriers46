@@ -910,25 +910,88 @@ const slugify = (text: string) =>
     .replace(/[\s_]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+const URL_REGEX = /^https?:\/\/[^\s]+\.[^\s]+$/;
+
+// Field validators — required fields always check min length; optional
+// fields only validate (min length / URL format) once something is typed.
+const serviceFieldValidators: Record<string, (value: string) => string> = {
+  name: (v) =>
+    v.trim().length < 3 ? "Name must be at least 3 characters." : "",
+  slug: (v) =>
+    v.trim().length < 3 ? "Slug must be at least 3 characters." : "",
+  heroTitle: (v) =>
+    v.trim() && v.trim().length < 3
+      ? "Hero Title must be at least 3 characters."
+      : "",
+  heroSubtitle: (v) =>
+    v.trim() && v.trim().length < 3
+      ? "Hero Subtitle must be at least 3 characters."
+      : "",
+  heroImage: (v) =>
+    v.trim() && !URL_REGEX.test(v.trim())
+      ? "Enter a valid image URL (e.g. https://example.com/image.jpg)."
+      : "",
+  intro: (v) =>
+    v.trim() && v.trim().length < 10
+      ? "Intro must be at least 10 characters."
+      : "",
+  ctaPrimaryText: (v) =>
+    v.trim() && v.trim().length < 2
+      ? "CTA Button Text must be at least 2 characters."
+      : "",
+  ctaPrimaryLink: (v) =>
+    v.trim() && !/^\//.test(v.trim()) && !URL_REGEX.test(v.trim())
+      ? "CTA Button Link must be a path starting with / or a full URL."
+      : "",
+  seoTitle: (v) =>
+    v.trim().length < 10 ? "SEO Title must be at least 10 characters." : "",
+  seoDescription: (v) =>
+    v.trim().length < 20
+      ? "SEO Description must be at least 20 characters."
+      : "",
+  canonicalUrl: (v) =>
+    v.trim() && !URL_REGEX.test(v.trim())
+      ? "Enter a valid canonical URL (e.g. https://example.com/page)."
+      : "",
+  ogImage: (v) =>
+    v.trim() && !URL_REGEX.test(v.trim())
+      ? "Enter a valid image URL (e.g. https://example.com/image.jpg)."
+      : "",
+  faqHeading: (v) =>
+    v.trim() && v.trim().length < 3
+      ? "FAQ Heading must be at least 3 characters."
+      : "",
+};
+
 // --- Tag Input Component ---
 const TagInput = ({
   label,
   values,
   onChange,
   placeholder,
+  minLength = 2,
 }: {
   label: string;
   values: string[];
   onChange: (v: string[]) => void;
   placeholder?: string;
+  minLength?: number;
 }) => {
   const [input, setInput] = useState("");
+  const [error, setError] = useState("");
+
   const add = () => {
     const trimmed = input.trim();
-    if (trimmed && !values.includes(trimmed)) {
+    if (!trimmed) return;
+    if (trimmed.length < minLength) {
+      setError(`Must be at least ${minLength} characters.`);
+      return;
+    }
+    if (!values.includes(trimmed)) {
       onChange([...values, trimmed]);
     }
     setInput("");
+    setError("");
   };
   return (
     <div>
@@ -936,7 +999,10 @@ const TagInput = ({
       <div className="flex gap-2 mb-2">
         <Input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            if (error) setError("");
+          }}
           onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
           placeholder={placeholder ?? "Type and press Enter"}
           className="flex-1"
@@ -945,6 +1011,9 @@ const TagInput = ({
           <Plus className="w-4 h-4" />
         </Button>
       </div>
+      {error && (
+        <p className="text-sm font-medium text-destructive mb-2">{error}</p>
+      )}
       <div className="flex flex-wrap gap-2">
         {values.map((v) => (
           <Badge
@@ -977,6 +1046,25 @@ const blockLabels: Record<BlockType, string> = {
   ctaBanner: "CTA Banner",
 };
 
+const blockFieldValidators: Record<string, (value: string) => string> = {
+  heading: (v) =>
+    v.trim() && v.trim().length < 3 ? "Must be at least 3 characters." : "",
+  richText: (v) =>
+    v.trim() && v.trim().length < 10 ? "Must be at least 10 characters." : "",
+  imageUrl: (v) =>
+    v.trim() && !URL_REGEX.test(v.trim()) ? "Enter a valid image URL." : "",
+  title: (v) =>
+    v.trim() && v.trim().length < 3 ? "Must be at least 3 characters." : "",
+  shortText: (v) =>
+    v.trim() && v.trim().length < 10 ? "Must be at least 10 characters." : "",
+  buttonText: (v) =>
+    v.trim() && v.trim().length < 2 ? "Must be at least 2 characters." : "",
+  buttonLink: (v) =>
+    v.trim() && !/^\//.test(v.trim()) && !URL_REGEX.test(v.trim())
+      ? "Must be a path starting with / or a full URL."
+      : "",
+};
+
 const BlockEditor = ({
   block,
   onChange,
@@ -986,8 +1074,14 @@ const BlockEditor = ({
   onChange: (b: ContentBlock) => void;
   onRemove: () => void;
 }) => {
+  const [blockErrors, setBlockErrors] = useState<Record<string, string>>({});
   const update = (fields: Partial<ContentBlock>) =>
     onChange({ ...block, ...fields });
+  const handleBlur = (field: string, value: string) => {
+    const validate = blockFieldValidators[field];
+    if (!validate) return;
+    setBlockErrors((prev) => ({ ...prev, [field]: validate(value) }));
+  };
 
   return (
     <div className="border rounded-xl p-4 space-y-3 bg-muted/30">
@@ -1013,8 +1107,14 @@ const BlockEditor = ({
           <Input
             value={block.heading ?? ""}
             onChange={(e) => update({ heading: e.target.value })}
+            onBlur={(e) => handleBlur("heading", e.target.value)}
             placeholder="Section heading"
           />
+          {blockErrors.heading && (
+            <p className="text-sm font-medium text-destructive mt-1">
+              {blockErrors.heading}
+            </p>
+          )}
         </div>
       )}
 
@@ -1027,9 +1127,15 @@ const BlockEditor = ({
           <Textarea
             value={block.richText ?? ""}
             onChange={(e) => update({ richText: e.target.value })}
+            onBlur={(e) => handleBlur("richText", e.target.value)}
             rows={4}
             placeholder="<p>Content here...</p>"
           />
+          {blockErrors.richText && (
+            <p className="text-sm font-medium text-destructive mt-1">
+              {blockErrors.richText}
+            </p>
+          )}
         </div>
       )}
 
@@ -1050,8 +1156,14 @@ const BlockEditor = ({
           <Input
             value={block.imageUrl ?? ""}
             onChange={(e) => update({ imageUrl: e.target.value })}
+            onBlur={(e) => handleBlur("imageUrl", e.target.value)}
             placeholder="https://..."
           />
+          {blockErrors.imageUrl && (
+            <p className="text-sm font-medium text-destructive mt-1">
+              {blockErrors.imageUrl}
+            </p>
+          )}
           {block.imageUrl && (
             <img
               src={block.imageUrl}
@@ -1071,15 +1183,27 @@ const BlockEditor = ({
             <Input
               value={block.title ?? ""}
               onChange={(e) => update({ title: e.target.value })}
+              onBlur={(e) => handleBlur("title", e.target.value)}
             />
+            {blockErrors.title && (
+              <p className="text-sm font-medium text-destructive mt-1">
+                {blockErrors.title}
+              </p>
+            )}
           </div>
           <div>
             <Label className="text-xs">Short Text</Label>
             <Textarea
               value={block.shortText ?? ""}
               onChange={(e) => update({ shortText: e.target.value })}
+              onBlur={(e) => handleBlur("shortText", e.target.value)}
               rows={2}
             />
+            {blockErrors.shortText && (
+              <p className="text-sm font-medium text-destructive mt-1">
+                {blockErrors.shortText}
+              </p>
+            )}
           </div>
         </>
       )}
@@ -1092,15 +1216,27 @@ const BlockEditor = ({
             <Input
               value={block.title ?? ""}
               onChange={(e) => update({ title: e.target.value })}
+              onBlur={(e) => handleBlur("title", e.target.value)}
             />
+            {blockErrors.title && (
+              <p className="text-sm font-medium text-destructive mt-1">
+                {blockErrors.title}
+              </p>
+            )}
           </div>
           <div>
             <Label className="text-xs">Text</Label>
             <Textarea
               value={block.richText ?? ""}
               onChange={(e) => update({ richText: e.target.value })}
+              onBlur={(e) => handleBlur("richText", e.target.value)}
               rows={2}
             />
+            {blockErrors.richText && (
+              <p className="text-sm font-medium text-destructive mt-1">
+                {blockErrors.richText}
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -1108,16 +1244,28 @@ const BlockEditor = ({
               <Input
                 value={block.buttonText ?? ""}
                 onChange={(e) => update({ buttonText: e.target.value })}
+                onBlur={(e) => handleBlur("buttonText", e.target.value)}
                 placeholder="Get a Quote"
               />
+              {blockErrors.buttonText && (
+                <p className="text-sm font-medium text-destructive mt-1">
+                  {blockErrors.buttonText}
+                </p>
+              )}
             </div>
             <div>
               <Label className="text-xs">Button Link</Label>
               <Input
                 value={block.buttonLink ?? ""}
                 onChange={(e) => update({ buttonLink: e.target.value })}
+                onBlur={(e) => handleBlur("buttonLink", e.target.value)}
                 placeholder="/quick-quote"
               />
+              {blockErrors.buttonLink && (
+                <p className="text-sm font-medium text-destructive mt-1">
+                  {blockErrors.buttonLink}
+                </p>
+              )}
             </div>
           </div>
         </>
@@ -1158,11 +1306,13 @@ export function ServiceFormDialog({
   const [newBlockType, setNewBlockType] = useState<BlockType>("textSection");
   // ✅ Fix #6 — track whether slug was manually edited
   const [slugManual, setSlugManual] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Populate form when editing
   useEffect(() => {
     if (!open) return;
     setActiveTab("core");
+    setErrors({});
     if (editingItem) {
       setSlugManual(true); // preserve existing slug when editing
       setForm({
@@ -1204,6 +1354,18 @@ export function ServiceFormDialog({
   // ✅ Fix #6 — auto-slug from name on new services
   const handleNameChange = (name: string) => {
     update({ name, ...(!slugManual && { slug: slugify(name) }) });
+    if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+  };
+
+  const handleFieldChange = (field: string, value: string) => {
+    update({ [field]: value } as Partial<ServiceFormData>);
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleFieldBlur = (field: string, value: string) => {
+    const validate = serviceFieldValidators[field];
+    if (!validate) return;
+    setErrors((prev) => ({ ...prev, [field]: validate(value) }));
   };
 
   const addBlock = () => {
@@ -1224,24 +1386,38 @@ export function ServiceFormDialog({
     update({ contentBlocks: form.contentBlocks.filter((b) => b.id !== id) });
   };
 
+  const fieldTabMap: Record<string, typeof activeTab> = {
+    name: "core",
+    slug: "core",
+    heroTitle: "core",
+    heroSubtitle: "core",
+    heroImage: "core",
+    intro: "body",
+    ctaPrimaryText: "delivery",
+    ctaPrimaryLink: "delivery",
+    seoTitle: "seo",
+    seoDescription: "seo",
+    canonicalUrl: "seo",
+    ogImage: "seo",
+    faqHeading: "relations",
+  };
+
   // ✅ Fix #1 + #3 — status passed as param (fixes race condition); alert → toast.error
   const handleSave = async (status: "draft" | "published") => {
-    if (!form.name.trim()) {
-      toast.error("Name is required.");
+    const newErrors: Record<string, string> = {};
+    for (const [field, validate] of Object.entries(serviceFieldValidators)) {
+      newErrors[field] = validate((form as any)[field] ?? "");
+    }
+    setErrors(newErrors);
+
+    const firstErrorField = Object.keys(newErrors).find((f) => newErrors[f]);
+    if (firstErrorField) {
+      toast.error("Please fix the highlighted fields below.");
+      const tab = fieldTabMap[firstErrorField];
+      if (tab) setActiveTab(tab);
       return;
     }
-    if (!form.slug.trim()) {
-      toast.error("Slug is required.");
-      return;
-    }
-    if (!form.seoTitle.trim()) {
-      toast.error("SEO Title is required.");
-      return;
-    }
-    if (!form.seoDescription.trim()) {
-      toast.error("SEO Description is required.");
-      return;
-    }
+
     setIsSaving(true);
     try {
       // ✅ Fix #1 — status injected directly here, never relies on async state
@@ -1305,8 +1481,14 @@ export function ServiceFormDialog({
                 <Input
                   value={form.name}
                   onChange={(e) => handleNameChange(e.target.value)}
+                  onBlur={(e) => handleFieldBlur("name", e.target.value)}
                   placeholder="Same Day Courier"
                 />
+                {errors.name && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.name}
+                  </p>
+                )}
               </div>
               <div>
                 <Label>Slug *</Label>
@@ -1317,13 +1499,20 @@ export function ServiceFormDialog({
                     update({
                       slug: e.target.value.toLowerCase().replace(/\s+/g, "-"),
                     });
+                    if (errors.slug) setErrors((prev) => ({ ...prev, slug: "" }));
                   }}
+                  onBlur={(e) => handleFieldBlur("slug", e.target.value)}
                   placeholder="same-day-courier"
                   className="font-mono text-sm"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Auto-generated from name. Edit to override.
                 </p>
+                {errors.slug && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.slug}
+                  </p>
+                )}
               </div>
               <div>
                 <Label>Status</Label>
@@ -1356,25 +1545,45 @@ export function ServiceFormDialog({
                 <Label>Hero Title</Label>
                 <Input
                   value={form.heroTitle}
-                  onChange={(e) => update({ heroTitle: e.target.value })}
+                  onChange={(e) => handleFieldChange("heroTitle", e.target.value)}
+                  onBlur={(e) => handleFieldBlur("heroTitle", e.target.value)}
                   placeholder="Fast, Reliable Same Day Courier"
                 />
+                {errors.heroTitle && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.heroTitle}
+                  </p>
+                )}
               </div>
               <div className="col-span-2">
                 <Label>Hero Subtitle</Label>
                 <Input
                   value={form.heroSubtitle}
-                  onChange={(e) => update({ heroSubtitle: e.target.value })}
+                  onChange={(e) =>
+                    handleFieldChange("heroSubtitle", e.target.value)
+                  }
+                  onBlur={(e) => handleFieldBlur("heroSubtitle", e.target.value)}
                   placeholder="UK-wide collection within 60 minutes"
                 />
+                {errors.heroSubtitle && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.heroSubtitle}
+                  </p>
+                )}
               </div>
               <div className="col-span-2">
                 <Label>Hero Image URL</Label>
                 <Input
                   value={form.heroImage}
-                  onChange={(e) => update({ heroImage: e.target.value })}
+                  onChange={(e) => handleFieldChange("heroImage", e.target.value)}
+                  onBlur={(e) => handleFieldBlur("heroImage", e.target.value)}
                   placeholder="https://..."
                 />
+                {errors.heroImage && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.heroImage}
+                  </p>
+                )}
                 {form.heroImage && (
                   <img
                     src={form.heroImage}
@@ -1394,11 +1603,17 @@ export function ServiceFormDialog({
                 <Label>Intro (HTML / Rich Text)</Label>
                 <Textarea
                   value={form.intro}
-                  onChange={(e) => update({ intro: e.target.value })}
+                  onChange={(e) => handleFieldChange("intro", e.target.value)}
+                  onBlur={(e) => handleFieldBlur("intro", e.target.value)}
                   rows={5}
                   placeholder="<p>We provide same day courier services across the UK...</p>"
                   className="font-mono text-sm"
                 />
+                {errors.intro && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.intro}
+                  </p>
+                )}
               </div>
 
               <SectionHeader title="Content Blocks" />
@@ -1468,17 +1683,33 @@ export function ServiceFormDialog({
                 <Label>CTA Button Text</Label>
                 <Input
                   value={form.ctaPrimaryText}
-                  onChange={(e) => update({ ctaPrimaryText: e.target.value })}
+                  onChange={(e) =>
+                    handleFieldChange("ctaPrimaryText", e.target.value)
+                  }
+                  onBlur={(e) => handleFieldBlur("ctaPrimaryText", e.target.value)}
                   placeholder="Get a Quote"
                 />
+                {errors.ctaPrimaryText && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.ctaPrimaryText}
+                  </p>
+                )}
               </div>
               <div>
                 <Label>CTA Button Link</Label>
                 <Input
                   value={form.ctaPrimaryLink}
-                  onChange={(e) => update({ ctaPrimaryLink: e.target.value })}
+                  onChange={(e) =>
+                    handleFieldChange("ctaPrimaryLink", e.target.value)
+                  }
+                  onBlur={(e) => handleFieldBlur("ctaPrimaryLink", e.target.value)}
                   placeholder="/quick-quote"
                 />
+                {errors.ctaPrimaryLink && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.ctaPrimaryLink}
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -1495,11 +1726,17 @@ export function ServiceFormDialog({
                 </Label>
                 <Input
                   value={form.seoTitle}
-                  onChange={(e) => update({ seoTitle: e.target.value })}
+                  onChange={(e) => handleFieldChange("seoTitle", e.target.value)}
+                  onBlur={(e) => handleFieldBlur("seoTitle", e.target.value)}
                   placeholder="Same Day Courier UK | FourSix46®"
                   maxLength={60}
                   className={form.seoTitle.length > 60 ? "border-red-500" : ""}
                 />
+                {errors.seoTitle && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.seoTitle}
+                  </p>
+                )}
               </div>
               <div>
                 <Label>
@@ -1510,7 +1747,10 @@ export function ServiceFormDialog({
                 </Label>
                 <Textarea
                   value={form.seoDescription}
-                  onChange={(e) => update({ seoDescription: e.target.value })}
+                  onChange={(e) =>
+                    handleFieldChange("seoDescription", e.target.value)
+                  }
+                  onBlur={(e) => handleFieldBlur("seoDescription", e.target.value)}
                   placeholder="Fast, reliable same day courier services across the UK. Book online or get a quote..."
                   maxLength={160}
                   rows={3}
@@ -1518,6 +1758,11 @@ export function ServiceFormDialog({
                     form.seoDescription.length > 160 ? "border-red-500" : ""
                   }
                 />
+                {errors.seoDescription && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.seoDescription}
+                  </p>
+                )}
               </div>
               <div>
                 <Label>
@@ -1528,9 +1773,17 @@ export function ServiceFormDialog({
                 </Label>
                 <Input
                   value={form.canonicalUrl}
-                  onChange={(e) => update({ canonicalUrl: e.target.value })}
+                  onChange={(e) =>
+                    handleFieldChange("canonicalUrl", e.target.value)
+                  }
+                  onBlur={(e) => handleFieldBlur("canonicalUrl", e.target.value)}
                   placeholder={`https://couriers.foursix46.com/services/${form.slug || "slug"}`}
                 />
+                {errors.canonicalUrl && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.canonicalUrl}
+                  </p>
+                )}
               </div>
               <div>
                 <Label>
@@ -1541,9 +1794,15 @@ export function ServiceFormDialog({
                 </Label>
                 <Input
                   value={form.ogImage}
-                  onChange={(e) => update({ ogImage: e.target.value })}
+                  onChange={(e) => handleFieldChange("ogImage", e.target.value)}
+                  onBlur={(e) => handleFieldBlur("ogImage", e.target.value)}
                   placeholder="https://..."
                 />
+                {errors.ogImage && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.ogImage}
+                  </p>
+                )}
                 {form.ogImage && (
                   <img
                     src={form.ogImage}
@@ -1596,9 +1855,15 @@ export function ServiceFormDialog({
                 <Label>FAQ Section Heading</Label>
                 <Input
                   value={form.faqHeading}
-                  onChange={(e) => update({ faqHeading: e.target.value })}
+                  onChange={(e) => handleFieldChange("faqHeading", e.target.value)}
+                  onBlur={(e) => handleFieldBlur("faqHeading", e.target.value)}
                   placeholder="Frequently Asked Questions"
                 />
+                {errors.faqHeading && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {errors.faqHeading}
+                  </p>
+                )}
               </div>
               <TagInput
                 label="FAQ IDs (enter Firestore FAQ document IDs)"

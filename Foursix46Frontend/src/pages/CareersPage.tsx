@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,6 @@ export default function CareersPage() {
   const [careers, setCareers] = useState<Career[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeType, setActiveType] = useState("All");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -136,25 +136,21 @@ export default function CareersPage() {
         {/* Job Listings */}
         {!loading && filtered.length > 0 && (
           <div className="space-y-4">
-            {filtered.map((job, i) => {
-              const isExpanded = expandedId === job.id;
-              const requirementLines = (job.requirements ?? "")
-                .split("\n")
-                .map((r) => r.trim())
-                .filter(Boolean);
-
-              return (
-                <motion.div
-                  key={job.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.06, duration: 0.4 }}
-                  className="rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden bg-white p-6"
+            {filtered.map((job, i) => (
+              <motion.div
+                key={job.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06, duration: 0.4 }}
+              >
+                <Link
+                  to={`/careers/${job.id}`}
+                  className="group block rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-[#48AEDD]/40 transition-all overflow-hidden bg-white p-6"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <h2 className="text-xl font-bold text-[#134467]">
+                        <h2 className="text-xl font-bold text-[#134467] group-hover:text-[#0e3352]">
                           {job.title}
                         </h2>
                         <Badge className="bg-[#F5EB18] text-[#134467] font-bold text-xs">
@@ -165,51 +161,18 @@ export default function CareersPage() {
                         <MapPin className="w-4 h-4" />
                         {job.location}
                       </div>
-                      <p
-                        className={`text-sm text-slate-600 leading-relaxed ${
-                          isExpanded ? "" : "line-clamp-2"
-                        }`}
-                      >
+                      <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">
                         {job.description}
                       </p>
-
-                      {isExpanded && requirementLines.length > 0 && (
-                        <div className="mt-4">
-                          <p className="text-xs font-bold uppercase tracking-wide text-[#134467] mb-2">
-                            Requirements
-                          </p>
-                          <ul className="list-disc list-inside space-y-1 text-sm text-slate-600">
-                            {requirementLines.map((r, idx) => (
-                              <li key={idx}>{r}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      <button
-                        onClick={() =>
-                          setExpandedId(isExpanded ? null : job.id)
-                        }
-                        className="mt-3 text-sm font-semibold text-[#E53935] hover:underline"
-                      >
-                        {isExpanded ? "Show less" : "Show more"}
-                      </button>
                     </div>
 
-                    <a
-                      href={`mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(
-                        `Application for ${job.title}`,
-                      )}`}
-                      className="shrink-0"
-                    >
-                      <Button className="bg-[#134467] hover:bg-[#0e3352] text-white whitespace-nowrap">
-                        Apply Now <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </a>
+                    <Button className="shrink-0 bg-[#134467] group-hover:bg-[#0e3352] text-white whitespace-nowrap pointer-events-none">
+                      View Details <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
                   </div>
-                </motion.div>
-              );
-            })}
+                </Link>
+              </motion.div>
+            ))}
           </div>
         )}
       </div>
