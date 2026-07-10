@@ -239,6 +239,20 @@ export default function Footer() {
             </a>{" "}
             All rights reserved.
           </p>
+
+          {/* Developer Credit */}
+          <p className="text-xs text-[#134467]/55 font-medium">
+            Designed &amp; built by{" "}
+            <a
+              href="https://stack46.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-bold text-[#48AEDD] hover:underline"
+            >
+              Stack46
+            </a>{" "}
+            · Full-stack software agency
+          </p>
         </div>
 
         {/* --- Developer Credit --- */}
