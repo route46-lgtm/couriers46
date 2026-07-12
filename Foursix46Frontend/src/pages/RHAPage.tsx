@@ -95,7 +95,7 @@ export default function RhaConditionsPage() {
             )}
           >
             <img
-              src="/RHA-LogoSquare.png"
+              src="/RHA-LogoSquare.webp"
               alt="RHA Logo"
               className="w-full h-full object-contain"
             />

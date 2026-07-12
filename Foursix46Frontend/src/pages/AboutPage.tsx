@@ -189,7 +189,7 @@
 //                 className="absolute top-6 right-10 w-10 h-10"
 //               >
 //                 <img
-//                   src="/X-Logo.png" // Use your uploaded "X" image filename here
+//                   src="/X-Logo.webp" // Use your uploaded "X" image filename here
 //                   alt="X Twitter Icon"
 //                   className="w-full h-full object-contain cursor-pointer transition-transform duration-300 hover:scale-110 drop-shadow-lg"
 //                 />
@@ -763,7 +763,7 @@ export default function AboutPage() {
                 className="absolute top-6 right-10 w-10 h-10"
               >
                 <img
-                  src="/X-Logo.png" // Use your uploaded "X" image filename here
+                  src="/X-Logo.webp" // Use your uploaded "X" image filename here
                   alt="X Twitter Icon"
                   className="w-full h-full object-contain cursor-pointer transition-transform duration-300 hover:scale-110 drop-shadow-lg"
                 />

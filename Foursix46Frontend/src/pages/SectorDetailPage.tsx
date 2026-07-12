@@ -313,7 +313,7 @@
 //   }
 
 //   const heroImage =
-//     !imgError && sector.heroImage ? sector.heroImage : "/route462.jpeg";
+//     !imgError && sector.heroImage ? sector.heroImage : "/route462.webp";
 //   const canonicalUrl =
 //     sector.canonicalUrl ||
 //     `https://couriers.foursix46.com/sectors/${sector.slug}`;
@@ -1253,7 +1253,7 @@ export default function SectorDetailPage() {
   }
 
   const heroImage =
-    !imgError && sector.heroImage ? sector.heroImage : "/route462.jpeg";
+    !imgError && sector.heroImage ? sector.heroImage : "/route462.webp";
   const canonicalUrl = `https://www.route46couriers.co.uk/sectors/${sector.slug}`;
   const recommendedServices: any[] = sector.recommendedServices || [];
   const featuredLocations: any[] = sector.featuredLocations || [];

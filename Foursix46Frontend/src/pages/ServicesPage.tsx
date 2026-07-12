@@ -273,7 +273,7 @@ export default function ServicesPage() {
                       alt={service.name}
                       className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/route462.jpeg";
+                        (e.target as HTMLImageElement).src = "/route462.webp";
                       }}
                     />
                   ) : (

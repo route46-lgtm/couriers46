@@ -8,7 +8,7 @@ const fadeInUp =
 export default function Footer() {
   const trustBadges = [
     {
-      icon: "/RHA-LogoSquare.png",
+      icon: "/RHA-LogoSquare.webp",
       title: "RHA Member",
       description: "Approved UK Road Haulage Association Member",
       color: "#48AEDD",

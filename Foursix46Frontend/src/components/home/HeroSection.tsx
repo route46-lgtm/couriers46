@@ -291,8 +291,8 @@ interface HeroSectionProps {
 export const HeroSection = ({
   onSendParcel,
   onJoinNetwork,
-  backgroundImageUrl = "/route462.jpeg",
-  mobileBackgroundImageUrl = "/route463mob.png",
+  backgroundImageUrl = "/route462.webp",
+  mobileBackgroundImageUrl = "/route463mob.webp",
 }: HeroSectionProps) => {
   return (
     <section

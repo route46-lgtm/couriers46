@@ -71,8 +71,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <HeroSection
-        backgroundImageUrl="/route462.jpeg"
-        mobileBackgroundImageUrl="/route463mob.png"
+        backgroundImageUrl="/route462.webp"
+        mobileBackgroundImageUrl="/route463mob.webp"
         // backgroundImageUrl="/FourSixLogo.png"
         onSendParcel={() => navigate("/quick-quote")}
         onJoinNetwork={() => navigate("/for-businesses")}
@@ -86,7 +86,7 @@ export default function HomePage() {
         description="Join the Route46 Couriers driver network and deliver parcels across the UK with flexible working
 opportunities. Our courier drivers handle urgent deliveries, business shipments, and same day
 courier services for customers nationwide."
-        image="/route461.jpeg"
+        image="/route461.webp"
         benefits={driverBenefits}
         cta={{
           label: "Drive with Route46",
@@ -99,7 +99,7 @@ courier services for customers nationwide."
         description="Whether you're sending a single parcel or managing regular business deliveries,  Couriers
 provides reliable same day courier services across the UK. Our courier network supports
 businesses with urgent shipments, document transport, and time-critical logistics."
-        image="/route463.jpeg"
+        image="/route463.webp"
         benefits={businessBenefits}
         reverse
         cta={{
@@ -121,7 +121,7 @@ businesses with urgent shipments, document transport, and time-critical logistic
         description="Route46 Couriers provides fast and reliable courier services
 across the UK. Request an instant courier quote and arrange collection for urgent parcels,
 documents, and time-critical deliveries."
-        image="/route464.jpeg"
+        image="/route464.webp"
         benefits={individualBenefits}
         cta={{ label: "Quick Quote", onClick: () => navigate("/quick-quote") }}
         highlight={

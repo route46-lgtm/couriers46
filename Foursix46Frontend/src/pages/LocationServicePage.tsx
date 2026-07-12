@@ -1069,7 +1069,7 @@ export default function LocationServicePage() {
   }
 
   /* ── Derived data ── */
-  const heroImage = page.heroImage || "/route4622.png";
+  const heroImage = page.heroImage || "/route4622.webp";
   const canonicalUrl = `${BASE_URL}/locations/${locationSlug}/${serviceSlug}`;
   const proofPoints = page.localProofPoints || [];
   const contentBlocks = page.contentBlocks || [];
