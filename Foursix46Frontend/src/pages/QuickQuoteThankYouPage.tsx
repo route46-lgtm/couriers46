@@ -160,7 +160,7 @@ export default function QuickQuoteThankYouPage() {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => navigate("/get-a-quote")}
+                onClick={() => navigate("/quick-quote")}
                 className="border-[#48AEDD] text-[#48AEDD] 
              hover:bg-[#48AEDD] hover:text-white 
              px-8 py-5 text-base rounded-xl transition"
