@@ -13,6 +13,8 @@ interface SplitFeatureSectionProps {
   secondaryCta?: { label: string; onClick: () => void };
   reverse?: boolean;
   highlight?: ReactNode;
+  /** Force a fixed 1:1 (3/3) image box at all widths, uncapped, so the full graphic shows larger */
+  squareImage?: boolean;
 }
 
 export const SplitFeatureSection = ({
@@ -25,6 +27,7 @@ export const SplitFeatureSection = ({
   secondaryCta,
   reverse = false,
   highlight,
+  squareImage = false,
 }: SplitFeatureSectionProps) => {
 
   // Helper to render the image block (used for both Mobile and Desktop positions)
@@ -34,7 +37,14 @@ export const SplitFeatureSection = ({
       <div className="absolute inset-0 bg-gradient-to-br from-[#48AEDD]/20 to-[#F5EB18]/20 rounded-[3rem] blur-3xl scale-95 -z-10" />
 
       {/* Main Image Container */}
-      <div className="relative rounded-[2.5rem] overflow-hidden border-[6px] border-white shadow-2xl w-full aspect-square lg:aspect-[4/3] max-h-[500px]">
+      <div
+        className={cn(
+          "relative rounded-[2.5rem] overflow-hidden border-[6px] border-white shadow-2xl w-full",
+          squareImage
+            ? "aspect-square"
+            : "aspect-square lg:aspect-[4/3] max-h-[500px]",
+        )}
+      >
         <img
           src={image}
           alt={title}

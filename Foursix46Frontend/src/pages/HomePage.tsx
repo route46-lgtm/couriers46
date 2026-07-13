@@ -122,6 +122,7 @@ businesses with urgent shipments, document transport, and time-critical logistic
 across the UK. Request an instant courier quote and arrange collection for urgent parcels,
 documents, and time-critical deliveries."
         image="/route464.webp"
+        squareImage
         benefits={individualBenefits}
         cta={{ label: "Quick Quote", onClick: () => navigate("/quick-quote") }}
         highlight={
