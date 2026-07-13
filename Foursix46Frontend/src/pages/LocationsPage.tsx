@@ -399,13 +399,13 @@ export default function LocationsPage() {
         </script>
       </Helmet>
 
-      {/* ── HERO ── */}
-      <section className="pt-24 pb-16 text-center">
+      {/* ── HERO — compact so the location grid is visible without scrolling ── */}
+      <section className="pt-20 pb-8 text-center">
         <div className="container mx-auto px-6 max-w-5xl">
           {/* ✅ Fix #4 — "Nationwide Courier Coverage" per Location Links Hub spec */}
           <span
             className={cn(
-              "inline-block py-1.5 px-4 rounded-full bg-[#F5EB18] text-[#134467] font-black text-xs uppercase tracking-widest mb-6",
+              "inline-block py-1.5 px-4 rounded-full bg-[#F5EB18] text-[#134467] font-black text-xs uppercase tracking-widest mb-4",
               fadeInUp,
             )}
           >
@@ -413,13 +413,13 @@ export default function LocationsPage() {
           </span>
           <h1
             className={cn(
-              "text-5xl sm:text-6xl font-extrabold text-[#48AEDD] mb-6",
+              "text-4xl sm:text-5xl font-extrabold text-[#48AEDD] mb-4",
               fadeInUp,
             )}
           >
             Our <span className="text-[#E53935]">Locations</span>
           </h1>
-          <p className="text-lg text-[#134467]/80 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base text-[#134467]/80 max-w-3xl mx-auto leading-relaxed">
             Our courier network covers major cities and business hubs across the
             UK, providing reliable same-day and urgent delivery services.
           </p>
@@ -427,7 +427,7 @@ export default function LocationsPage() {
       </section>
 
       {/* ── SEARCH ── */}
-      <section className="container mx-auto px-6 pb-8 max-w-xl">
+      <section className="container mx-auto px-6 pb-6 max-w-xl">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
@@ -469,75 +469,46 @@ export default function LocationsPage() {
             )}
           </div>
         ) : (
-          <div className="max-w-6xl mx-auto space-y-16">
+          <div className="max-w-6xl mx-auto space-y-10">
             {Object.entries(groupedByCountry).map(([country, locs]) => (
               <div key={country}>
                 {/* Country heading */}
-                <h2 className="text-2xl font-bold text-[#134467] mb-6 pb-2 border-b-2 border-[#F1C40F]">
+                <h2 className="text-lg font-bold text-[#134467] mb-4 pb-1.5 border-b-2 border-[#F1C40F] flex items-baseline gap-2">
                   {country}
+                  <span className="text-xs font-semibold text-[#134467]/40">
+                    {locs.length} {locs.length === 1 ? "city" : "cities"}
+                  </span>
                 </h2>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {locs.map((location, index) => {
-                    const previewText = location.intro
-                      ? stripHtml(location.intro)
-                      : location.seoDescription || "";
-
-                    return (
-                      <div
-                        key={location.slug}
-                        onClick={() => navigate(`/locations/${location.slug}`)}
-                        className={cn(
-                          "cursor-pointer group bg-white border border-slate-200 rounded-[2.5rem] p-8",
-                          "hover:shadow-xl hover:-translate-y-1 transition-all duration-500",
-                          fadeInUp,
-                        )}
-                        style={{ animationDelay: `${index * 80}ms` }}
-                      >
-                        {/* ✅ Fix #5 — heroImage with onError fallback */}
-                        {location.heroImage && (
-                          <img
-                            src={location.heroImage}
-                            alt={location.name}
-                            className="w-full h-36 object-cover rounded-2xl mb-5"
-                            onError={(e) =>
-                              (e.currentTarget.style.display = "none")
-                            }
-                          />
-                        )}
-
-                        <div className="flex items-center gap-3 mb-4">
-                          <MapPin
-                            className="text-[#E53935] flex-shrink-0"
-                            size={20}
-                          />
-                          <h3 className="text-2xl font-bold text-[#134467] group-hover:text-[#E53935] transition leading-tight">
-                            {location.name}
-                          </h3>
-                        </div>
-
-                        {previewText && (
-                          <p className="text-[#134467]/70 mb-5 line-clamp-3 text-sm leading-relaxed">
-                            {previewText}
-                          </p>
-                        )}
-
-                        {location.postcodeCoverage && (
-                          <p className="text-xs text-[#134467]/50 mb-4 font-medium">
-                            Postcodes:{" "}
-                            <span className="font-mono">
-                              {location.postcodeCoverage}
-                            </span>
-                          </p>
-                        )}
-
-                        <div className="flex items-center gap-2 text-[#E53935] font-semibold text-sm">
-                          Explore Location
-                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
-                        </div>
-                      </div>
-                    );
-                  })}
+                {/* Compact tile grid — whole coverage visible at a glance */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                  {locs.map((location, index) => (
+                    <div
+                      key={location.slug}
+                      onClick={() => navigate(`/locations/${location.slug}`)}
+                      title={
+                        location.postcodeCoverage
+                          ? `Postcodes: ${location.postcodeCoverage}`
+                          : undefined
+                      }
+                      className={cn(
+                        "cursor-pointer group bg-white border border-slate-200 rounded-xl px-3.5 py-3",
+                        "flex items-center gap-2.5",
+                        "hover:shadow-lg hover:-translate-y-0.5 hover:border-[#48AEDD]/50 transition-all duration-300",
+                        fadeInUp,
+                      )}
+                      style={{ animationDelay: `${index * 30}ms` }}
+                    >
+                      <MapPin
+                        className="text-[#E53935] flex-shrink-0"
+                        size={16}
+                      />
+                      <span className="text-sm font-bold text-[#134467] group-hover:text-[#E53935] transition leading-tight truncate">
+                        {location.name}
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 ml-auto flex-shrink-0 text-[#E53935] opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
