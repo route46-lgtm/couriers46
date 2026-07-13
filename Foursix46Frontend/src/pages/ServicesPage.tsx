@@ -241,9 +241,9 @@ export default function ServicesPage() {
           SERVICES LIST
       ══════════════════════════════════════════════════════════════ */}
       <section className="container mx-auto px-6 pb-24">
-        <div className="max-w-6xl mx-auto grid gap-7">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
           {filteredServices.length === 0 && (
-            <div className="text-center py-20">
+            <div className="col-span-full text-center py-20">
               <BookOpen className="w-12 h-12 mx-auto text-slate-200 mb-4" />
               <p className="text-[#134467]/40 font-semibold text-lg tracking-wide">
                 {search
@@ -264,9 +264,9 @@ export default function ServicesPage() {
               )}
               style={{ animationDelay: `${index * 80}ms` }}
             >
-              <div className="grid md:grid-cols-[5fr_8fr] items-stretch">
+              <div className="flex flex-col h-full">
                 {/* ── Image ── */}
-                <div className="relative h-56 md:h-auto bg-slate-100 overflow-hidden min-h-[200px]">
+                <div className="relative h-48 bg-slate-100 overflow-hidden flex-shrink-0">
                   {service.heroImage || service.featuredImage ? (
                     <img
                       src={service.heroImage || service.featuredImage}
@@ -281,27 +281,27 @@ export default function ServicesPage() {
                       <BookOpen className="w-14 h-14 text-white/15" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/5 md:hidden" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
                 </div>
 
                 {/* ── Content ── */}
-                <div className="p-8 md:p-10 lg:p-12 flex flex-col justify-center gap-4">
+                <div className="p-6 lg:p-7 flex flex-col flex-1 gap-3">
                   <span className="inline-block w-fit text-[10px] font-black uppercase tracking-[0.18em] text-[#134467] bg-[#F5EB18] px-3.5 py-1.5 rounded-full shadow-sm">
                     Courier Service
                   </span>
 
-                  <h2 className="text-2xl md:text-3xl font-black text-[#134467] group-hover:text-[#E53935] transition-colors duration-200 flex items-center gap-3 leading-tight tracking-tight">
+                  <h2 className="text-xl font-black text-[#134467] group-hover:text-[#E53935] transition-colors duration-200 flex items-center gap-2 leading-tight tracking-tight">
                     {service.name}
                     <ArrowRight className="text-[#E53935] w-5 h-5 flex-shrink-0 group-hover:translate-x-2 transition-transform duration-300" />
                   </h2>
 
-                  <p className="text-[#134467]/60 text-[15px] leading-[1.85] font-medium line-clamp-3">
+                  <p className="text-[#134467]/60 text-sm leading-[1.75] font-medium line-clamp-3">
                     {service.heroSubtitle ||
                       service.seoDescription ||
                       "Click to view full service details and get an instant quote."}
                   </p>
 
-                  <div className="flex flex-wrap gap-2 pt-1">
+                  <div className="flex flex-wrap gap-2 pt-1 mt-auto">
                     {[
                       { icon: Timer, label: "60 Min Collection" },
                       { icon: Map, label: "UK Mainland" },
@@ -309,8 +309,8 @@ export default function ServicesPage() {
                     ].map(({ icon: Icon, label }) => (
                       <span
                         key={label}
-                        className="flex items-center gap-1.5 text-xs font-bold text-[#134467]
-                          bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-full
+                        className="flex items-center gap-1.5 text-[11px] font-bold text-[#134467]
+                          bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-full
                           group-hover:border-[#48AEDD]/40 group-hover:bg-[#48AEDD]/5 transition-colors duration-200"
                       >
                         <Icon className="w-3.5 h-3.5 text-[#48AEDD]" />

@@ -344,7 +344,7 @@ export const HeroSection = ({
           src={mobileBackgroundImageUrl}
           alt=""
           className="w-full h-full object-fill opacity-80 sm:opacity-75"
-          fetchPriority="high"
+          {...{ fetchpriority: "high" }}
           loading="eager"
           width="900"
           height="1600"
