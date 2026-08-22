@@ -17,7 +17,7 @@ import {
   Users,
   CloudLightning,
   Gavel,
-  Download,
+  RefreshCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
@@ -48,16 +48,14 @@ export default function TermsPage() {
           </p>
           <p>
             All carriage and delivery services arranged by Route46 Couriers are
-            undertaken strictly in accordance with the Road Haulage Association
-            (RHA) Conditions of Carriage 2024, which set out the standard terms,
-            responsibilities, and liability limits applicable to road freight
-            operations in the UK.
+            undertaken in accordance with these Terms, which set out the
+            standard terms, responsibilities, and liability limits applicable to
+            our road transport operations in the UK.
           </p>
           <p>
             By requesting a delivery quotation, booking a shipment, opening an
             account, or consigning goods for transport, the customer confirms
-            their acceptance of these Terms and Conditions and the applicable
-            RHA Conditions of Carriage 2024.
+            their acceptance of these Terms and Conditions.
           </p>
           <p>
             No additional or alternative terms shall apply unless expressly
@@ -65,7 +63,7 @@ export default function TermsPage() {
             Global Ltd.
           </p>
           <p className="italic text-sm">
-            A full copy of the RHA Conditions is available upon request.
+            A full copy of these Terms is available on request.
           </p>
           <p>
             Company Information:
@@ -89,12 +87,13 @@ export default function TermsPage() {
       content: (
         <div className="space-y-2">
           <p>
-            The definitions used in these Terms correspond to those in the RHA
-            Conditions, including but not limited to:
+            The following terms carry the meanings set out below wherever they
+            appear in these Terms:
           </p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
-              <strong>“Carrier”</strong> – Route46 Global Ltd
+              <strong>“Carrier”</strong> – Route46 Couriers (FourSix46 Global
+              Ltd)
             </li>
             <li>
               <strong>“Customer”</strong> – Any person or business using the
@@ -123,16 +122,15 @@ export default function TermsPage() {
       content: (
         <ul className="list-disc pl-5 space-y-2">
           <li>
-            3.1 All services are supplied under the{" "}
-            <strong className="text-[#134467]">
-              RHA Conditions of Carriage 2024
-            </strong>
-            , which take precedence over all other terms including Customer
-            terms.
+            3.1 All services are supplied under{" "}
+            <strong className="text-[#134467]">these Terms</strong>, which take
+            precedence over any other terms, including the Customer’s own,
+            unless we agree otherwise in writing.
           </li>
           <li>
             3.2 No employee, contractor, or agent has authority to{" "}
-            <strong className="text-[#134467]">vary these Conditions</strong>.
+            <strong className="text-[#134467]">vary these Conditions</strong>{" "}
+            unless authorised in writing by a director of FourSix46 Global Ltd.
           </li>
         </ul>
       ),
@@ -152,7 +150,7 @@ export default function TermsPage() {
           <li>
             4.2 The Carrier may{" "}
             <strong className="text-[#134467]">subcontract</strong> the whole or
-            any part of the carriage in accordance with the RHA Conditions.
+            any part of the carriage to another carrier, courier or driver.
           </li>
         </ul>
       ),
@@ -165,8 +163,7 @@ export default function TermsPage() {
       content: (
         <div className="space-y-2">
           <p>
-            The Customer must comply with the responsibilities outlined in the
-            RHA Conditions, including:
+            The Customer must ensure:
           </p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
@@ -229,7 +226,7 @@ export default function TermsPage() {
           {/* Alert Box */}
           <div className="bg-[#E53935]/5 p-4 rounded-lg border border-[#E53935]/20">
             <p className="font-semibold text-[#E53935] mb-2">
-              RHA Conditions Notice:
+              Notice:
             </p>
             <p className="text-slate-700 text-sm">
               The Carrier may refuse, remove, make safe, render harmless, or
@@ -247,7 +244,6 @@ export default function TermsPage() {
       bg: "bg-[#134467]/10",
       content: (
         <div className="space-y-2">
-          <p>Packaging responsibilities follow RHA rules:</p>
           <ul className="list-disc pl-5 space-y-2">
             <li>
               The Customer must ensure Goods are{" "}
@@ -275,8 +271,7 @@ export default function TermsPage() {
           <li>
             8.1 Times for collection or delivery are{" "}
             <strong className="text-[#E53935]">not guaranteed</strong> unless
-            expressly agreed in writing as a special contractual service under
-            the RHA Conditions.
+            expressly agreed in writing as a special contractual service.
           </li>
           <li>
             8.2 Delivery may be made to any person appearing{" "}
@@ -284,8 +279,8 @@ export default function TermsPage() {
             delivery address.
           </li>
           <li>
-            8.3 Undelivered goods will be handled in accordance with the RHA
-            Conditions (including storage, return, or disposal).
+            8.3 Undelivered goods will be handled in accordance with these
+            Terms (including storage, return, or disposal).
           </li>
         </ul>
       ),
@@ -301,8 +296,8 @@ export default function TermsPage() {
           <ul className="list-disc pl-5 space-y-1">
             <li>The Carrier will attempt to contact the Customer;</li>
             <li>
-              Goods may be held, returned, stored, or sold after the RHA notice
-              period;
+              Goods may be held, returned, stored, or sold after a reasonable
+              notice period;
             </li>
             <li>
               All costs associated with{" "}
@@ -337,8 +332,7 @@ export default function TermsPage() {
           </li>
           <li>
             10.4 The Carrier exercises a <strong>general lien</strong> over
-            Goods until all charges are paid (as permitted under RHA
-            Conditions).
+            Goods until all charges are paid in full (see Condition 13 below).
           </li>
         </ul>
       ),
@@ -351,11 +345,8 @@ export default function TermsPage() {
       content: (
         <div className="space-y-2">
           <p>
-            Liability for loss, damage, or delay is governed strictly by the{" "}
-            <strong className="text-[#134467]">
-              RHA Conditions of Carriage 2024
-            </strong>
-            . This includes:
+            Liability for loss, damage, or delay is governed by these Terms, as
+            follows:
           </p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
@@ -393,21 +384,25 @@ export default function TermsPage() {
       bg: "bg-[#E53935]/10",
       content: (
         <div className="space-y-2">
-          <p>Claims must comply with RHA deadlines:</p>
+          <p>Claims must be made within the following deadlines:</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
               <strong>Damage / Shortage:</strong> Notify within{" "}
               <strong className="text-[#E53935]">7 days</strong> of delivery
             </li>
             <li>
-              <strong>Loss / Non-Delivery:</strong> Notify within the RHA time
-              limits
+              <strong>Loss / Non-Delivery:</strong> Notify within{" "}
+              <strong className="text-[#E53935]">28 days</strong> of the date
+              the Goods should have been delivered
             </li>
             <li>
-              Claims outside the permitted RHA windows are{" "}
-              <strong className="text-[#E53935]">invalid</strong>
+              Claims made outside these windows will not be accepted, unless it
+              was genuinely not possible to notify us in time
             </li>
-            <li>All claims must include required evidence per RHA rules</li>
+            <li>
+              All claims must be supported by reasonable evidence of the loss or
+              damage claimed
+            </li>
           </ul>
         </div>
       ),
@@ -421,8 +416,7 @@ export default function TermsPage() {
         <p>
           The Carrier may{" "}
           <strong className="text-[#134467]">retain Goods</strong> until all
-          charges due are paid in full, as authorised by the RHA Conditions. If
-          charges remain unpaid, Goods may be{" "}
+          charges due are paid in full. If charges remain unpaid, Goods may be{" "}
           <strong className="text-[#E53935]">sold to recover costs</strong>.
         </p>
       ),
@@ -435,8 +429,8 @@ export default function TermsPage() {
       content: (
         <div className="space-y-2">
           <p>
-            All subcontracted drivers operate under the authority and rules of
-            the RHA Conditions, including:
+            All subcontracted drivers must operate in accordance with these
+            Terms, including:
           </p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
@@ -463,8 +457,7 @@ export default function TermsPage() {
             <strong className="text-[#134467]">
               outside the Carrier’s reasonable control
             </strong>{" "}
-            (as defined in the RHA Conditions) relieve the Carrier of liability
-            and may include:
+            relieve the Carrier of liability and may include:
           </p>
           <ul className="list-disc pl-5 grid sm:grid-cols-2 gap-1">
             <li>Weather disruptions</li>
@@ -490,21 +483,16 @@ export default function TermsPage() {
             disputes subject to the exclusive jurisdiction of the English
             courts.
           </p>
-          <p>
-            All carriage remains subject to the{" "}
-            <strong>RHA Conditions of Carriage 2024</strong>, which override any
-            conflicting term herein.
-          </p>
         </div>
       ),
     },
     {
-      title: "17. Availability of RHA Conditions",
-      icon: Download,
+      title: "17. Updates to These Terms",
+      icon: RefreshCcw,
       color: "#48AEDD", // Blue
       bg: "bg-[#48AEDD]/10",
       content:
-        "A full copy of the RHA Conditions of Carriage 2024 is available on request or for download from our website.",
+        "We may update these Terms from time to time to reflect changes in our services or the law. The version in force is always the one published on this page, dated above. A full copy of these Terms is available on request.",
     },
   ];
 
@@ -562,7 +550,8 @@ export default function TermsPage() {
               "animation-delay-200",
             )}
           >
-            All Carriage Subject to RHA Conditions of Carriage 2024
+            Our Conditions of Carriage — Effective for Every Booking and
+            Consignment
           </p>
           <p
             className={cn(
@@ -571,7 +560,7 @@ export default function TermsPage() {
               "animation-delay-300",
             )}
           >
-            Last Updated: 16/03/2026
+            Last Updated: 22/08/2026
           </p>
         </div>
       </div>
@@ -595,12 +584,10 @@ export default function TermsPage() {
                 </h2>
                 <p className="text-white/90 leading-relaxed">
                   FourSix46&reg; Global Ltd, trading as Route46 Couriers,
-                  undertakes all carriage and related transport services
-                  strictly under the Road Haulage Association (RHA) Conditions
-                  of Carriage 2024. All transport and delivery services are
-                  undertaken in accordance with these industry-standard
-                  conditions, which set out the rights, responsibilities and
-                  liability limits applicable to UK road freight operations.
+                  provides all carriage and related transport services under
+                  these Conditions of Carriage, which set out the rights,
+                  responsibilities and liability limits that apply to every
+                  consignment we carry.
                 </p>
               </div>
             </div>
