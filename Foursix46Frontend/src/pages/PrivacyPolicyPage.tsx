@@ -18,6 +18,8 @@ import {
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // Animation utility
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
@@ -275,6 +277,20 @@ export default function PrivacyPolicyPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden font-sans selection:bg-[#E53935] selection:text-white">
+      <Seo
+        title="Privacy Policy"
+        description="How Route46 Couriers collects, uses and protects your personal data. ICO registered and UK GDPR compliant."
+        path="/privacy"
+        schemas={[
+          webPageSchema({
+            path: "/privacy",
+            name: "Privacy Policy",
+            description: "How Route46 Couriers collects, uses and protects your personal data. ICO registered and UK GDPR compliant.",
+          }),
+          breadcrumbSchema([{ name: "Privacy Policy", path: "/privacy" }]),
+        ]}
+      />
+
       {/* Header Area */}
       <div className="relative pt-16 pb-12 sm:pt-24 sm:pb-16 bg-white border-b border-[#48AEDD]/10">
         {/* Subtle Background Decor */}

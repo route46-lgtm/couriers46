@@ -198,7 +198,7 @@
 //         <meta property="og:type" content="website" />
 //         <meta
 //           property="og:image"
-//           content="https://www.route46couriers.co.uk/og-default.jpg"
+//           content="https://www.route46couriers.co.uk/route46logo.png"
 //         />
 //         {/* ✅ og:image dimensions — prevents unfurling issues on Slack/LinkedIn */}
 //         <meta property="og:image:width" content="1200" />
@@ -217,7 +217,7 @@
 //         />
 //         <meta
 //           name="twitter:image"
-//           content="https://www.route46couriers.co.uk/og-default.jpg"
+//           content="https://www.route46couriers.co.uk/route46logo.png"
 //         />
 //         <meta name="twitter:image:alt" content="FourSix46 Couriers – FAQs" />
 
@@ -670,8 +670,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
-import { Helmet } from "react-helmet-async";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema, faqSchema } from "@/lib/seo";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const fadeInUp =
@@ -870,9 +871,38 @@ export default function FaqPage() {
   const activeSection = tagSections.find((s) => s.id === activeTag);
 
   /* ── Loading ───────────────────────────────────────────── */
+  // Declared above the loading guard so the head tags are emitted in
+  // every render state — during SSG this component only ever renders
+  // the loading branch, and the page would otherwise ship no SEO at all.
+  const seo = (
+    <Seo
+      title="Frequently Asked Questions"
+      description="Answers to common questions about Route46 Couriers — booking a same day courier, pricing, insurance, collection times and delivery policies."
+      path="/faqs"
+      schemas={[
+        webPageSchema({
+          path: "/faqs",
+          name: "Frequently Asked Questions",
+          description:
+            "Common questions about booking, pricing, insurance and delivery policies.",
+          type: "FAQPage",
+        }),
+        breadcrumbSchema([{ name: "FAQs", path: "/faqs" }]),
+        allFaqs.length > 0 &&
+          faqSchema(
+            allFaqs.map((faq) => ({
+              question: faq.question,
+              answer: faq.answer.replace(/<[^>]*>/g, ""),
+            })),
+          ),
+      ].filter(Boolean) as object[]}
+    />
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        {seo}
         <div className="text-center">
           <div className="w-10 h-10 border-4 border-[#48AEDD] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-[#134467]/60 font-medium">Loading FAQs...</p>
@@ -884,87 +914,8 @@ export default function FaqPage() {
   /* ── UI ────────────────────────────────────────────────── */
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden font-sans selection:bg-[#E53935] selection:text-white">
-      <Helmet>
-        <title>FAQs | Route46 Couriers</title>
-        <meta
-          name="description"
-          content="Answers to common questions about FourSix46® courier services, booking, pricing, and policies."
-        />
-        <link rel="canonical" href="https://www.route46couriers.co.uk/faqs" />
-        <meta name="robots" content="index, follow" />
-
-        <meta property="og:title" content="FAQs | Route46 Couriers" />
-        <meta
-          property="og:description"
-          content="Answers to common questions about Route46 Couriers, booking, pricing, and policies."
-        />
-        <meta
-          property="og:url"
-          content="https://www.route46couriers.co.uk/faqs"
-        />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:image"
-          content="https://www.route46couriers.co.uk/og-default.jpg"
-        />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="FourSix46 Couriers – FAQs" />
-        <meta property="og:locale" content="en_GB" />
-        <meta property="og:site_name" content="FourSix46 Couriers" />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="FAQs | Route46 Couriers" />
-        <meta
-          name="twitter:description"
-          content="Answers to common questions about Route46 Couriers, booking, pricing, and policies."
-        />
-        <meta
-          name="twitter:image"
-          content="https://www.route46couriers.co.uk/og-default.jpg"
-        />
-        <meta name="twitter:image:alt" content="FourSix46 Couriers – FAQs" />
-
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "Home",
-                item: "https://www.route46couriers.co.uk",
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: "FAQs",
-                item: "https://www.route46couriers.co.uk/faqs",
-              },
-            ],
-          })}
-        </script>
-
-        {allFaqs.length > 0 && (
-          <script type="application/ld+json">
-            {JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: allFaqs.map((faq) => ({
-                "@type": "Question",
-                name: faq.question,
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: faq.answer.replace(/<[^>]*>/g, ""),
-                },
-              })),
-            })}
-          </script>
-        )}
-      </Helmet>
-
-      {/* Custom scrollbar */}
+      {seo}
+{/* Custom scrollbar */}
       <style>{`
         .faq-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
         .faq-scrollbar::-webkit-scrollbar-track { background: transparent; }

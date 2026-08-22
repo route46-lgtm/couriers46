@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Briefcase, MapPin, ArrowRight } from "lucide-react";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 const apiUrl = import.meta.env.VITE_API_URL;
 const CAREERS_EMAIL = "operations@route46couriers.co.uk";
 
@@ -51,6 +53,22 @@ export default function CareersPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
+      <Seo
+        title="Careers & Courier Jobs"
+        description="Open roles at Route46 Couriers. Join a UK same day courier and time-critical logistics team — driver, operations and office vacancies."
+        path="/careers"
+        schemas={[
+          webPageSchema({
+            path: "/careers",
+            name: "Careers & Courier Jobs",
+            description:
+              "Open roles at Route46 Couriers across driving, operations and office functions.",
+            type: "CollectionPage",
+          }),
+          breadcrumbSchema([{ name: "Careers", path: "/careers" }]),
+        ]}
+      />
+
       {/* Hero */}
       <div className="relative bg-[#134467] overflow-hidden">
         <div className="absolute inset-0 opacity-10">

@@ -493,6 +493,8 @@ import {
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out fill-mode-forwards";
 
@@ -526,6 +528,22 @@ function TypingHighlight({ text, speed = 80 }) {
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-white overflow-x-hidden font-sans">
+      <Seo
+        title="About Route46 Couriers"
+        description="Route46 Couriers is a UK same day courier and time-critical logistics operator, and a trading name of FourSix46® Global Ltd. Learn who we are and how we deliver."
+        path="/about"
+        schemas={[
+          webPageSchema({
+            path: "/about",
+            name: "About Route46 Couriers",
+            description:
+              "A UK same day courier and time-critical logistics operator, and a trading name of FourSix46® Global Ltd.",
+            type: "AboutPage",
+          }),
+          breadcrumbSchema([{ name: "About", path: "/about" }]),
+        ]}
+      />
+
       {/* ── HERO ── */}
       <div className="relative py-20 sm:py-24 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#48AEDD]/10 rounded-full blur-3xl -z-10" />

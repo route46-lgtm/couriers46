@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Search, ArrowRight, BookOpen } from "lucide-react";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema, itemListSchema } from "@/lib/seo";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 interface BlogPost {
@@ -61,6 +63,30 @@ export default function BlogsPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
+      <Seo
+        title="Courier & Logistics Blog"
+        description="Guides, industry news and practical advice on same day courier delivery, time-critical logistics and UK transport from the Route46 Couriers team."
+        path="/blog"
+        schemas={[
+          webPageSchema({
+            path: "/blog",
+            name: "Courier & Logistics Blog",
+            description:
+              "Guides, industry news and practical advice on same day courier delivery and UK logistics.",
+            type: "CollectionPage",
+          }),
+          breadcrumbSchema([{ name: "Blog", path: "/blog" }]),
+          posts.length > 0 &&
+            itemListSchema({
+              name: "Route46 Couriers Blog Posts",
+              items: posts.map((p) => ({
+                name: p.title,
+                path: `/blog/${p.slug}`,
+              })),
+            }),
+        ].filter(Boolean) as object[]}
+      />
+
       {/* ── Hero ─────────────────────────────────────── */}
       <div className="relative bg-[#134467] overflow-hidden">
         <div className="absolute inset-0 opacity-10">

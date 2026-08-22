@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, ShieldCheck, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
+import Seo from "@/components/Seo";
 export default function ContactThankYouPage() {
   const navigate = useNavigate();
 
@@ -13,6 +14,8 @@ export default function ContactThankYouPage() {
 
   return (
     <div className="min-h-screen w-full bg-white flex flex-col relative overflow-hidden font-sans text-slate-800">
+      <Seo title="Message Received" path="/contact-thank-you" noindex />
+
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#48AEDD]/5 rounded-full blur-3xl -z-10" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#E53935]/5 rounded-full blur-3xl -z-10" />

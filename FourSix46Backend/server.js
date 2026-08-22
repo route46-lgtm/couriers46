@@ -4030,6 +4030,42 @@ app.delete("/api/location-services/:id", async (req, res) => {
     });
   }
 });
+/**
+ * @route   GET /api/location-services
+ * @desc    Public list of published location x service landing pages.
+ *          Powers the HTML sitemap at /sitemap so it lists exactly the
+ *          landing pages that sitemap.xml lists — no drift between the two.
+ */
+app.get("/api/location-services", async (req, res) => {
+  try {
+    const snapshot = await db
+      .collection("locationServicePages")
+      .where("status", "==", "published")
+      .get();
+
+    const pages = snapshot.docs
+      .map((doc) => {
+        const d = doc.data();
+        return {
+          id: doc.id,
+          locationSlug: d.locationSlug,
+          serviceSlug: d.serviceSlug,
+          locationName: d.locationName || d.locationSlug,
+          serviceName: d.serviceName || d.serviceSlug,
+          noindex: d.noindex === true,
+        };
+      })
+      .filter((p) => p.locationSlug && p.serviceSlug);
+
+    res.json(pages);
+  } catch (err) {
+    console.error("GET /api/location-services error:", err);
+    res
+      .status(500)
+      .json({ message: "Failed to fetch landing pages", error: err.message });
+  }
+});
+
 app.get("/sitemap.xml", async (req, res) => {
   try {
 
@@ -4058,6 +4094,7 @@ app.get("/sitemap.xml", async (req, res) => {
     u(`${BASE_URL}/quick-quote`,        "monthly", "0.9");
     u(`${BASE_URL}/accredited-trusted`, "monthly", "0.5");
     u(`${BASE_URL}/rha-summary`,        "monthly", "0.5");
+    u(`${BASE_URL}/sitemap`,            "weekly",  "0.4");
     u(`${BASE_URL}/privacy`,            "yearly",  "0.3");
     u(`${BASE_URL}/terms`,              "yearly",  "0.3");
     u(`${BASE_URL}/cookies`,            "yearly",  "0.3");
@@ -4126,6 +4163,19 @@ app.get("/sitemap.xml", async (req, res) => {
         const lastmod = data.updatedAt?.toDate?.()?.toISOString?.()?.split("T")?.[0] ??
                         data.publishedDate ?? today;
         u(`${BASE_URL}/blog/${data.slug}`, "weekly", "0.7", lastmod);
+      }
+    });
+
+    /* ===== CAREER LISTINGS ===== */
+    const careers = await db.collection("careers")
+      .where("status", "==", "published")
+      .get();
+
+    careers.forEach(doc => {
+      const data = doc.data();
+      if (!data.noindex) {
+        const lastmod = data.updatedAt?.toDate?.()?.toISOString?.()?.split("T")?.[0] ?? today;
+        u(`${BASE_URL}/careers/${doc.id}`, "weekly", "0.5", lastmod);
       }
     });
 

@@ -3,6 +3,8 @@ import { Shield, FileCheck, Truck, Lock, Building2, CheckCircle, Award, Target, 
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // Smoother animation utility
 const fadeInUp = "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
 
@@ -107,6 +109,23 @@ export default function AccreditedTrustedPage() {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden font-sans text-slate-800">
+      <Seo
+        title="Accreditations & Trust"
+        description="Route46 Couriers is RHA approved, Cyber Essentials certified, ICO registered, fully insured and an FSB member. See our UK industry accreditations."
+        path="/accredited-trusted"
+        schemas={[
+          webPageSchema({
+            path: "/accredited-trusted",
+            name: "Accreditations & Trust",
+            description:
+              "RHA approved, Cyber Essentials certified, ICO registered, fully insured and an FSB member.",
+          }),
+          breadcrumbSchema([
+            { name: "Accredited & Trusted", path: "/accredited-trusted" },
+          ]),
+        ]}
+      />
+
 
       {/* --- HERO HEADER --- */}
       <div className="relative pt-24 pb-20 overflow-hidden bg-slate-50/50 border-b border-slate-100">

@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { LoadingAnimation } from "@/components/shared/LoadingAnimation";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 const UK_POSTCODE_REGEX =
   /^([Gg][Ii][Rr] ?0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
@@ -141,6 +143,21 @@ export default function QuickQuotePage() {
 
   return (
     <>
+      <Seo
+        title="Get a Same Day Courier Quote"
+        description="Get a fast, no-obligation quote for same day courier delivery anywhere in the UK. Tell us your collection and delivery details and we will price it."
+        path="/quick-quote"
+        schemas={[
+          webPageSchema({
+            path: "/quick-quote",
+            name: "Get a Same Day Courier Quote",
+            description:
+              "Fast, no-obligation quotes for same day courier delivery anywhere in the UK.",
+          }),
+          breadcrumbSchema([{ name: "Get a Quote", path: "/quick-quote" }]),
+        ]}
+      />
+
       {isSubmitting && (
         <LoadingAnimation message="Submitting your driver application..." />
       )}

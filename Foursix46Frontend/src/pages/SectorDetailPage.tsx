@@ -947,6 +947,7 @@ import { Helmet } from "react-helmet-async";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import BlockRenderer from "@/components/BlockRenderer";
+import { ORG_ID } from "@/lib/seo";
 import {
   Accordion,
   AccordionItem,
@@ -1274,21 +1275,24 @@ export default function SectorDetailPage() {
         <meta
           property="og:image"
           content={
-            sector.ogImage || "https://www.route46couriers.co.uk/og-default.jpg"
+            sector.ogImage || "https://www.route46couriers.co.uk/route46logo.png"
           }
         />
-        {sector.noindex && <meta name="robots" content="noindex,nofollow" />}
+        <meta
+          name="robots"
+          content={
+            sector.noindex
+              ? "noindex, nofollow"
+              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          }
+        />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Service",
             name: sector.name,
             description: sector.seoDescription,
-            provider: {
-              "@type": "Organization",
-              name: "FourSix46®",
-              url: "https://www.route46couriers.co.uk",
-            },
+            provider: { "@id": ORG_ID },
             areaServed: "United Kingdom",
           })}
         </script>
@@ -1315,27 +1319,6 @@ export default function SectorDetailPage() {
                 name: sector.name,
                 item: canonicalUrl,
               },
-            ],
-          })}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "@id": "https://www.route46couriers.co.uk/#business",
-            name: "FourSix46® Couriers",
-            url: "https://www.route46couriers.co.uk",
-            telephone: "+447393363802",
-            image:
-              sector.ogImage ||
-              "https://www.route46couriers.co.uk/og-default.jpg",
-            description: sector.seoDescription || "",
-            address: { "@type": "PostalAddress", addressCountry: "GB" },
-            areaServed: "United Kingdom",
-            sameAs: [
-              "https://www.instagram.com/route46couriers/",
-              "https://www.facebook.com/route46couriers/",
-              "https://www.linkedin.com/company/foursix46-couriers/",
             ],
           })}
         </script>

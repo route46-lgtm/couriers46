@@ -22,6 +22,8 @@ import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { LoadingAnimation } from "@/components/shared/LoadingAnimation";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // Animation utilities
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
@@ -217,6 +219,22 @@ export default function ContactPage() {
 
   return (
     <>
+      <Seo
+        title="Contact Us"
+        description="Speak to the Route46 Couriers team about same day delivery, dedicated vehicles and time-critical UK logistics. Call, email or send us a message."
+        path="/contact"
+        schemas={[
+          webPageSchema({
+            path: "/contact",
+            name: "Contact Route46 Couriers",
+            description:
+              "Speak to the Route46 Couriers team about same day delivery and time-critical UK logistics.",
+            type: "ContactPage",
+          }),
+          breadcrumbSchema([{ name: "Contact", path: "/contact" }]),
+        ]}
+      />
+
       {/* Loading Animation Overlay */}
       {isLoading && <LoadingAnimation message="Sending your message..." />}
 

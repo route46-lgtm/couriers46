@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 
 <head>
   <meta charset="UTF-8" />
@@ -45,7 +45,7 @@
   <meta name="robots" content="index, follow" />
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@Route46" />
+  <meta name="twitter:site" content="@Route46Couriers" />
   <meta name="twitter:image" content="https://www.route46couriers.co.uk/route46logo.png" />
 
   <!-- Theme Color for Mobile Browsers -->
@@ -89,17 +89,10 @@
     anonymize_ip: true
   });
 </script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Route46 Couriers",
-  "url": "https://www.route46couriers.co.uk",
-  "logo": "https://www.route46couriers.co.uk/route46logo.png",
-  "description": "Fast, reliable same-day courier services across the UK.",
-  "areaServed": "United Kingdom"
-}
-</script>
+<!-- Organization + WebSite JSON-LD is emitted by RootLayout via react-helmet-async
+     (see src/lib/seo.ts). It is baked into every statically generated page and
+     injected on client-side navigation — keeping a copy here too would duplicate
+     the node on every page, since this file is the SSG template. -->
 </head>
 
 <body>

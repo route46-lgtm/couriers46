@@ -13,6 +13,8 @@ import {
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // Animation utility
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
@@ -80,6 +82,21 @@ export default function RhaConditionsPage() {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden font-sans text-slate-800">
+      <Seo
+        title="RHA Conditions of Carriage Summary"
+        description="A plain-English summary of the Road Haulage Association (RHA) Conditions of Carriage under which Route46 Couriers transports your goods."
+        path="/rha-summary"
+        schemas={[
+          webPageSchema({
+            path: "/rha-summary",
+            name: "RHA Conditions of Carriage Summary",
+            description:
+              "A plain-English summary of the RHA Conditions of Carriage used by Route46 Couriers.",
+          }),
+          breadcrumbSchema([{ name: "RHA Summary", path: "/rha-summary" }]),
+        ]}
+      />
+
       {/* --- HERO SECTION --- */}
       <div className="relative pt-24 pb-20 border-b border-slate-100 bg-slate-50/50">
         {/* Background Decor */}

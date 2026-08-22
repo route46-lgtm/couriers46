@@ -22,6 +22,8 @@ import {
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // Animation utility
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
@@ -508,6 +510,20 @@ export default function TermsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden font-sans selection:bg-[#E53935] selection:text-white">
+      <Seo
+        title="Terms & Conditions"
+        description="The terms and conditions governing use of the Route46 Couriers website and our same day courier services."
+        path="/terms"
+        schemas={[
+          webPageSchema({
+            path: "/terms",
+            name: "Terms & Conditions",
+            description: "The terms and conditions governing use of the Route46 Couriers website and our same day courier services.",
+          }),
+          breadcrumbSchema([{ name: "Terms & Conditions", path: "/terms" }]),
+        ]}
+      />
+
       {/* Header Area */}
       <div className="relative pt-16 pb-12 sm:pt-24 sm:pb-16 bg-white border-b border-[#48AEDD]/10">
         {/* Subtle Background Decor */}

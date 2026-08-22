@@ -12,9 +12,10 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema, itemListSchema } from "@/lib/seo";
 const apiUrl = import.meta.env.VITE_API_URL;
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out";
@@ -126,9 +127,39 @@ export default function ServicesPage() {
       : true,
   );
 
+  // Declared above the loading guard so the head tags are emitted in
+  // every render state — during SSG this component only ever renders
+  // the loading branch, and the page would otherwise ship no SEO at all.
+  const seo = (
+    <Seo
+      title="Our Courier Services"
+      description="Explore Route46 Couriers services — same day, next day, dedicated vehicle, nationwide and time-critical delivery across the UK."
+      path="/services"
+      schemas={[
+        webPageSchema({
+          path: "/services",
+          name: "Our Courier Services",
+          description:
+            "Same day, next day, dedicated vehicle and time-critical courier services across the UK.",
+          type: "CollectionPage",
+        }),
+        breadcrumbSchema([{ name: "Our Services", path: "/services" }]),
+        services.length > 0 &&
+          itemListSchema({
+            name: "Route46 Couriers Services",
+            items: services.map((s: { name: string; slug: string }) => ({
+              name: s.name,
+              path: `/services/${s.slug}`,
+            })),
+          }),
+      ].filter(Boolean) as object[]}
+    />
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
+        {seo}
         <div className="flex flex-col items-center gap-5">
           <div className="relative w-16 h-16">
             <div className="absolute inset-0 rounded-full border-4 border-[#134467]/10" />
@@ -144,54 +175,9 @@ export default function ServicesPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans antialiased">
+      {seo}
       {/* ── SEO ─────────────────────────────────────────────────────────── */}
-      <Helmet>
-        <title>Our Services | Route46 Couriers</title>
-        <meta
-          name="description"
-          content="Explore Route46 courier services — same day, next day, nationwide and more."
-        />
-        <link
-          rel="canonical"
-          href="https://www.route46couriers.co.uk/services"
-        />
-        <meta property="og:title" content="Our Services | Route46" />
-        <meta
-          property="og:description"
-          content="Explore Route46 courier services — same day, next day, nationwide and more."
-        />
-        <meta
-          property="og:url"
-          content="https://www.route46couriers.co.uk/services"
-        />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:image"
-          content="https://www.route46couriers.co.uk/og-default.jpg"
-        />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "Home",
-                item: "https://www.route46couriers.co.uk",
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: "Our Services",
-                item: "https://www.route46couriers.co.uk/services",
-              },
-            ],
-          })}
-        </script>
-      </Helmet>
-
-      {/* ══════════════════════════════════════════════════════════════
+{/* ══════════════════════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════════════════════ */}
       <section className="relative pt-20 pb-24 text-center overflow-hidden bg-white">

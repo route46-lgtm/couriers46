@@ -2,6 +2,7 @@ import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import Seo from "@/components/Seo";
 export default function PaySuccessPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -9,6 +10,8 @@ export default function PaySuccessPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-6 bg-gradient-to-br from-green-50 via-white to-[#134467]/5">
+      <Seo title="Payment Successful" path="/pay/success" noindex />
+
       <CheckCircle className="w-20 h-20 text-green-500 mb-6" />
 
       <h1 className="text-3xl font-bold text-[#134467] mb-3">

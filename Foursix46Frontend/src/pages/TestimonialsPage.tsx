@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // Animation utility
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
@@ -157,6 +159,22 @@ export const TestimonialsPage = () => {
 
   return (
     <div className="bg-slate-50 font-sans selection:bg-[#E53935] selection:text-white min-h-screen">
+      <Seo
+        title="Customer Testimonials"
+        description="What UK businesses say about Route46 Couriers — real feedback on our same day delivery, dedicated vehicles and time-critical logistics service."
+        path="/testimonials"
+        schemas={[
+          webPageSchema({
+            path: "/testimonials",
+            name: "Customer Testimonials",
+            description:
+              "Real feedback from UK businesses on Route46 Couriers' same day delivery service.",
+            type: "CollectionPage",
+          }),
+          breadcrumbSchema([{ name: "Testimonials", path: "/testimonials" }]),
+        ]}
+      />
+
       {/* Testimonials Section */}
       <section className="py-20 bg-slate-50 relative overflow-hidden flex flex-col justify-center">
         {/* Styles for Marquee Animations */}

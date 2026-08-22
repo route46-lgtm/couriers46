@@ -1029,6 +1029,7 @@ import { Helmet } from "react-helmet-async";
 import Footer from "@/components/Footer";
 import BlockRenderer from "@/components/BlockRenderer";
 import { cn } from "@/lib/utils";
+import { ORG_ID } from "@/lib/seo";
 import {
   Accordion,
   AccordionItem,
@@ -1303,10 +1304,17 @@ export default function ServiceDetailPage() {
           property="og:image"
           content={
             service.ogImage ||
-            "https://www.route46couriers.co.uk/og-default.jpg"
+            "https://www.route46couriers.co.uk/route46logo.png"
           }
         />
-        {service.noindex && <meta name="robots" content="noindex,nofollow" />}
+        <meta
+          name="robots"
+          content={
+            service.noindex
+              ? "noindex, nofollow"
+              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          }
+        />
 
         {/* Service schema */}
         <script type="application/ld+json">
@@ -1315,11 +1323,7 @@ export default function ServiceDetailPage() {
             "@type": "Service",
             name: service.name,
             description: service.seoDescription,
-            provider: {
-              "@type": "Organization",
-              name: "Route46",
-              url: "https://www.route46couriers.co.uk",
-            },
+            provider: { "@id": ORG_ID },
             areaServed: "United Kingdom",
           })}
         </script>
@@ -1348,29 +1352,6 @@ export default function ServiceDetailPage() {
                 name: service.name,
                 item: canonicalUrl,
               },
-            ],
-          })}
-        </script>
-
-        {/* LocalBusiness schema */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "@id": "https://www.route46couriers.co.uk/#business",
-            name: "FourSix46® Couriers",
-            url: "https://www.route46couriers.co.uk",
-            telephone: "+447393363802",
-            image:
-              service.ogImage ||
-              "https://www.route46couriers.co.uk/og-default.jpg",
-            description: service.seoDescription || "",
-            address: { "@type": "PostalAddress", addressCountry: "GB" },
-            areaServed: "United Kingdom",
-            sameAs: [
-              "https://www.instagram.com/route46couriers/",
-              "https://www.facebook.com/route46couriers/",
-              "https://www.linkedin.com/company/foursix46-couriers/",
             ],
           })}
         </script>

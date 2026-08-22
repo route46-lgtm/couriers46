@@ -36,6 +36,8 @@ import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { LoadingAnimation } from "@/components/shared/LoadingAnimation";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // --- Zod Validation Schemas ---
 
 // Step 1: Personal Information
@@ -444,6 +446,23 @@ export default function BecomeDriverPage() {
 
   return (
     <>
+      <Seo
+        title="Become a Courier Driver"
+        description="Join the Route46 Couriers driver network. Apply to run same day and time-critical courier work across the UK with consistent jobs and fast payment."
+        path="/become-driver"
+        schemas={[
+          webPageSchema({
+            path: "/become-driver",
+            name: "Become a Courier Driver",
+            description:
+              "Join the Route46 Couriers driver network for same day and time-critical courier work across the UK.",
+          }),
+          breadcrumbSchema([
+            { name: "Become a Driver", path: "/become-driver" },
+          ]),
+        ]}
+      />
+
       {/* Loading Animation Overlay */}
       {isSubmitting && (
         <LoadingAnimation message="Submitting your driver application..." />

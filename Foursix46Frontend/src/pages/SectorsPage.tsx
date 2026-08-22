@@ -203,9 +203,10 @@ import React, { useEffect, useState, useMemo } from "react";
 import { ArrowRight, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema, itemListSchema } from "@/lib/seo";
 const apiUrl = import.meta.env.VITE_API_URL;
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out";
@@ -262,9 +263,39 @@ export default function SectorsPage() {
     );
   }, [allSectors, search]);
 
+  // Declared above the loading guard so the head tags are emitted in
+  // every render state — during SSG this component only ever renders
+  // the loading branch, and the page would otherwise ship no SEO at all.
+  const seo = (
+    <Seo
+      title="Industry Sectors We Serve"
+      description="Specialist courier services for dental, aerospace, medical, legal, automotive and manufacturing sectors across the UK."
+      path="/sectors"
+      schemas={[
+        webPageSchema({
+          path: "/sectors",
+          name: "Industry Sectors We Serve",
+          description:
+            "Specialist courier services for dental, aerospace, medical and manufacturing sectors across the UK.",
+          type: "CollectionPage",
+        }),
+        breadcrumbSchema([{ name: "Industry Sectors", path: "/sectors" }]),
+        allSectors.length > 0 &&
+          itemListSchema({
+            name: "Industry Sectors",
+            items: allSectors.map((s: { name: string; slug: string }) => ({
+              name: s.name,
+              path: `/sectors/${s.slug}`,
+            })),
+          }),
+      ].filter(Boolean) as object[]}
+    />
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
+        {seo}
         <div className="flex flex-col items-center gap-5">
           <div className="relative w-16 h-16">
             <div className="absolute inset-0 rounded-full border-4 border-[#134467]/10" />
@@ -280,53 +311,8 @@ export default function SectorsPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
-      <Helmet>
-        <title>Industry Sectors | Route46 Couriers</title>
-        <meta
-          name="description"
-          content="Specialist courier services for dental, aerospace, medical and more industries across the UK."
-        />
-        <link
-          rel="canonical"
-          href="https://www.route46couriers.co.uk/sectors"
-        />
-        <meta property="og:title" content="Industry Sectors | FourSix46®" />
-        <meta
-          property="og:description"
-          content="Specialist courier services for dental, aerospace, medical and more industries across the UK."
-        />
-        <meta
-          property="og:url"
-          content="https://www.route46couriers.co.uk/sectors"
-        />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:image"
-          content="https://www.route46couriers.co.uk/og-default.jpg"
-        />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "Home",
-                item: "https://www.route46couriers.co.uk",
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: "Industry Sectors",
-                item: "https://www.route46couriers.co.uk/sectors",
-              },
-            ],
-          })}
-        </script>
-      </Helmet>
-
-      {/* ── HERO ── */}
+      {seo}
+{/* ── HERO ── */}
       <section className="pt-24 pb-16 text-center px-5">
         {/* ✅ Fix #2 — consistent eyebrow badge */}
         <span

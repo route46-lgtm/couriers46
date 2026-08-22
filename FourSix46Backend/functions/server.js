@@ -4028,23 +4028,72 @@ app.delete("/api/location-services/:id", async (req, res) => {
     });
   }
 });
+/**
+ * @route   GET /api/location-services
+ * @desc    Public list of published location x service landing pages.
+ *          Powers the HTML sitemap at /sitemap so it lists exactly the
+ *          landing pages that sitemap.xml lists — no drift between the two.
+ */
+app.get("/api/location-services", async (req, res) => {
+  try {
+    const snapshot = await db
+      .collection("locationServicePages")
+      .where("status", "==", "published")
+      .get();
+
+    const pages = snapshot.docs
+      .map((doc) => {
+        const d = doc.data();
+        return {
+          id: doc.id,
+          locationSlug: d.locationSlug,
+          serviceSlug: d.serviceSlug,
+          locationName: d.locationName || d.locationSlug,
+          serviceName: d.serviceName || d.serviceSlug,
+          noindex: d.noindex === true,
+        };
+      })
+      .filter((p) => p.locationSlug && p.serviceSlug);
+
+    res.json(pages);
+  } catch (err) {
+    console.error("GET /api/location-services error:", err);
+    res
+      .status(500)
+      .json({ message: "Failed to fetch landing pages", error: err.message });
+  }
+});
+
 app.get('/sitemap.xml', async (req, res) => {
   try {
     const BASE_URL = process.env.BASE_URL || 'https://www.route46couriers.co.uk';
     const today = new Date().toISOString().split('T')[0]; // 2026-04-03
 
     // [url, changefreq, priority]
+    // Every entry below must be a real route in Foursix46Frontend/src/routes.tsx.
+    // Excluded on purpose: /admin/*, /pay/*, and the *-thank-you pages — those
+    // are disallowed in robots.txt and rendered noindex by <Seo>.
     let urls = [
-      [BASE_URL,                    'weekly',  '1.0'],
-      [`${BASE_URL}/services`,      'weekly',  '0.8'],
-      [`${BASE_URL}/sectors`,       'weekly',  '0.8'],
-      [`${BASE_URL}/locations`,     'weekly',  '0.8'],
-      [`${BASE_URL}/blog`,          'weekly',  '0.7'],
-      [`${BASE_URL}/contact`,       'monthly', '0.6'],
-      [`${BASE_URL}/about`,         'monthly', '0.6'],
-      [`${BASE_URL}/become-driver`, 'monthly', '0.6'],
-      [`${BASE_URL}/become-shipper`,'monthly', '0.6'],
-      [`${BASE_URL}/careers`,       'weekly',  '0.6'],
+      [BASE_URL,                          'daily',   '1.0'],
+      [`${BASE_URL}/quick-quote`,         'monthly', '0.9'],
+      [`${BASE_URL}/services`,            'weekly',  '0.8'],
+      [`${BASE_URL}/sectors`,             'weekly',  '0.8'],
+      [`${BASE_URL}/locations`,           'weekly',  '0.8'],
+      [`${BASE_URL}/blog`,                'daily',   '0.8'],
+      [`${BASE_URL}/for-businesses`,      'monthly', '0.7'],
+      [`${BASE_URL}/become-driver`,       'monthly', '0.7'],
+      [`${BASE_URL}/contact`,             'monthly', '0.7'],
+      [`${BASE_URL}/about`,               'monthly', '0.7'],
+      [`${BASE_URL}/careers`,             'weekly',  '0.6'],
+      [`${BASE_URL}/faqs`,                'monthly', '0.6'],
+      [`${BASE_URL}/testimonials`,        'monthly', '0.6'],
+      [`${BASE_URL}/accredited-trusted`,  'monthly', '0.5'],
+      [`${BASE_URL}/rha-summary`,         'monthly', '0.5'],
+      [`${BASE_URL}/sitemap`,             'weekly',  '0.4'],
+      [`${BASE_URL}/privacy`,             'yearly',  '0.3'],
+      [`${BASE_URL}/terms`,               'yearly',  '0.3'],
+      [`${BASE_URL}/cookies`,             'yearly',  '0.3'],
+      [`${BASE_URL}/refund-policy`,       'yearly',  '0.3'],
     ];
 
     // Dynamic: Services
@@ -4094,6 +4143,16 @@ app.get('/sitemap.xml', async (req, res) => {
       if (!data.noindex) {
         const lastmod = data.updatedAt?.toDate?.()?.toISOString().split('T')[0] || today;
         urls.push([`${BASE_URL}/blog/${data.slug}`, 'monthly', '0.6', lastmod]);
+      }
+    });
+
+    // Dynamic: Career listings
+    const careers = await db.collection('careers').where('status', '==', 'published').get();
+    careers.forEach(doc => {
+      const data = doc.data();
+      if (!data.noindex) {
+        const lastmod = data.updatedAt?.toDate?.()?.toISOString().split('T')[0] || today;
+        urls.push([`${BASE_URL}/careers/${doc.id}`, 'weekly', '0.5', lastmod]);
       }
     });
 

@@ -11,6 +11,8 @@ import { Building2, Send, Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema } from "@/lib/seo";
 export default function HomePage() {
   const navigate = useNavigate();
 
@@ -70,6 +72,20 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title="Same Day Courier Services UK"
+        description="Fast, reliable same day courier services across the UK. Secure transport, professional drivers and real-time delivery updates with Route46 Couriers."
+        path="/"
+        schemas={[
+          webPageSchema({
+            path: "/",
+            name: "Same Day Courier Services UK | Route46 Couriers",
+            description:
+              "Fast, reliable same day courier services across the UK. Secure transport, professional drivers and real-time delivery updates.",
+          }),
+        ]}
+      />
+
       <HeroSection
         backgroundImageUrl="/route462.webp"
         mobileBackgroundImageUrl="/route463mob.webp"

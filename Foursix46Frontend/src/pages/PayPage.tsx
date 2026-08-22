@@ -259,6 +259,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { useVatSettings } from "@/hooks/useVatSettings";
 
+import Seo from "@/components/Seo";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 const UK_PHONE_REGEX = /^\+44\d{10}$/;
 
@@ -400,6 +401,8 @@ export default function PayPage() {
   ───────────────────────────────────────────────────────────────────────── */
   return (
     <>
+      <Seo title="Pay an Invoice" path="/pay" noindex />
+
       <div className="min-h-screen py-12 px-4 sm:px-8 bg-gradient-to-br from-[#E53935]/5 via-white to-[#134467]/5">
         <div className="max-w-3xl mx-auto">
           {/* ── BACK BUTTON ── */}

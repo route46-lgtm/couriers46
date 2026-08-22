@@ -177,7 +177,7 @@
 //         {/* ✅ FIX 2: Always render og:image with fallback */}
 //         <meta
 //           property="og:image"
-//           content={page.ogImage || `${BASE_URL}/og-default.jpg`}
+//           content={page.ogImage || `${BASE_URL}/route46logo.png`}
 //         />
 
 //         {/* ✅ Service Schema (existing — unchanged) */}
@@ -209,7 +209,7 @@
 //             name: "FourSix46® Couriers",
 //             url: BASE_URL,
 //             telephone: "+447393363802",
-//             image: `${BASE_URL}/og-default.jpg`,
+//             image: `${BASE_URL}/route46logo.png`,
 //             description: page.seoDescription || "",
 //             address: {
 //               "@type": "PostalAddress",
@@ -561,6 +561,7 @@ import {
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import BlockRenderer from "@/components/BlockRenderer";
+import { ORG_ID } from "@/lib/seo";
 import {
   Accordion,
   AccordionItem,
@@ -1082,7 +1083,14 @@ export default function LocationServicePage() {
         <title>{page.seoTitle || page.heroTitle} | Route46 Couriers</title>
         <meta name="description" content={page.seoDescription || ""} />
         <link rel="canonical" href={canonicalUrl} />
-        {page.noindex && <meta name="robots" content="noindex,nofollow" />}
+        <meta
+          name="robots"
+          content={
+            page.noindex
+              ? "noindex, nofollow"
+              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          }
+        />
 
         <meta property="og:title" content={page.seoTitle || page.heroTitle} />
         <meta property="og:description" content={page.seoDescription || ""} />
@@ -1090,7 +1098,7 @@ export default function LocationServicePage() {
         <meta property="og:type" content="website" />
         <meta
           property="og:image"
-          content={page.ogImage || `${BASE_URL}/og-default.jpg`}
+          content={page.ogImage || `${BASE_URL}/route46logo.png`}
         />
 
         {/* Service Schema */}
@@ -1101,43 +1109,11 @@ export default function LocationServicePage() {
             "@id": canonicalUrl,
             name: page.heroTitle,
             description: page.seoDescription,
-            provider: {
-              "@type": "CourierService",
-              name: "FourSix46®",
-              url: BASE_URL,
-            },
+            provider: { "@id": ORG_ID },
             areaServed: {
               "@type": "Place",
               name: page.location?.name || locationSlug,
             },
-          })}
-        </script>
-
-        {/* LocalBusiness Schema */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "@id": `${BASE_URL}/#business`,
-            name: "FourSix46® Couriers",
-            url: BASE_URL,
-            telephone: "+447393363802",
-            image: `${BASE_URL}/og-default.jpg`,
-            description: page.seoDescription || "",
-            address: {
-              "@type": "PostalAddress",
-              addressCountry: "GB",
-              addressRegion: page.location?.country || "England",
-            },
-            areaServed: {
-              "@type": "Place",
-              name: page.location?.name || locationSlug,
-            },
-            sameAs: [
-              "https://www.instagram.com/route46couriers/",
-              "https://www.facebook.com/route46couriers/",
-              "https://www.linkedin.com/company/foursix46-couriers/",
-            ],
           })}
         </script>
 

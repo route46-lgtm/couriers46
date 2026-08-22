@@ -247,9 +247,10 @@ import React, { useEffect, useState, useMemo } from "react";
 import { ArrowRight, MapPin, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema, itemListSchema } from "@/lib/seo";
 const apiUrl = import.meta.env.VITE_API_URL;
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out";
@@ -334,9 +335,39 @@ export default function LocationsPage() {
   }, [publishedLocations]);
 
   /* ── ✅ Fix #1 — skeleton loading state ── */
+  // Declared above the loading guard so the head tags are emitted in
+  // every render state — during SSG this component only ever renders
+  // the loading branch, and the page would otherwise ship no SEO at all.
+  const seo = (
+    <Seo
+      title="Locations We Serve"
+      description="Cities and regions where Route46 Couriers provides reliable same day courier services across the UK mainland — from London and Birmingham to Cardiff and Manchester."
+      path="/locations"
+      schemas={[
+        webPageSchema({
+          path: "/locations",
+          name: "Locations We Serve",
+          description:
+            "Cities and regions covered by Route46 Couriers' same day courier service across the UK mainland.",
+          type: "CollectionPage",
+        }),
+        breadcrumbSchema([{ name: "Locations", path: "/locations" }]),
+        allLocations.length > 0 &&
+          itemListSchema({
+            name: "Courier Service Locations",
+            items: allLocations.map((l: { name: string; slug: string }) => ({
+              name: l.name,
+              path: `/locations/${l.slug}`,
+            })),
+          }),
+      ].filter(Boolean) as object[]}
+    />
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
+        {seo}
         <div className="flex flex-col items-center gap-5">
           <div className="relative w-16 h-16">
             <div className="absolute inset-0 rounded-full border-4 border-[#134467]/10" />
@@ -352,54 +383,9 @@ export default function LocationsPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans">
+      {seo}
       {/* ── SEO ── */}
-      <Helmet>
-        <title>Locations We Serve | Route46 Couriers</title>
-        <meta
-          name="description"
-          content="Explore cities and regions where FourSix46® provides reliable same-day courier services across the UK mainland."
-        />
-        <link
-          rel="canonical"
-          href="https://www.route46couriers.co.uk/locations"
-        />
-        <meta property="og:title" content="Locations We Serve | FourSix46®" />
-        <meta
-          property="og:description"
-          content="Explore cities and regions where FourSix46® provides reliable same-day courier services across the UK mainland."
-        />
-        <meta
-          property="og:url"
-          content="https://www.route46couriers.co.uk/locations"
-        />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:image"
-          content="https://www.route46couriers.co.uk/og-default.jpg"
-        />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "Home",
-                item: "https://www.route46couriers.co.uk",
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: "Locations",
-                item: "https://www.route46couriers.co.uk/locations",
-              },
-            ],
-          })}
-        </script>
-      </Helmet>
-
-      {/* ── HERO — compact so the location grid is visible without scrolling ── */}
+{/* ── HERO — compact so the location grid is visible without scrolling ── */}
       <section className="pt-20 pb-8 text-center">
         <div className="container mx-auto px-6 max-w-5xl">
           {/* ✅ Fix #4 — "Nationwide Courier Coverage" per Location Links Hub spec */}

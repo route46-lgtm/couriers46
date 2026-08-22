@@ -581,6 +581,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
+import { ORG_ID } from "@/lib/seo";
 import {
   Accordion,
   AccordionItem,
@@ -1037,7 +1038,7 @@ export default function BlogPostPage() {
   const ogImage =
     post.ogImage ||
     post.featuredImage ||
-    "https://www.route46couriers.co.uk/og-default.jpg";
+    "https://www.route46couriers.co.uk/route46logo.png";
 
   const formattedDate = post.publishedDate
     ? new Date(post.publishedDate).toLocaleDateString("en-GB", {
@@ -1059,7 +1060,14 @@ export default function BlogPostPage() {
           content={post.seoDescription || post.excerpt || ""}
         />
         <link rel="canonical" href={canonicalUrl} />
-        {post.noindex && <meta name="robots" content="noindex,nofollow" />}
+        <meta
+          name="robots"
+          content={
+            post.noindex
+              ? "noindex, nofollow"
+              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          }
+        />
 
         {/* Open Graph */}
         <meta property="og:type" content="article" />
@@ -1117,15 +1125,7 @@ export default function BlogPostPage() {
               "@type": "Person",
               name: post.authorName || "Route46 Editorial Team",
             },
-            publisher: {
-              "@type": "Organization",
-              name: "FourSix46® Couriers",
-              url: "https://www.route46couriers.co.uk",
-              logo: {
-                "@type": "ImageObject",
-                url: "https://www.route46couriers.co.uk/logo.png",
-              },
-            },
+            publisher: { "@id": ORG_ID },
             mainEntityOfPage: {
               "@type": "WebPage",
               "@id": canonicalUrl,
@@ -1174,32 +1174,6 @@ export default function BlogPostPage() {
                       item: canonicalUrl,
                     },
                   ]),
-            ],
-          })}
-        </script>
-
-        {/* LocalBusiness schema — consistent across all pages */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "@id": "https://www.route46couriers.co.uk/#business",
-            name: "FourSix46® Couriers",
-            url: "https://www.route46couriers.co.uk",
-            telephone: "+447393363802",
-            image: "https://www.route46couriers.co.uk/og-default.jpg",
-            address: {
-              "@type": "PostalAddress",
-              streetAddress: "66 Paul Street",
-              addressLocality: "London",
-              postalCode: "EC2A 4NA",
-              addressCountry: "GB",
-            },
-            areaServed: "United Kingdom",
-            sameAs: [
-              "https://www.instagram.com/route46couriers/",
-              "https://www.facebook.com/route46couriers/",
-              "https://www.linkedin.com/company/foursix46-couriers/",
             ],
           })}
         </script>

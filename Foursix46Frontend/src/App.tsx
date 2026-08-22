@@ -188,17 +188,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { Suspense, Component, ReactNode } from "react";
-import { HelmetProvider } from "react-helmet-async";
 import { Helmet } from "react-helmet-async";
 
 // ── Always-on Global Components ───────────────────────────────────────────────
 import { Navigation } from "@/components/Navigation";
 import { Chatbot } from "@/components/Chatbot";
 import ScrollToTop from "@/components/ScrollToTop";
-
-const BASE_URL = "https://www.route46couriers.co.uk";
+import { organizationSchema, websiteSchema, clean } from "@/lib/seo";
 
 const queryClient = new QueryClient();
 
@@ -295,16 +293,36 @@ export class PageErrorBoundary extends Component<EBProps, EBState> {
 // Top-level component passed to vite-react-ssg.
 // HelmetProvider MUST be here so every child Helmet has a valid context.
 // NOTE: Do NOT add canonical here — pages set their own via <Helmet>.
+// NOTE: do NOT add a <HelmetProvider> here. vite-react-ssg already wraps the
+// whole app in one — on the server with the context it reads head tags back
+// out of, and on the client for hydration. A second provider nested here
+// captures every <Helmet> in the tree into a throwaway context, which is why
+// titles, meta and JSON-LD never reached the built HTML.
 export const RootLayout = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <HelmetProvider>
+      <>
+        {/* ── Site-wide JSON-LD ────────────────────────────────────────────
+            Emitted into the <head> of EVERY page (static + client-side).
+            Route46 Couriers is a trading name of FourSix46® Global Ltd, so
+            this node carries parentOrganization and no company number of
+            its own. Page-level schemas reference it by @id — see lib/seo.ts.
+        ──────────────────────────────────────────────────────────────────── */}
+        <Helmet>
+          <html lang="en-GB" />
+          <script type="application/ld+json">
+            {JSON.stringify(clean(organizationSchema))}
+          </script>
+          <script type="application/ld+json">
+            {JSON.stringify(clean(websiteSchema))}
+          </script>
+        </Helmet>
         <Toaster />
         <Sonner />
         <ScrollToTop />
         <Outlet />
         {/* <Chatbot /> */}
-      </HelmetProvider>
+      </>
     </TooltipProvider>
   </QueryClientProvider>
 );
@@ -314,18 +332,10 @@ export const RootLayout = () => (
 // For SSG, canonical is guaranteed by the onPageRendered hook in vite.config.ts.
 // Page-level <Helmet> (deeper in tree) always overrides this layout-level one.
 export const PublicLayout = () => {
-  const { pathname } = useLocation();
-  // Normalise trailing slash so canonical is always clean
-  const cleanPath =
-    pathname.endsWith("/") && pathname !== "/"
-      ? pathname.slice(0, -1)
-      : pathname;
-
+  // Canonical is no longer set here — every public page emits its own via
+  // <Seo>. Two <link rel="canonical"> with different hrefs would both render.
   return (
     <PageErrorBoundary>
-      <Helmet>
-        <link rel="canonical" href={`${BASE_URL}${cleanPath}`} />
-      </Helmet>
       <div className="min-h-screen">
         <Navigation />
         <main className="pt-20 pb-24 lg:pt-0 lg:pb-0 lg:mr-72">

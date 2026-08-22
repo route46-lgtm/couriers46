@@ -215,6 +215,12 @@ export default function Footer() {
             >
               Refund Policy
             </a>
+            <a
+              href="/sitemap"
+              className="text-sm text-[#134467]/80 hover:text-[#134467] transition-colors duration-300 font-medium"
+            >
+              Sitemap
+            </a>
           </div>
 
           {/* Copyright */}

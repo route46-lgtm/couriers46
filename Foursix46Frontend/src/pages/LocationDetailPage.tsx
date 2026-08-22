@@ -17,6 +17,7 @@ import { Helmet } from "react-helmet-async";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import BlockRenderer from "@/components/BlockRenderer";
+import { ORG_ID } from "@/lib/seo";
 import {
   Accordion,
   AccordionItem,
@@ -393,10 +394,17 @@ export default function LocationDetailPage() {
           property="og:image"
           content={
             location.ogImage ||
-            "https://www.route46couriers.co.uk/og-default.jpg"
+            "https://www.route46couriers.co.uk/route46logo.png"
           }
         />
-        {location.noindex && <meta name="robots" content="noindex,nofollow" />}
+        <meta
+          name="robots"
+          content={
+            location.noindex
+              ? "noindex, nofollow"
+              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          }
+        />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -415,37 +423,7 @@ export default function LocationDetailPage() {
                 addressCountry: "GB",
               },
             },
-            provider: {
-              "@type": "Organization",
-              name: "FourSix46®",
-              url: baseUrl,
-            },
-          })}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "@id": "https://www.route46couriers.co.uk/#business",
-            name: "FourSix46® Couriers",
-            url: "https://www.route46couriers.co.uk",
-            telephone: "+447393363802",
-            image:
-              location.ogImage ||
-              "https://www.route46couriers.co.uk/og-default.jpg",
-            description: location.seoDescription || "",
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: location.name,
-              addressCountry: "GB",
-              addressRegion: location.country || "England",
-            },
-            areaServed: { "@type": "Place", name: location.name },
-            sameAs: [
-              "https://www.instagram.com/route46couriers/",
-              "https://www.facebook.com/route46couriers/",
-              "https://www.linkedin.com/company/foursix46-couriers/",
-            ],
+            provider: { "@id": ORG_ID },
           })}
         </script>
         <script type="application/ld+json">

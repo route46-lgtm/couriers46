@@ -829,6 +829,8 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { LoadingAnimation } from "@/components/shared/LoadingAnimation";
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema, serviceSchema } from "@/lib/seo";
 import {
   Select,
   SelectContent,
@@ -1043,6 +1045,29 @@ export default function ForBusinessesPage() {
 
   return (
     <>
+      <Seo
+        title="Courier Services for Businesses"
+        description="Business courier accounts with Route46 Couriers: dedicated same day vehicles, scheduled contracts, account billing and nationwide UK coverage."
+        path="/for-businesses"
+        schemas={[
+          webPageSchema({
+            path: "/for-businesses",
+            name: "Courier Services for Businesses",
+            description:
+              "Business courier accounts: dedicated same day vehicles, scheduled contracts and nationwide UK coverage.",
+          }),
+          serviceSchema({
+            name: "Business Courier Accounts",
+            description:
+              "Dedicated same day vehicles, scheduled contracts and account billing for UK businesses.",
+            path: "/for-businesses",
+          }),
+          breadcrumbSchema([
+            { name: "For Businesses", path: "/for-businesses" },
+          ]),
+        ]}
+      />
+
       {isSubmitting && (
         <LoadingAnimation message="Submitting your business registration..." />
       )}

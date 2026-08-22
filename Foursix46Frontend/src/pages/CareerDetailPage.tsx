@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Helmet } from "react-helmet-async";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +13,8 @@ import {
 } from "lucide-react";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { jobPostingSchema, breadcrumbSchema } from "@/lib/seo";
 const apiUrl = import.meta.env.VITE_API_URL;
 const CAREERS_EMAIL = "operations@route46couriers.co.uk";
 
@@ -26,6 +27,8 @@ interface Career {
   requirements?: string;
   status: string;
   sortOrder?: number;
+  datePosted?: string;
+  createdAt?: string;
 }
 
 export default function CareerDetailPage() {
@@ -65,13 +68,26 @@ export default function CareerDetailPage() {
   return (
     <div className="min-h-screen bg-white font-sans">
       {job && (
-        <Helmet>
-          <title>{job.title} | Careers at Route46 Couriers</title>
-          <meta
-            name="description"
-            content={`${job.title} — ${job.employmentType} role in ${job.location}. Apply now to join the Route46 Couriers team.`}
-          />
-        </Helmet>
+        <Seo
+          title={`${job.title} | Careers at Route46 Couriers`}
+          rawTitle
+          description={`${job.title} — ${job.employmentType} role in ${job.location}. Apply now to join the Route46 Couriers team.`}
+          path={`/careers/${id}`}
+          schemas={[
+            jobPostingSchema({
+              path: `/careers/${id}`,
+              title: job.title,
+              description: job.description || job.title,
+              datePosted: job.datePosted || job.createdAt,
+              employmentType: job.employmentType,
+              location: job.location,
+            }),
+            breadcrumbSchema([
+              { name: "Careers", path: "/careers" },
+              { name: job.title, path: `/careers/${id}` },
+            ]),
+          ]}
+        />
       )}
 
       {/* Hero */}

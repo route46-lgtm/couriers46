@@ -5,6 +5,9 @@ Allow: /
 Disallow: /admin/
 Disallow: /admin/login
 Disallow: /admin/dashboard
+
+# Payment flow — transactional, no SEO value
+Disallow: /pay
 Disallow: /pay/success
 Disallow: /pay/cancel
 
@@ -15,4 +18,6 @@ Disallow: /contact-thank-you
 Disallow: /booking-thank-you
 Disallow: /get-a-quote/thank-you
 
+# Human-readable index of the whole site: /sitemap
+# Machine-readable index below.
 Sitemap: https://www.route46couriers.co.uk/sitemap.xml

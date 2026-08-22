@@ -3,6 +3,8 @@ import { Cookie, ShieldCheck, Activity, Settings, Sliders, Info, HelpCircle } fr
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 
+import Seo from "@/components/Seo";
+import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // Animation utility
 const fadeInUp = "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
 
@@ -43,6 +45,20 @@ export default function CookiesPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden font-sans selection:bg-[#E53935] selection:text-white">
+      <Seo
+        title="Cookies Policy"
+        description="How Route46 Couriers uses cookies and similar technologies, and how you can manage your cookie preferences."
+        path="/cookies"
+        schemas={[
+          webPageSchema({
+            path: "/cookies",
+            name: "Cookies Policy",
+            description: "How Route46 Couriers uses cookies and similar technologies, and how you can manage your cookie preferences.",
+          }),
+          breadcrumbSchema([{ name: "Cookies Policy", path: "/cookies" }]),
+        ]}
+      />
+
       
       {/* Hero Section */}
       <div className="relative pt-16 pb-12 sm:pt-24 sm:pb-16 bg-white border-b border-[#48AEDD]/10">

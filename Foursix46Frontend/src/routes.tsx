@@ -33,10 +33,10 @@ const PrivacyPolicyPage = lazy(() => import("@/pages/PrivacyPolicyPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
 const CookiesPage = lazy(() => import("@/pages/CookiesPage"));
 const RefundPolicyPage = lazy(() => import("@/pages/RefundPolicyPage"));
-const FAQSPage = lazy(() => import("@/pages/FAQSPage"));
 const AccreditedTrustedPage = lazy(
   () => import("@/pages/AccreditedTrustedPage"),
 );
+const FAQSPage = lazy(() => import("@/pages/FAQSPage"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const AdminLoginPage = lazy(() => import("@/pages/AdminLoginPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
@@ -179,6 +179,15 @@ export const routes: RouteRecord[] = [
           { path: "cookies", element: s(CookiesPage) },
           { path: "refund-policy", element: s(RefundPolicyPage) },
           { path: "faqs", element: s(FAQSPage) },
+
+          // HTML sitemap — loader bakes the full link tree into static HTML
+          {
+            path: "sitemap",
+            lazy: async () => {
+              const mod = await import("./pages/SitemapPage");
+              return { Component: mod.default, loader: mod.loader };
+            },
+          },
           { path: "accredited-trusted", element: s(AccreditedTrustedPage) },
           { path: "rha-summary", element: s(RHAPage) },
 
