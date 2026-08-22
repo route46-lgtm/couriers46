@@ -4093,7 +4093,6 @@ app.get("/sitemap.xml", async (req, res) => {
     u(`${BASE_URL}/careers`,            "weekly",  "0.6");
     u(`${BASE_URL}/quick-quote`,        "monthly", "0.9");
     u(`${BASE_URL}/accredited-trusted`, "monthly", "0.5");
-    u(`${BASE_URL}/rha-summary`,        "monthly", "0.5");
     u(`${BASE_URL}/sitemap`,            "weekly",  "0.4");
     u(`${BASE_URL}/privacy`,            "yearly",  "0.3");
     u(`${BASE_URL}/terms`,              "yearly",  "0.3");

@@ -40,7 +40,6 @@ const FAQSPage = lazy(() => import("@/pages/FAQSPage"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const AdminLoginPage = lazy(() => import("@/pages/AdminLoginPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
-const RHAPage = lazy(() => import("@/pages/RHAPage"));
 const DriverThankYouPage = lazy(() => import("@/pages/DriverThankYouPage"));
 const ShipperThankYouPage = lazy(() => import("@/pages/ShipperThankYouPage"));
 const ContactThankYouPage = lazy(() => import("@/pages/ContactThankYouPage"));
@@ -189,7 +188,6 @@ export const routes: RouteRecord[] = [
             },
           },
           { path: "accredited-trusted", element: s(AccreditedTrustedPage) },
-          { path: "rha-summary", element: s(RHAPage) },
 
           { path: "driver-thank-you", element: s(DriverThankYouPage) },
           { path: "shipper-thank-you", element: s(ShipperThankYouPage) },

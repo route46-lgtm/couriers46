@@ -4088,7 +4088,6 @@ app.get('/sitemap.xml', async (req, res) => {
       [`${BASE_URL}/faqs`,                'monthly', '0.6'],
       [`${BASE_URL}/testimonials`,        'monthly', '0.6'],
       [`${BASE_URL}/accredited-trusted`,  'monthly', '0.5'],
-      [`${BASE_URL}/rha-summary`,         'monthly', '0.5'],
       [`${BASE_URL}/sitemap`,             'weekly',  '0.4'],
       [`${BASE_URL}/privacy`,             'yearly',  '0.3'],
       [`${BASE_URL}/terms`,               'yearly',  '0.3'],

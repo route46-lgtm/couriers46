@@ -52,7 +52,6 @@ const MAIN_PAGES: SitemapLink[] = [
   { name: "Careers", path: "/careers" },
   { name: "FAQs", path: "/faqs" },
   { name: "Accredited & Trusted", path: "/accredited-trusted" },
-  { name: "RHA Conditions Summary", path: "/rha-summary" },
 ];
 
 const LEGAL_PAGES: SitemapLink[] = [

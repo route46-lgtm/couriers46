@@ -768,12 +768,6 @@ const infoItems = [
 
 const legalItems = [
   {
-    id: "rha-conditions",
-    label: "RHA Summary",
-    icon: FileCheck,
-    path: "/rha-summary",
-  },
-  {
     id: "compliance",
     label: "Accredited & Trusted",
     icon: FileCheck,
@@ -827,7 +821,7 @@ const socialItems = [
     id: "linkedin",
     label: "LinkedIn",
     icon: Linkedin,
-    path: "https://www.linkedin.com/company/foursix46-couriers/",
+    path: "https://www.linkedin.com/company/route46-couriers/",
     color: "hover:text-[#0077b5] hover:bg-[#0077b5]/20",
   },
   {

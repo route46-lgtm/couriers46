@@ -5,6 +5,12 @@
       "dest": "https://europe-west2-foursix46-production-4a43f.cloudfunctions.net/api/sitemap.xml"
     },
     {
+      "comment": "/rha-summary was removed but is already indexed — 301 to /terms, which carries the RHA Conditions of Carriage text, so the link equity is not lost to a 404.",
+      "src": "/rha-summary",
+      "status": 301,
+      "headers": { "Location": "/terms" }
+    },
+    {
       "src": "/admin(.*)",
       "dest": "/index.html"
     },

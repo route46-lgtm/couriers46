@@ -1,5 +1,5 @@
 import React from "react";
-import { Shield, FileCheck, Truck, Lock, Building2, CheckCircle, Award, Target, ArrowUpRight } from "lucide-react";
+import { Shield, FileCheck, Lock, Building2, CheckCircle, Award, Target, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 
@@ -13,11 +13,11 @@ export default function AccreditedTrustedPage() {
   // Bento Grid Data - Light, Vibrant, High Visibility
   const certifications = [
     {
-      id: "rha",
-      icon: Truck,
-      title: "RHA Member",
-      subtitle: "Approved & Certified",
-      description: "Proud members of the Road Haulage Association (RHA), committed to maintaining the highest standards of safety, compliance, and professionalism across our logistics operations.",
+      id: "companies-house",
+      icon: Building2,
+      title: "Registered UK Company",
+      subtitle: "Companies House Verified",
+      description: "Route46 Couriers is a trading name of FourSix46 Global Ltd, a company registered in England & Wales (Company No. 16712658). Every job is backed by a fully verifiable, accountable UK business, checkable by anyone on the public Companies House register.",
       // Sky Blue Theme
       iconColor: "text-[#48AEDD]",
       bg: "bg-[#48AEDD]/5",
@@ -111,14 +111,14 @@ export default function AccreditedTrustedPage() {
     <div className="min-h-screen bg-white overflow-x-hidden font-sans text-slate-800">
       <Seo
         title="Accreditations & Trust"
-        description="Route46 Couriers is RHA approved, Cyber Essentials certified, ICO registered, fully insured and an FSB member. See our UK industry accreditations."
+        description="Route46 Couriers is a registered UK company, Cyber Essentials certified, ICO registered, fully insured and an FSB member. See our UK industry accreditations."
         path="/accredited-trusted"
         schemas={[
           webPageSchema({
             path: "/accredited-trusted",
             name: "Accreditations & Trust",
             description:
-              "RHA approved, Cyber Essentials certified, ICO registered, fully insured and an FSB member.",
+              "A registered UK company, Cyber Essentials certified, ICO registered, fully insured and an FSB member.",
           }),
           breadcrumbSchema([
             { name: "Accredited & Trusted", path: "/accredited-trusted" },

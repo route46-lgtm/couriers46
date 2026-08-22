@@ -37,8 +37,11 @@ export default function RefundPolicyPage() {
             dispatched, or travelled.
           </p>
           <p className="font-medium text-[#134467]">
-            All liability, claims, and compensation are governed by the RHA
-            Conditions of Carriage 2024.
+            All liability, claims, and compensation are governed by our{" "}
+            <a href="/terms" className="underline hover:text-[#48AEDD]">
+              Terms and Conditions
+            </a>
+            .
           </p>
         </div>
       ),
@@ -132,8 +135,8 @@ export default function RefundPolicyPage() {
             <p className="font-bold text-[#134467]">5.1 Same-Day Deliveries</p>
             <p>
               Same-day delivery is not guaranteed unless expressly agreed in
-              writing as a special service under RHA rules. Delays caused by
-              traffic, weather, road closures, or incidents are not refundable.
+              writing as a special service. Delays caused by traffic, weather,
+              road closures, or incidents are not refundable.
             </p>
           </div>
           <div>
@@ -151,22 +154,20 @@ export default function RefundPolicyPage() {
     },
     {
       icon: Shield,
-      title: "6. Loss or Damage (RHA)",
+      title: "6. Loss or Damage",
       color: "#E53935", // Red
       bg: "bg-[#E53935]/10",
       content: (
         <div className="space-y-3">
-          <p>
-            Customers must follow the{" "}
-            <strong>RHA Conditions of Carriage 2024</strong>:
-          </p>
+          <p>Loss or damage claims are handled as follows:</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
-              <strong>Damage/Shortage:</strong> Notice required within 7 days.
+              <strong>Damage/Shortage:</strong> Notice required within{" "}
+              <strong>7 days</strong>.
             </li>
             <li>
-              <strong>Loss/Non-delivery:</strong> Notice required within RHA
-              time limits.
+              <strong>Loss/Non-delivery:</strong> Notice required within{" "}
+              <strong>28 days</strong>.
             </li>
             <li>
               <strong>Liability Limit:</strong> £1,300 per tonne of gross weight
@@ -196,7 +197,7 @@ export default function RefundPolicyPage() {
               Delays arise from external factors (weather, traffic, incidents).
             </li>
             <li>The job is completed and then cancellation is requested.</li>
-            <li>The Customer breaches the RHA Conditions or our Terms.</li>
+            <li>The Customer breaches our Terms and Conditions.</li>
           </ul>
         </div>
       ),
@@ -207,7 +208,7 @@ export default function RefundPolicyPage() {
       color: "#F5EB18", // Yellow
       bg: "bg-[#F5EB18]/20",
       content:
-        "Refunds for account customers follow this Policy and the RHA Conditions. Any credit notes issued will be applied to the business account balance.",
+        "Refunds for account customers follow this Policy and our Terms and Conditions. Any credit notes issued will be applied to the business account balance.",
     },
     {
       icon: RefreshCcw,
@@ -261,10 +262,12 @@ export default function RefundPolicyPage() {
         <div className="space-y-2">
           <p>FourSix46® Global Ltd may refuse a refund if:</p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>Policy or RHA Conditions are breached.</li>
+            <li>This Policy or our Terms and Conditions are breached.</li>
             <li>Fraudulent claims are detected.</li>
             <li>Goods fall under prohibited categories.</li>
-            <li>Claims do not meet RHA time limits.</li>
+            <li>
+              Claims do not meet the time limits set out in Section 6.
+            </li>
           </ul>
         </div>
       ),
@@ -333,7 +336,7 @@ export default function RefundPolicyPage() {
               "animation-delay-200",
             )}
           >
-            All Carriage Subject to RHA Conditions of Carriage 2024.
+            Applies to All Bookings, Cancellations and Deliveries
           </p>
           <p
             className={cn(
@@ -342,7 +345,7 @@ export default function RefundPolicyPage() {
               "animation-delay-300",
             )}
           >
-            Last Updated: 23/03/2026
+            Last Updated: 22/08/2026
           </p>
         </div>
       </div>
@@ -372,22 +375,27 @@ export default function RefundPolicyPage() {
                 </p>
                 <br />
                 <p className="text-white/90 leading-relaxed">
-                  All delivery and transport services are undertaken in
-                  accordance with the Road Haulage Association (RHA) Conditions
-                  of Carriage 2024, which set out the industry-standard terms
-                  governing liability, claims, and compensation for road freight
-                  services.
+                  All delivery and transport services are provided in accordance
+                  with our{" "}
+                  <a
+                    href="/terms"
+                    className="underline decoration-[#F5EB18]/60 underline-offset-2 hover:text-[#F5EB18]"
+                  >
+                    Terms and Conditions
+                  </a>
+                  , which set out our standard terms governing liability,
+                  claims, and compensation.
                 </p>
                 <br />
                 <p className="text-white/90 leading-relaxed">
                   Where any conflict arises between this Refund & Cancellation
-                  Policy and the RHA Conditions of Carriage 2024, the RHA
-                  Conditions shall take precedence.
+                  Policy and our Terms and Conditions, our Terms and Conditions
+                  shall take precedence.
                 </p>
                 <br />
                 <p className="text-white/90 leading-relaxed">
                   This policy outlines how booking cancellations, refunds, and
-                  related service adjustments are handled in accordance with
+                  related service adjustments are handled in accordance with our
                   operational planning, driver dispatch procedures, and
                   transport commitments.
                 </p>
