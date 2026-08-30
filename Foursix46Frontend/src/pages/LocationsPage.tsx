@@ -466,35 +466,69 @@ export default function LocationsPage() {
                   </span>
                 </h2>
 
-                {/* Compact tile grid — whole coverage visible at a glance */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                  {locs.map((location, index) => (
-                    <div
-                      key={location.slug}
-                      onClick={() => navigate(`/locations/${location.slug}`)}
-                      title={
-                        location.postcodeCoverage
-                          ? `Postcodes: ${location.postcodeCoverage}`
-                          : undefined
-                      }
-                      className={cn(
-                        "cursor-pointer group bg-white border border-slate-200 rounded-xl px-3.5 py-3",
-                        "flex items-center gap-2.5",
-                        "hover:shadow-lg hover:-translate-y-0.5 hover:border-[#48AEDD]/50 transition-all duration-300",
-                        fadeInUp,
-                      )}
-                      style={{ animationDelay: `${index * 30}ms` }}
-                    >
-                      <MapPin
-                        className="text-[#E53935] flex-shrink-0"
-                        size={16}
-                      />
-                      <span className="text-sm font-bold text-[#134467] group-hover:text-[#E53935] transition leading-tight truncate">
-                        {location.name}
-                      </span>
-                      <ArrowRight className="w-3.5 h-3.5 ml-auto flex-shrink-0 text-[#E53935] opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                    </div>
-                  ))}
+                {/* Card grid — image, name and a blurb, matching the card
+                    treatment used for Related Content on blog posts. */}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {locs.map((location, index) => {
+                    const image = location.ogImage || location.heroImage;
+                    const blurb =
+                      location.seoDescription || location.heroSubtitle || "";
+
+                    return (
+                      <a
+                        key={location.slug}
+                        href={`/locations/${location.slug}`}
+                        title={
+                          location.postcodeCoverage
+                            ? `Postcodes: ${location.postcodeCoverage}`
+                            : undefined
+                        }
+                        className={cn(
+                          "group flex flex-col rounded-xl border border-slate-100 overflow-hidden bg-white",
+                          "hover:shadow-md hover:-translate-y-0.5 hover:border-[#48AEDD]/40 transition-all duration-300",
+                          fadeInUp,
+                        )}
+                        style={{ animationDelay: `${index * 30}ms` }}
+                      >
+                        <div className="h-32 bg-slate-100 overflow-hidden shrink-0 relative">
+                          {image ? (
+                            <img
+                              src={image}
+                              alt={`Same day courier services in ${location.name}`}
+                              loading="lazy"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              onError={(e) =>
+                                (e.currentTarget.style.display = "none")
+                              }
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-[#134467]/10 to-[#48AEDD]/20" />
+                          )}
+                        </div>
+
+                        <div className="p-4 flex flex-col flex-1">
+                          <h3 className="flex items-center gap-1.5 text-sm font-bold text-[#134467] leading-snug mb-1.5 group-hover:text-[#E53935] transition-colors">
+                            <MapPin
+                              className="text-[#E53935] flex-shrink-0"
+                              size={14}
+                            />
+                            {location.name}
+                          </h3>
+
+                          {blurb && (
+                            <p className="text-xs text-slate-500 leading-relaxed line-clamp-3 flex-1">
+                              {blurb}
+                            </p>
+                          )}
+
+                          <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#48AEDD]">
+                            Learn more
+                            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                          </span>
+                        </div>
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             ))}
