@@ -239,6 +239,12 @@ export default function Footer() {
             All rights reserved.
           </p>
 
+          {/* Company registration — Companies House details */}
+          <p className="text-xs text-[#134467]/55 font-medium">
+            Company No. 16712658 · Registered in England &amp; Wales · &copy;{" "}
+            {new Date().getFullYear()}
+          </p>
+
           {/* Developer Credit */}
           <p className="text-xs text-[#134467]/55 font-medium">
             Designed &amp; built by{" "}
