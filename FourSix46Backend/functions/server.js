@@ -4095,12 +4095,34 @@ app.get('/sitemap.xml', async (req, res) => {
       [`${BASE_URL}/refund-policy`,       'yearly',  '0.3'],
     ];
 
+    // Firestore stores updatedAt inconsistently across these collections:
+    // usually a Timestamp, but some documents hold epoch millis or an ISO
+    // string. `new Date(timestampObject)` yields an Invalid Date, and calling
+    // .toISOString() on that throws RangeError — which aborted the whole
+    // handler and returned a 500. Normalise every shape here instead.
+    const lastmodOf = (value) => {
+      if (!value) return today;
+      try {
+        const d =
+          typeof value.toDate === "function" ? value.toDate()
+          : value instanceof Date ? value
+          : typeof value === "number" ? new Date(value)
+          : typeof value === "string" ? new Date(value)
+          : typeof value._seconds === "number" ? new Date(value._seconds * 1000)
+          : null;
+        if (!d || Number.isNaN(d.getTime())) return today;
+        return d.toISOString().split("T")[0];
+      } catch {
+        return today;
+      }
+    };
+
     // Dynamic: Services
     const services = await db.collection('services').where('status', '==', 'published').get();
     services.forEach(doc => {
       const data = doc.data();
       if (!data.noindex) {
-        const lastmod = data.updatedAt?.toDate?.()?.toISOString().split('T')[0] || today;
+        const lastmod = lastmodOf(data.updatedAt);
         urls.push([`${BASE_URL}/services/${data.slug}`, 'weekly', '0.8', lastmod]);
       }
     });
@@ -4110,7 +4132,7 @@ app.get('/sitemap.xml', async (req, res) => {
     sectors.forEach(doc => {
       const data = doc.data();
       if (!data.noindex) {
-        const lastmod = data.updatedAt?.toDate?.()?.toISOString().split('T')[0] || today;
+        const lastmod = lastmodOf(data.updatedAt);
         urls.push([`${BASE_URL}/sectors/${data.slug}`, 'weekly', '0.7', lastmod]);
       }
     });
@@ -4120,7 +4142,7 @@ app.get('/sitemap.xml', async (req, res) => {
     locations.forEach(doc => {
       const data = doc.data();
       if (!data.noindex) {
-        const lastmod = data.updatedAt?.toDate?.()?.toISOString().split('T')[0] || today;
+        const lastmod = lastmodOf(data.updatedAt);
         urls.push([`${BASE_URL}/locations/${data.slug}`, 'weekly', '0.7', lastmod]);
       }
     });
@@ -4130,7 +4152,7 @@ app.get('/sitemap.xml', async (req, res) => {
     landings.forEach(doc => {
       const data = doc.data();
       if (!data.noindex) {
-        const lastmod = data.updatedAt ? new Date(data.updatedAt).toISOString().split('T')[0] : today;
+        const lastmod = lastmodOf(data.updatedAt);
         urls.push([`${BASE_URL}/locations/${data.locationSlug}/${data.serviceSlug}`, 'weekly', '0.6', lastmod]);
       }
     });
@@ -4140,7 +4162,7 @@ app.get('/sitemap.xml', async (req, res) => {
     blogPosts.forEach(doc => {
       const data = doc.data();
       if (!data.noindex) {
-        const lastmod = data.updatedAt?.toDate?.()?.toISOString().split('T')[0] || today;
+        const lastmod = lastmodOf(data.updatedAt);
         urls.push([`${BASE_URL}/blog/${data.slug}`, 'monthly', '0.6', lastmod]);
       }
     });
@@ -4150,7 +4172,7 @@ app.get('/sitemap.xml', async (req, res) => {
     careers.forEach(doc => {
       const data = doc.data();
       if (!data.noindex) {
-        const lastmod = data.updatedAt?.toDate?.()?.toISOString().split('T')[0] || today;
+        const lastmod = lastmodOf(data.updatedAt);
         urls.push([`${BASE_URL}/careers/${doc.id}`, 'weekly', '0.5', lastmod]);
       }
     });
