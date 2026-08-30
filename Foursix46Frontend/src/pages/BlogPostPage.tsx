@@ -566,6 +566,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   User,
   Calendar,
@@ -596,9 +597,60 @@ const fadeUp =
 /* ─────────────────────────────────────────────────────────────────────────────
    SSG LOADER — fetches post + all blog + all FAQs at build time
 ───────────────────────────────────────────────────────────────────────────── */
+/** A service / sector / location shown as a Related Content card. */
+export interface RelatedEntity {
+  slug: string;
+  name: string;
+  description: string;
+  image?: string;
+}
+
+/**
+ * The post stores only slugs for its related services, sectors and locations,
+ * so fetch each record to get a real name, blurb and image for the cards.
+ * Failures are per-item: one missing record never breaks the section.
+ */
+async function fetchRelatedEntities(
+  type: "services" | "sectors" | "locations",
+  slugs?: string[],
+): Promise<RelatedEntity[]> {
+  if (!slugs?.length) return [];
+
+  const results = await Promise.all(
+    slugs.map(async (slug) => {
+      try {
+        const res = await fetch(`${apiUrl}/api/${type}/${slug}`);
+        if (!res.ok) return null;
+        const json = await res.json();
+        const item = json?.data || json;
+        if (!item) return null;
+        return {
+          slug,
+          name: item.name || item.heroTitle || slug.replace(/-/g, " "),
+          description:
+            item.seoDescription || item.heroSubtitle || item.description || "",
+          image: item.ogImage || item.heroImage || undefined,
+        } as RelatedEntity;
+      } catch {
+        return null;
+      }
+    }),
+  );
+
+  return results.filter((r): r is RelatedEntity => r !== null);
+}
+
 export async function loader({ params }: { params: Record<string, string> }) {
   const slug = params.slug;
-  if (!slug) return { post: null, related: [], allFaqs: [] };
+  if (!slug)
+    return {
+      post: null,
+      related: [],
+      allFaqs: [],
+      relatedServices: [],
+      relatedSectors: [],
+      relatedLocations: [],
+    };
 
   try {
     const [postRes, allPostsRes, faqsRes] = await Promise.all([
@@ -623,6 +675,16 @@ export async function loader({ params }: { params: Record<string, string> }) {
           .slice(0, 3)
       : [];
 
+    const postData = post?.data || post;
+
+    // Resolve the related slugs into full records for the cards.
+    const [relatedServices, relatedSectors, relatedLocations] =
+      await Promise.all([
+        fetchRelatedEntities("services", postData?.relatedServiceSlugs),
+        fetchRelatedEntities("sectors", postData?.relatedSectorSlugs),
+        fetchRelatedEntities("locations", postData?.relatedLocationSlugs),
+      ]);
+
     return {
       post: post || null,
       related,
@@ -631,9 +693,19 @@ export async function loader({ params }: { params: Record<string, string> }) {
         : Array.isArray(faqsData)
           ? faqsData
           : [],
+      relatedServices,
+      relatedSectors,
+      relatedLocations,
     };
   } catch {
-    return { post: null, related: [], allFaqs: [] };
+    return {
+      post: null,
+      related: [],
+      allFaqs: [],
+      relatedServices: [],
+      relatedSectors: [],
+      relatedLocations: [],
+    };
   }
 }
 
@@ -935,7 +1007,14 @@ export default function BlogPostPage() {
 
   // ── Pre-fetched data from SSG loader or React Router loader ──
   const loaderData = useLoaderData() as
-    | { post: BlogPost | null; related: BlogPost[]; allFaqs: any[] }
+    | {
+        post: BlogPost | null;
+        related: BlogPost[];
+        allFaqs: any[];
+        relatedServices?: RelatedEntity[];
+        relatedSectors?: RelatedEntity[];
+        relatedLocations?: RelatedEntity[];
+      }
     | undefined;
 
   const [post, setPost] = useState<BlogPost | null>(loaderData?.post ?? null);
@@ -943,6 +1022,18 @@ export default function BlogPostPage() {
   const [faqs, setFaqs] = useState<any[]>([]);
   const [loading, setLoading] = useState(!loaderData?.post);
   const [notFound, setNotFound] = useState(false);
+
+  // Full records behind post.relatedServiceSlugs / SectorSlugs / LocationSlugs,
+  // so Related Content can show a name, blurb and image instead of a raw slug.
+  const [relatedServices, setRelatedServices] = useState<RelatedEntity[]>(
+    loaderData?.relatedServices ?? [],
+  );
+  const [relatedSectors, setRelatedSectors] = useState<RelatedEntity[]>(
+    loaderData?.relatedSectors ?? [],
+  );
+  const [relatedLocations, setRelatedLocations] = useState<RelatedEntity[]>(
+    loaderData?.relatedLocations ?? [],
+  );
 
   /* ── Client-side fetch — only when loader didn't provide data ── */
   useEffect(() => {
@@ -977,6 +1068,38 @@ export default function BlogPostPage() {
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
   }, [slug, loaderData]);
+
+  /* ── Resolve related services / sectors / locations for the cards ──
+     Runs when the loader didn't already supply them (client-side navigation
+     or a cold CSR load). Cheap: at most a handful of records. */
+  useEffect(() => {
+    if (!post) return;
+    if (
+      relatedServices.length ||
+      relatedSectors.length ||
+      relatedLocations.length
+    )
+      return;
+
+    let cancelled = false;
+    Promise.all([
+      fetchRelatedEntities("services", post.relatedServiceSlugs),
+      fetchRelatedEntities("sectors", post.relatedSectorSlugs),
+      fetchRelatedEntities("locations", post.relatedLocationSlugs),
+    ])
+      .then(([svcs, scts, locs]) => {
+        if (cancelled) return;
+        setRelatedServices(svcs);
+        setRelatedSectors(scts);
+        setRelatedLocations(locs);
+      })
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [post]);
 
   /* ── Filter FAQs once post is available ── */
   useEffect(() => {
@@ -1309,74 +1432,103 @@ export default function BlogPostPage() {
           )}
         </motion.div>
         {/* ══════════════════════════════════════════════════
-    RELATED CONTENT LINKS (from Relations tab)
-══════════════════════════════════════════════════ */}
-        {((post.relatedServiceSlugs?.length ?? 0) > 0 ||
-          (post.relatedLocationSlugs?.length ?? 0) > 0 ||
-          (post.relatedSectorSlugs?.length ?? 0) > 0) && (
-          <div className="mt-10 pt-6 border-t border-slate-100 space-y-5">
-            <h3 className="text-sm font-black uppercase tracking-widest text-[#134467]/50">
-              Related Content
-            </h3>
+            RELATED CONTENT (from Relations tab)
+            Cards with a real name, blurb and image — the slugs stored on the
+            post are resolved to full records in the loader (see above).
+        ══════════════════════════════════════════════════ */}
+        {(relatedServices.length > 0 ||
+          relatedLocations.length > 0 ||
+          relatedSectors.length > 0) && (
+          <div className="mt-14 pt-10 border-t border-slate-100 space-y-10">
+            <div className="flex items-center gap-3">
+              <div className="w-1 h-6 bg-[#48AEDD] rounded-full" />
+              <h2 className="text-xl font-black text-[#134467]">
+                Related Content
+              </h2>
+            </div>
 
-            {post.relatedServiceSlugs &&
-              post.relatedServiceSlugs.length > 0 && (
-                <div>
-                  <p className="text-xs font-bold text-[#134467] uppercase tracking-wider mb-2">
-                    Services
+            {(
+              [
+                {
+                  key: "services",
+                  heading: "Courier Services",
+                  items: relatedServices,
+                  base: "/services",
+                  accent: "#134467",
+                },
+                {
+                  key: "sectors",
+                  heading: "Industry Sectors",
+                  items: relatedSectors,
+                  base: "/sectors",
+                  accent: "#E53935",
+                },
+                {
+                  key: "locations",
+                  heading: "Locations",
+                  items: relatedLocations,
+                  base: "/locations",
+                  accent: "#48AEDD",
+                },
+              ] as const
+            )
+              .filter((group) => group.items.length > 0)
+              .map((group) => (
+                <div key={group.key}>
+                  <p
+                    className="text-[11px] font-black uppercase tracking-[0.18em] mb-4"
+                    style={{ color: group.accent }}
+                  >
+                    {group.heading}
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {post.relatedServiceSlugs.map((slug) => (
+
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {group.items.map((item) => (
                       <a
-                        key={slug}
-                        href={`/services/${slug}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#134467]/20 text-xs font-semibold text-[#134467] hover:bg-[#134467] hover:text-white transition-colors"
+                        key={item.slug}
+                        href={`${group.base}/${item.slug}`}
+                        className="group flex flex-col rounded-xl border border-slate-100 overflow-hidden bg-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
                       >
-                        {slug.replace(/-/g, " ")}
+                        <div className="h-32 bg-slate-100 overflow-hidden shrink-0">
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              loading="lazy"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              onError={(e) =>
+                                (e.currentTarget.style.display = "none")
+                              }
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-[#134467]/10 to-[#48AEDD]/20" />
+                          )}
+                        </div>
+
+                        <div className="p-4 flex flex-col flex-1">
+                          <h3 className="text-sm font-bold text-[#134467] leading-snug mb-1.5 line-clamp-2">
+                            {item.name}
+                          </h3>
+
+                          {item.description && (
+                            <p className="text-xs text-slate-500 leading-relaxed line-clamp-3 flex-1">
+                              {item.description}
+                            </p>
+                          )}
+
+                          <span
+                            className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider"
+                            style={{ color: group.accent }}
+                          >
+                            Learn more
+                            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                          </span>
+                        </div>
                       </a>
                     ))}
                   </div>
                 </div>
-              )}
-
-            {post.relatedLocationSlugs &&
-              post.relatedLocationSlugs.length > 0 && (
-                <div>
-                  <p className="text-xs font-bold text-[#134467] uppercase tracking-wider mb-2">
-                    Locations
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {post.relatedLocationSlugs.map((slug) => (
-                      <a
-                        key={slug}
-                        href={`/locations/${slug}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#48AEDD]/30 text-xs font-semibold text-[#48AEDD] hover:bg-[#48AEDD] hover:text-white transition-colors"
-                      >
-                        {slug.replace(/-/g, " ")}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-            {post.relatedSectorSlugs && post.relatedSectorSlugs.length > 0 && (
-              <div>
-                <p className="text-xs font-bold text-[#134467] uppercase tracking-wider mb-2">
-                  Sectors
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {post.relatedSectorSlugs.map((slug) => (
-                    <a
-                      key={slug}
-                      href={`/sectors/${slug}`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E53935]/20 text-xs font-semibold text-[#E53935] hover:bg-[#E53935] hover:text-white transition-colors"
-                    >
-                      {slug.replace(/-/g, " ")}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
+              ))}
           </div>
         )}
 

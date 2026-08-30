@@ -1,122 +1,181 @@
 {
-  "routes": [
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
     {
-      "src": "/sitemap.xml",
-      "dest": "https://europe-west2-foursix46-production-4a43f.cloudfunctions.net/api/sitemap.xml"
+      "source": "/rha-summary",
+      "destination": "/terms",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://europe-west2-foursix46-production-4a43f.cloudfunctions.net/api/sitemap.xml"
     },
     {
-      "src": "/rha-summary",
-      "status": 301,
-      "headers": { "Location": "/terms" }
+      "source": "/admin/:path*",
+      "destination": "/index.html"
     },
     {
-      "src": "/admin(.*)",
-      "dest": "/index.html"
+      "source": "/send-parcel/:path*",
+      "destination": "/index.html"
     },
     {
-      "src": "/send-parcel(.*)",
-      "dest": "/index.html"
+      "source": "/send-parcel",
+      "destination": "/index.html"
     },
     {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/((?!api/|static-loader-data).*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
     {
       "source": "/assets/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.js",
+      "source": "/(.*).js",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.css",
+      "source": "/(.*).css",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.woff2",
+      "source": "/(.*).woff2",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.woff",
+      "source": "/(.*).woff",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.ttf",
+      "source": "/(.*).ttf",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.eot",
+      "source": "/(.*).eot",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.jpg",
+      "source": "/(.*).jpg",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.jpeg",
+      "source": "/(.*).jpeg",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.png",
+      "source": "/(.*).png",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.webp",
+      "source": "/(.*).webp",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.svg",
+      "source": "/(.*).svg",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.ico",
+      "source": "/(.*).ico",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
-      "source": "/(.*)\\.html",
+      "source": "/(.*).html",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
     }
   ]
