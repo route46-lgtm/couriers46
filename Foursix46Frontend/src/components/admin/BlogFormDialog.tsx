@@ -1040,6 +1040,7 @@ import { Switch } from "@/components/ui/switch";
 import { Loader2, Plus, Trash2, ChevronUp, ChevronDown, X } from "lucide-react";
 import { toast } from "sonner";
 
+import ImageUploadField from "@/components/admin/ImageUploadField";
 // ── Types ────────────────────────────────────────────────────────────────────
 
 interface ContentBlock {
@@ -1521,11 +1522,11 @@ export function BlogFormDialog({
         {needsImage && (
           <div className="grid grid-cols-2 gap-3">
             <Field label="Image URL">
-              <Input
+              <ImageUploadField
                 value={block.imageUrl}
-                onChange={(e) => upd({ imageUrl: e.target.value })}
-                placeholder="https://..."
-                className="bg-white"
+                onChange={(url) => upd({ imageUrl: url })}
+                folder="blog"
+                compact
               />
             </Field>
             <Field label="Image Alt Text">
@@ -1726,10 +1727,10 @@ export function BlogFormDialog({
 
                 <div className="col-span-2">
                   <Field label="Featured Image URL">
-                    <Input
+                    <ImageUploadField
                       value={featuredImage}
-                      onChange={(e) => setFeaturedImage(e.target.value)}
-                      placeholder="https://cdn.example.com/blog/hero.jpg"
+                      onChange={(url) => setFeaturedImage(url)}
+                      folder="blog"
                     />
                   </Field>
                 </div>
@@ -1944,10 +1945,10 @@ export function BlogFormDialog({
                   label="OG Image URL"
                   hint="Used for social sharing previews"
                 >
-                  <Input
+                  <ImageUploadField
                     value={ogImage}
-                    onChange={(e) => setOgImage(e.target.value)}
-                    placeholder="https://cdn.example.com/og/blog.jpg"
+                    onChange={(url) => setOgImage(url)}
+                    folder="blog"
                   />
                 </Field>
               </div>

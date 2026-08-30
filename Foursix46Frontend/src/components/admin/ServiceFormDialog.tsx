@@ -819,6 +819,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { X, Plus, GripVertical, Trash2, Loader2 } from "lucide-react";
 
+import ImageUploadField from "@/components/admin/ImageUploadField";
 // --- Types ---
 type BlockType =
   | "textSection"
@@ -1153,25 +1154,14 @@ const BlockEditor = ({
       {["imageLeftTextRight", "imageRightTextLeft"].includes(block.type) && (
         <div>
           <Label className="text-xs">Image URL</Label>
-          <Input
+          <ImageUploadField
             value={block.imageUrl ?? ""}
-            onChange={(e) => update({ imageUrl: e.target.value })}
-            onBlur={(e) => handleBlur("imageUrl", e.target.value)}
-            placeholder="https://..."
+            onChange={(url) => update({ imageUrl: url })}
+            onBlur={(url) => handleBlur("imageUrl", url)}
+            error={blockErrors.imageUrl}
+            folder="services"
+            compact
           />
-          {blockErrors.imageUrl && (
-            <p className="text-sm font-medium text-destructive mt-1">
-              {blockErrors.imageUrl}
-            </p>
-          )}
-          {block.imageUrl && (
-            <img
-              src={block.imageUrl}
-              alt="block preview"
-              className="mt-2 h-20 rounded border object-cover"
-              onError={(e) => (e.currentTarget.style.display = "none")}
-            />
-          )}
         </div>
       )}
 
@@ -1573,25 +1563,13 @@ export function ServiceFormDialog({
               </div>
               <div className="col-span-2">
                 <Label>Hero Image URL</Label>
-                <Input
+                <ImageUploadField
                   value={form.heroImage}
-                  onChange={(e) => handleFieldChange("heroImage", e.target.value)}
-                  onBlur={(e) => handleFieldBlur("heroImage", e.target.value)}
-                  placeholder="https://..."
+                  onChange={(url) => handleFieldChange("heroImage", url)}
+                  onBlur={(url) => handleFieldBlur("heroImage", url)}
+                  error={errors.heroImage}
+                  folder="services"
                 />
-                {errors.heroImage && (
-                  <p className="text-sm font-medium text-destructive mt-1">
-                    {errors.heroImage}
-                  </p>
-                )}
-                {form.heroImage && (
-                  <img
-                    src={form.heroImage}
-                    alt="Hero preview"
-                    className="mt-2 h-24 rounded border object-cover w-full"
-                    onError={(e) => (e.currentTarget.style.display = "none")}
-                  />
-                )}
               </div>
             </div>
           )}
@@ -1792,25 +1770,13 @@ export function ServiceFormDialog({
                     (optional)
                   </span>
                 </Label>
-                <Input
+                <ImageUploadField
                   value={form.ogImage}
-                  onChange={(e) => handleFieldChange("ogImage", e.target.value)}
-                  onBlur={(e) => handleFieldBlur("ogImage", e.target.value)}
-                  placeholder="https://..."
+                  onChange={(url) => handleFieldChange("ogImage", url)}
+                  onBlur={(url) => handleFieldBlur("ogImage", url)}
+                  error={errors.ogImage}
+                  folder="services"
                 />
-                {errors.ogImage && (
-                  <p className="text-sm font-medium text-destructive mt-1">
-                    {errors.ogImage}
-                  </p>
-                )}
-                {form.ogImage && (
-                  <img
-                    src={form.ogImage}
-                    alt="OG preview"
-                    className="mt-2 h-20 rounded border object-cover"
-                    onError={(e) => (e.currentTarget.style.display = "none")}
-                  />
-                )}
               </div>
               <div className="flex items-center gap-3 p-3 border rounded-xl">
                 <Checkbox

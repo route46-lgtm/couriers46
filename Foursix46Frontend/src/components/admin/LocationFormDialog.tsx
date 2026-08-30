@@ -547,6 +547,7 @@ import {
 import { toast } from "sonner";
 import { X, Plus, Loader2, GripVertical, Trash2 } from "lucide-react";
 
+import ImageUploadField from "@/components/admin/ImageUploadField";
 // ── Block Types (same system as ServiceFormDialog) ────────────────────────────
 type BlockType =
   | "textSection"
@@ -769,19 +770,12 @@ const BlockEditor = ({
       {["imageLeftTextRight", "imageRightTextLeft"].includes(block.type) && (
         <div>
           <Label className="text-xs">Image URL</Label>
-          <Input
+          <ImageUploadField
             value={block.imageUrl ?? ""}
-            onChange={(e) => update({ imageUrl: e.target.value })}
-            placeholder="https://..."
+            onChange={(url) => update({ imageUrl: url })}
+            folder="locations"
+            compact
           />
-          {block.imageUrl && (
-            <img
-              src={block.imageUrl}
-              alt="block preview"
-              className="mt-2 h-20 rounded border object-cover"
-              onError={(e) => (e.currentTarget.style.display = "none")}
-            />
-          )}
         </div>
       )}
 
@@ -1107,19 +1101,11 @@ export function LocationFormDialog({
 
               <div className="col-span-2">
                 <Label>Hero Image URL</Label>
-                <Input
+                <ImageUploadField
                   value={form.heroImage}
-                  onChange={(e) => update({ heroImage: e.target.value })}
-                  placeholder="e.g. https://cdn.example.com/cardiff-hero.jpg"
+                  onChange={(url) => update({ heroImage: url })}
+                  folder="locations"
                 />
-                {form.heroImage && (
-                  <img
-                    src={form.heroImage}
-                    alt="Hero preview"
-                    className="mt-2 h-24 rounded border object-cover w-full"
-                    onError={(e) => (e.currentTarget.style.display = "none")}
-                  />
-                )}
               </div>
             </div>
           )}
@@ -1282,19 +1268,11 @@ export function LocationFormDialog({
 
               <div>
                 <Label>OG Image URL</Label>
-                <Input
+                <ImageUploadField
                   value={form.ogImage}
-                  onChange={(e) => update({ ogImage: e.target.value })}
-                  placeholder="e.g. https://cdn.example.com/og-cardiff.jpg"
+                  onChange={(url) => update({ ogImage: url })}
+                  folder="locations"
                 />
-                {form.ogImage && (
-                  <img
-                    src={form.ogImage}
-                    alt="OG preview"
-                    className="mt-2 h-20 rounded border object-cover"
-                    onError={(e) => (e.currentTarget.style.display = "none")}
-                  />
-                )}
               </div>
 
               <div className="flex items-center gap-3 p-3 border rounded-xl">

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { X, Plus, Trash2, GripVertical } from "lucide-react";
 
+import ImageUploadField from "@/components/admin/ImageUploadField";
 interface ProofPoint {
   id: string;
   title: string;
@@ -223,9 +224,11 @@ const BlockEditor = ({
       {["imageLeftTextRight", "imageRightTextLeft"].includes(block.type) && (
         <div>
           <Label className="text-xs">Image URL</Label>
-          <Input
+          <ImageUploadField
             value={block.imageUrl ?? ""}
-            onChange={(e) => u({ imageUrl: e.target.value })}
+            onChange={(url) => u({ imageUrl: url })}
+            folder="landing-pages"
+            compact
           />
         </div>
       )}
@@ -500,18 +503,11 @@ export function LandingPageFormDialog({
               </div>
               <div className="col-span-2">
                 <Label>Hero Image URL</Label>
-                <Input
+                <ImageUploadField
                   value={form.heroImage}
-                  onChange={(e) => update({ heroImage: e.target.value })}
-                  placeholder="https://..."
+                  onChange={(url) => update({ heroImage: url })}
+                  folder="landing-pages"
                 />
-                {form.heroImage && (
-                  <img
-                    src={form.heroImage}
-                    alt="preview"
-                    className="mt-2 h-24 rounded border object-cover"
-                  />
-                )}
               </div>
             </div>
           )}
@@ -721,18 +717,11 @@ export function LandingPageFormDialog({
               </div>
               <div>
                 <Label>OG Image URL</Label>
-                <Input
+                <ImageUploadField
                   value={form.ogImage}
-                  onChange={(e) => update({ ogImage: e.target.value })}
-                  placeholder="https://..."
+                  onChange={(url) => update({ ogImage: url })}
+                  folder="landing-pages"
                 />
-                {form.ogImage && (
-                  <img
-                    src={form.ogImage}
-                    alt="og"
-                    className="mt-2 h-20 rounded border object-cover"
-                  />
-                )}
               </div>
               <div className="flex items-center gap-3 p-3 border rounded-xl">
                 <Checkbox
