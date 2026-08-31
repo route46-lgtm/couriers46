@@ -939,9 +939,17 @@ export default function LocationServicePage() {
   );
   const [loading, setLoading] = useState(!loaderData?.location);
   const [notFound, setNotFound] = useState(false);
-  const [fetchedFaqs, setFetchedFaqs] = useState<any[]>(
-    loaderData?.allFaqs ?? [],
-  );
+  // Seed with the FAQs this page actually selected, not the whole library.
+  // loaderData.allFaqs is every FAQ in the CMS (163 of them); assigning it
+  // straight to state put all 163 into the rendered page and its FAQPage
+  // schema during SSG, until the effect below filtered them on hydration.
+  const [fetchedFaqs, setFetchedFaqs] = useState<any[]>(() => {
+    const all = loaderData?.allFaqs ?? [];
+    // `page` is built from loaderData.location, so its faqIds live there.
+    const ids = loaderData?.location?.faqIds;
+    if (!all.length || !ids?.length) return [];
+    return all.filter((f: { id: string }) => ids.includes(f.id));
+  });
 
   /* ── Client-side fetch — only runs when loader didn't provide data ── */
   useEffect(() => {

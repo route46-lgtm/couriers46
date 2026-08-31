@@ -1186,7 +1186,15 @@ export default function ServiceDetailPage() {
     | undefined;
 
   const [service, setService] = useState<any>(loaderData?.service ?? null);
-  const [faqs, setFaqs] = useState<any[]>([]);
+  // Seeded from the loader so the FAQs an admin attached are present in the
+  // static HTML (and the FAQPage schema) rather than only appearing after
+  // hydration — the effect below still refreshes them client-side.
+  const [faqs, setFaqs] = useState<any[]>(() => {
+    const all = loaderData?.allFaqs ?? [];
+    const ids = loaderData?.service?.faqIds;
+    if (!all.length || !ids?.length) return [];
+    return all.filter((f: { id: string }) => ids.includes(f.id));
+  });
   const [loading, setLoading] = useState(!loaderData?.service);
   const [imgError, setImgError] = useState(false);
 

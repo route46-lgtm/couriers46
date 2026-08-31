@@ -1019,7 +1019,15 @@ export default function BlogPostPage() {
 
   const [post, setPost] = useState<BlogPost | null>(loaderData?.post ?? null);
   const [related, setRelated] = useState<BlogPost[]>(loaderData?.related ?? []);
-  const [faqs, setFaqs] = useState<any[]>([]);
+  // Seeded from the loader so the FAQs an admin attached are present in the
+  // static HTML (and the FAQPage schema) rather than only appearing after
+  // hydration — the effect below still refreshes them client-side.
+  const [faqs, setFaqs] = useState<any[]>(() => {
+    const all = loaderData?.allFaqs ?? [];
+    const ids = loaderData?.post?.faqIds;
+    if (!all.length || !ids?.length) return [];
+    return all.filter((f: { id: string }) => ids.includes(f.id));
+  });
   const [loading, setLoading] = useState(!loaderData?.post);
   const [notFound, setNotFound] = useState(false);
 
