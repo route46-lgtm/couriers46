@@ -1131,31 +1131,30 @@ export default function AboutPage() {
             </div>
             <div className="bg-white border border-slate-100 rounded-3xl p-8 sm:p-12 shadow-sm max-w-3xl mx-auto space-y-5">
               <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed">
-                Route46 Couriers is founded by{" "}
                 <strong>
-                  <a href="https://46dc.com" target="_blank">
-                    Dinesh Koyyalamudi
-                  </a>
-                </strong>
-                , an entrepreneur focused on building structured business
-                ventures with long-term brand identity.
-              </p>
-              <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed">
-                Through FourSix46®,{" "}
-                <strong>
-                  <a href="https://46dc.com" target="_blank">
+                  <a
+                    href="https://46dc.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Dinesh Koyyalamudi
                   </a>
                 </strong>{" "}
-                is developing a multi-industry brand ecosystem that combines
-                logistics services, digital platforms, and technology-driven
-                business solutions.
+                is a portfolio entrepreneur and business &amp; brand consultant
+                — founder of FourSix46®, the UK parent brand behind Route46
+                Couriers, Cinevenn, Stack46 and 46Dogs.
+              </p>
+              <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed">
+                He built Route46 Couriers to bring the same structure and brand
+                discipline to logistics that FourSix46® applies across every
+                venture it owns, and works alongside a small number of
+                early-stage founders, advising on strategy, structure and brand.
               </p>
               <div className="pl-6 border-l-4 border-[#48AEDD] mt-4">
                 <p className="text-[#134467]/80 font-medium leading-relaxed italic">
-                  "His vision behind Route46 Couriers is to create a trusted
-                  courier brand that connects businesses and individuals with
-                  reliable delivery services across the United Kingdom."
+                  "My vision for Route46 Couriers is a courier brand people
+                  trust — built on the same standards, wherever in the UK you
+                  are."
                 </p>
               </div>
             </div>
