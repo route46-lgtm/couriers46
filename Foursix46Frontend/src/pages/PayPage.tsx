@@ -516,7 +516,9 @@ export default function PayPage() {
                   name="amountNet"
                   min="1"
                   step="0.01"
-                  placeholder="Amount (ex VAT) £ *"
+                  placeholder={
+                    vatEnabled ? "Amount (ex VAT) £ *" : "Amount £ *"
+                  }
                   required
                   value={payment.amountNet}
                   onChange={handleChange}

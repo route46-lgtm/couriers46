@@ -132,6 +132,7 @@ app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), asy
     const totalAmount = session.metadata?.totalAmount || "N/A";
     const netAmount   = session.metadata?.netAmount   || "N/A";
     const vatAmount   = session.metadata?.vatAmount   || "N/A";
+    const vatRateMeta = session.metadata?.vatRate     || "0";
 
     if (paymentId) {
       await db.collection('payments').doc(paymentId).update({
@@ -240,7 +241,7 @@ app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), asy
                         <td style="font-size:13px;color:#222;font-weight:600;">&pound;${netAmount}</td>
                       </tr>
                       <tr>
-                        <td style="font-size:13px;color:#555;padding:4px 0;">VAT (20%)</td>
+                        <td style="font-size:13px;color:#555;padding:4px 0;">VAT (${vatRateMeta}%)</td>
                         <td style="font-size:13px;color:#222;font-weight:600;">&pound;${vatAmount}</td>
                       </tr>
                       <tr>
@@ -4545,9 +4546,29 @@ if (OWNER_EMAIL) {
     }
 
     // ================= VAT CALCULATION =================
+    // Read the rate from settings/vat — the same document the admin VAT card
+    // writes and that /pay reads to build the total it shows the customer.
+    //
+    // This used to be hardcoded as `net * 0.2`, which ignored the setting
+    // entirely: with VAT switched off the page quoted £750 and Stripe charged
+    // £900. Deliberately NOT taken from the request body — a client could then
+    // post vatRate: 0 and pay no VAT.
+    let vatEnabled = true;
+    let vatRate = 20;
+    try {
+      const vatSnap = await db.doc("settings/vat").get();
+      if (vatSnap.exists) {
+        const cfg = vatSnap.data() || {};
+        vatEnabled = cfg.vatEnabled === true;
+        vatRate = Number(cfg.vatRate) || 0;
+      }
+    } catch (e) {
+      console.error("VAT settings lookup failed, defaulting to 20%:", e);
+    }
 
     const net = Number(netAmount);
-    const vat = Number((net * 0.2).toFixed(2));
+    const effectiveRate = vatEnabled ? vatRate / 100 : 0;
+    const vat = Number((net * effectiveRate).toFixed(2));
     const total = Number((net + vat).toFixed(2));
     const totalPence = Math.round(total * 100);
 
@@ -4565,6 +4586,7 @@ if (OWNER_EMAIL) {
       reference,
       netAmount: net,
       vatAmount: vat,
+      vatRate: vatEnabled ? vatRate : 0,
       totalAmount: total,
       currency: "GBP",
       stripeSessionId: null,
@@ -4597,6 +4619,7 @@ if (OWNER_EMAIL) {
         reference,
         netAmount: net.toString(),
         vatAmount: vat.toString(),
+        vatRate: (vatEnabled ? vatRate : 0).toString(),
         totalAmount: total.toString(),
       },
       success_url: `${process.env.FRONTEND_URL}/pay/success?session_id={CHECKOUT_SESSION_ID}`,
