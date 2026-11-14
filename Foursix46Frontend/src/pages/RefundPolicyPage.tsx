@@ -18,29 +18,24 @@ import Footer from "@/components/Footer";
 
 import Seo from "@/components/Seo";
 import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
+import { Txt, useText } from "@/content/SiteContentProvider";
 // Animation utility
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
 
 export default function RefundPolicyPage() {
+  const txt = useText();
   const sections = [
     {
       icon: FileText,
-      title: "1. General Principle",
+      title: txt("refund.7e8bc31f", "1. General Principle"),
       color: "#48AEDD", // Blue
       bg: "bg-[#48AEDD]/10",
       content: (
         <div className="space-y-2">
-          <p>
-            Operational planning begins immediately once a booking is made.
-            Refund eligibility depends on whether a driver has been assigned,
-            dispatched, or travelled.
-          </p>
-          <p className="font-medium text-[#134467]">
-            All liability, claims, and compensation are governed by our{" "}
-            <a href="/terms" className="underline hover:text-[#48AEDD]">
-              Terms and Conditions
-            </a>
+          <p><Txt k="refund.a7ea5ad4">{"Operational planning begins immediately once a booking is made. Refund eligibility depends on whether a driver has been assigned, dispatched, or travelled."}</Txt></p>
+          <p className="font-medium text-[#134467]"><Txt k="refund.4a3c4672">{"All liability, claims, and compensation are governed by our"}</Txt>{" "}
+            <a href="/terms" className="underline hover:text-[#48AEDD]"><Txt k="refund.b01ec4b5">{"Terms and Conditions"}</Txt></a>
             .
           </p>
         </div>
@@ -48,237 +43,190 @@ export default function RefundPolicyPage() {
     },
     {
       icon: RefreshCcw,
-      title: "2. Cancellations Before Dispatch",
+      title: txt("refund.253f034f", "2. Cancellations Before Dispatch"),
       color: "#E53935", // Red
       bg: "bg-[#E53935]/10",
       content: (
         <div className="space-y-2">
-          <p>
-            A booking may be cancelled before a driver is allocated or
-            dispatched.
-          </p>
+          <p><Txt k="refund.6857dcc1">{"A booking may be cancelled before a driver is allocated or dispatched."}</Txt></p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>Refunds may be issued minus an administrative fee.</li>
+            <li><Txt k="refund.cc325e10">{"Refunds may be issued minus an administrative fee."}</Txt></li>
             <li>
-              <strong>Admin fee:</strong> Up to £5.00 to cover booking &
-              processing costs.
-            </li>
+              <strong><Txt k="refund.c4f9a7b5">{"Admin fee:"}</Txt></strong><Txt k="refund.df0e764f">{" Up to £5.00 to cover booking & processing costs."}</Txt></li>
           </ul>
-          <p className="text-sm text-slate-500">
-            Refunds are processed to the original payment method within 5–10
-            business days.
-          </p>
+          <p className="text-sm text-slate-500"><Txt k="refund.94bec0e3">{"Refunds are processed to the original payment method within 5–10 business days."}</Txt></p>
         </div>
       ),
     },
     {
       icon: Truck,
-      title: "3. Cancellations After Assignment",
+      title: txt("refund.32470d92", "3. Cancellations After Assignment"),
       color: "#134467", // Navy
       bg: "bg-[#134467]/10",
       content: (
         <div className="space-y-2">
-          <p>
-            Once a driver has been allocated or started travelling to the
-            collection point:
-          </p>
+          <p><Txt k="refund.4a4b9471">{"Once a driver has been allocated or started travelling to the collection point:"}</Txt></p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
-              A <strong>full refund is not available</strong>.
+              A <strong><Txt k="refund.0a3ab235">{"full refund is not available"}</Txt></strong>.
             </li>
-            <li>
-              A partial refund may be issued minus:
-              <ul className="list-circle pl-5 mt-1">
-                <li>Driver call-out fee</li>
-                <li>Mileage already travelled</li>
-                <li>Waiting time (if applicable)</li>
+            <li><Txt k="refund.42d06a01">{"A partial refund may be issued minus:"}</Txt><ul className="list-circle pl-5 mt-1">
+                <li><Txt k="refund.80f5484d">{"Driver call-out fee"}</Txt></li>
+                <li><Txt k="refund.2763165e">{"Mileage already travelled"}</Txt></li>
+                <li><Txt k="refund.439b46d1">{"Waiting time (if applicable)"}</Txt></li>
               </ul>
             </li>
           </ul>
-          <p className="italic text-sm">
-            This is permitted under the Carrier’s right to recover reasonable
-            operational costs.
-          </p>
+          <p className="italic text-sm"><Txt k="refund.408565cb">{"This is permitted under the Carrier’s right to recover reasonable operational costs."}</Txt></p>
         </div>
       ),
     },
     {
       icon: AlertOctagon,
-      title: "4. Failed Collection",
+      title: txt("refund.5d31dfa5", "4. Failed Collection"),
       color: "#F5EB18", // Yellow
       bg: "bg-[#F5EB18]/20",
       content: (
         <div className="space-y-2">
-          <p>A failed collection occurs when:</p>
+          <p><Txt k="refund.43284d06">{"A failed collection occurs when:"}</Txt></p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>Goods are not ready</li>
-            <li>Nobody is available at the collection point</li>
-            <li>Incorrect/incomplete address</li>
-            <li>Unsafe or inaccessible location</li>
+            <li><Txt k="refund.5f50d08b">{"Goods are not ready"}</Txt></li>
+            <li><Txt k="refund.3bff43d6">{"Nobody is available at the collection point"}</Txt></li>
+            <li><Txt k="refund.ff1f12ee">{"Incorrect/incomplete address"}</Txt></li>
+            <li><Txt k="refund.f7c283b4">{"Unsafe or inaccessible location"}</Txt></li>
           </ul>
           <div className="mt-2 bg-red-50 p-3 rounded-lg border border-red-100 text-red-800 text-sm">
-            <strong>Result:</strong> No refund is provided. Re-collection can be
-            arranged at additional cost. Drivers’ time and mileage are
-            chargeable.
-          </div>
+            <strong><Txt k="refund.39d55cc6">{"Result:"}</Txt></strong><Txt k="refund.c4efecb9">{" No refund is provided. Re-collection can be arranged at additional cost. Drivers’ time and mileage are chargeable."}</Txt></div>
         </div>
       ),
     },
     {
       icon: Clock,
-      title: "5. Delayed Deliveries",
+      title: txt("refund.73a0c565", "5. Delayed Deliveries"),
       color: "#48AEDD", // Blue
       bg: "bg-[#48AEDD]/10",
       content: (
         <div className="space-y-4">
           <div>
-            <p className="font-bold text-[#134467]">5.1 Same-Day Deliveries</p>
-            <p>
-              Same-day delivery is not guaranteed unless expressly agreed in
-              writing as a special service. Delays caused by traffic, weather,
-              road closures, or incidents are not refundable.
-            </p>
+            <p className="font-bold text-[#134467]"><Txt k="refund.909c03c5">{"5.1 Same-Day Deliveries"}</Txt></p>
+            <p><Txt k="refund.311e84da">{"Same-day delivery is not guaranteed unless expressly agreed in writing as a special service. Delays caused by traffic, weather, road closures, or incidents are not refundable."}</Txt></p>
           </div>
           <div>
-            <p className="font-bold text-[#134467]">
-              5.2 Standard Deliveries (2–4 Days)
-            </p>
-            <p>
-              Delivery times are estimates. Refunds are not given unless a delay
-              is proven to be solely caused by FourSix46® negligence, not
-              external conditions.
-            </p>
+            <p className="font-bold text-[#134467]"><Txt k="refund.1c09eaaa">{"5.2 Standard Deliveries (2–4 Days)"}</Txt></p>
+            <p><Txt k="refund.a180992d">{"Delivery times are estimates. Refunds are not given unless a delay is proven to be solely caused by FourSix46® negligence, not external conditions."}</Txt></p>
           </div>
         </div>
       ),
     },
     {
       icon: Shield,
-      title: "6. Loss or Damage",
+      title: txt("refund.9b2626eb", "6. Loss or Damage"),
       color: "#E53935", // Red
       bg: "bg-[#E53935]/10",
       content: (
         <div className="space-y-3">
-          <p>Loss or damage claims are handled as follows:</p>
+          <p><Txt k="refund.9f91e549">{"Loss or damage claims are handled as follows:"}</Txt></p>
           <ul className="list-disc pl-5 space-y-1">
             <li>
-              <strong>Damage/Shortage:</strong> Notice required within{" "}
-              <strong>7 days</strong>.
+              <strong><Txt k="refund.238f5b8e">{"Damage/Shortage:"}</Txt></strong><Txt k="refund.a4c1dd7d">{" Notice required within"}</Txt>{" "}
+              <strong><Txt k="refund.f7513daf">{"7 days"}</Txt></strong>.
             </li>
             <li>
-              <strong>Loss/Non-delivery:</strong> Notice required within{" "}
-              <strong>28 days</strong>.
+              <strong><Txt k="refund.3885fc5e">{"Loss/Non-delivery:"}</Txt></strong><Txt k="refund.a4c1dd7d_2">{" Notice required within"}</Txt>{" "}
+              <strong><Txt k="refund.7317afeb">{"28 days"}</Txt></strong>.
             </li>
             <li>
-              <strong>Liability Limit:</strong> £1,300 per tonne of gross weight
-              (~£1.30 per kg).
-            </li>
+              <strong><Txt k="refund.969a95c2">{"Liability Limit:"}</Txt></strong><Txt k="refund.1a9288f9">{" £1,300 per tonne of gross weight (~£1.30 per kg)."}</Txt></li>
           </ul>
-          <p className="text-sm">
-            Liability excludes consequential loss, loss of profits, or special
-            losses. Customers must arrange full-value insurance if needed.
-          </p>
+          <p className="text-sm"><Txt k="refund.274e549a">{"Liability excludes consequential loss, loss of profits, or special losses. Customers must arrange full-value insurance if needed."}</Txt></p>
         </div>
       ),
     },
     {
       icon: Wallet,
-      title: "7. Non-Refundable Situations",
+      title: txt("refund.fc003c1d", "7. Non-Refundable Situations"),
       color: "#134467", // Navy
       bg: "bg-[#134467]/10",
       content: (
         <div className="space-y-2">
-          <p>No refund will be issued if:</p>
+          <p><Txt k="refund.c2e718f3">{"No refund will be issued if:"}</Txt></p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>The Customer provides incorrect information.</li>
-            <li>The Goods are illegal, dangerous, or prohibited.</li>
-            <li>Delivery is refused by the recipient.</li>
-            <li>
-              Delays arise from external factors (weather, traffic, incidents).
-            </li>
-            <li>The job is completed and then cancellation is requested.</li>
-            <li>The Customer breaches our Terms and Conditions.</li>
+            <li><Txt k="refund.d169bc0b">{"The Customer provides incorrect information."}</Txt></li>
+            <li><Txt k="refund.ecb87017">{"The Goods are illegal, dangerous, or prohibited."}</Txt></li>
+            <li><Txt k="refund.c0dde288">{"Delivery is refused by the recipient."}</Txt></li>
+            <li><Txt k="refund.a1c08f72">{"Delays arise from external factors (weather, traffic, incidents)."}</Txt></li>
+            <li><Txt k="refund.0563ce56">{"The job is completed and then cancellation is requested."}</Txt></li>
+            <li><Txt k="refund.97287cfd">{"The Customer breaches our Terms and Conditions."}</Txt></li>
           </ul>
         </div>
       ),
     },
     {
       icon: Building2,
-      title: "8. Business (B2B) Customers",
+      title: txt("refund.fbfd3b1d", "8. Business (B2B) Customers"),
       color: "#F5EB18", // Yellow
       bg: "bg-[#F5EB18]/20",
       content:
-        "Refunds for account customers follow this Policy and our Terms and Conditions. Any credit notes issued will be applied to the business account balance.",
+        txt("refund.f310efc4", "Refunds for account customers follow this Policy and our Terms and Conditions. Any credit notes issued will be applied to the business account balance."),
     },
     {
       icon: RefreshCcw,
-      title: "9. Booking Changes",
+      title: txt("refund.f4d32f28", "9. Booking Changes"),
       color: "#48AEDD", // Blue
       bg: "bg-[#48AEDD]/10",
       content: (
         <div className="space-y-2">
-          <p>
-            Changes to collection time, delivery address, parcel details, or
-            contact information may:
-          </p>
+          <p><Txt k="refund.3edaf880">{"Changes to collection time, delivery address, parcel details, or contact information may:"}</Txt></p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>Not always be possible.</li>
-            <li>Incur additional charges.</li>
-            <li>Affect delivery times.</li>
+            <li><Txt k="refund.8a75acd2">{"Not always be possible."}</Txt></li>
+            <li><Txt k="refund.1dc6fd42">{"Incur additional charges."}</Txt></li>
+            <li><Txt k="refund.eca5b014">{"Affect delivery times."}</Txt></li>
           </ul>
-          <p className="text-sm italic">
-            If the change leads to cancellation, Sections 2–4 apply.
-          </p>
+          <p className="text-sm italic"><Txt k="refund.e89d1312">{"If the change leads to cancellation, Sections 2–4 apply."}</Txt></p>
         </div>
       ),
     },
     {
       icon: Receipt,
-      title: "10. Refund Procedure",
+      title: txt("refund.c3edab14", "10. Refund Procedure"),
       color: "#E53935", // Red
       bg: "bg-[#E53935]/10",
       content: (
         <div className="space-y-2">
-          <p>
-            To request a refund, contact us via the Contact Us page and include:
-          </p>
+          <p><Txt k="refund.fb965366">{"To request a refund, contact us via the Contact Us page and include:"}</Txt></p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>Booking reference</li>
-            <li>Reason for request</li>
-            <li>Relevant documents (if applicable)</li>
+            <li><Txt k="refund.9100768a">{"Booking reference"}</Txt></li>
+            <li><Txt k="refund.b94dd147">{"Reason for request"}</Txt></li>
+            <li><Txt k="refund.02856f44">{"Relevant documents (if applicable)"}</Txt></li>
           </ul>
-          <p className="font-semibold text-[#E53935]">
-            Approved refunds are issued within 5–10 business days.
-          </p>
+          <p className="font-semibold text-[#E53935]"><Txt k="refund.e75be05b">{"Approved refunds are issued within 5–10 business days."}</Txt></p>
         </div>
       ),
     },
     {
       icon: AlertTriangle,
-      title: "11. Right to Decline",
+      title: txt("refund.90115fef", "11. Right to Decline"),
       color: "#134467", // Navy
       bg: "bg-[#134467]/10",
       content: (
         <div className="space-y-2">
-          <p>FourSix46® Global Ltd may refuse a refund if:</p>
+          <p><Txt k="refund.e7faa36a">{"FourSix46® Global Ltd may refuse a refund if:"}</Txt></p>
           <ul className="list-disc pl-5 space-y-1">
-            <li>This Policy or our Terms and Conditions are breached.</li>
-            <li>Fraudulent claims are detected.</li>
-            <li>Goods fall under prohibited categories.</li>
-            <li>
-              Claims do not meet the time limits set out in Section 6.
-            </li>
+            <li><Txt k="refund.427fc097">{"This Policy or our Terms and Conditions are breached."}</Txt></li>
+            <li><Txt k="refund.f4417962">{"Fraudulent claims are detected."}</Txt></li>
+            <li><Txt k="refund.a18fbbf2">{"Goods fall under prohibited categories."}</Txt></li>
+            <li><Txt k="refund.9e7736ed">{"Claims do not meet the time limits set out in Section 6."}</Txt></li>
           </ul>
         </div>
       ),
     },
     {
       icon: CheckCircle,
-      title: "12. Policy Updates",
+      title: txt("refund.3b65e4e9", "12. Policy Updates"),
       color: "#F5EB18", // Yellow
       bg: "bg-[#F5EB18]/20",
       content:
-        "This Policy may be updated. Continued use of our services confirms acceptance of the latest version.",
+        txt("refund.de55ad8a", "This Policy may be updated. Continued use of our services confirms acceptance of the latest version."),
     },
   ];
 
@@ -314,9 +262,7 @@ export default function RefundPolicyPage() {
             )}
           >
             <Receipt className="w-4 h-4 text-[#48AEDD]" />
-            <span className="text-[#48AEDD] font-bold text-xs tracking-widest uppercase">
-              Customer Guarantee
-            </span>
+            <span className="text-[#48AEDD] font-bold text-xs tracking-widest uppercase"><Txt k="refund.514b1765">{"Customer Guarantee"}</Txt></span>
           </div>
 
           <h1
@@ -325,8 +271,7 @@ export default function RefundPolicyPage() {
               fadeInUp,
               "animation-delay-100",
             )}
-          >
-            Refund & <span className="text-[#E53935]">Cancellation Policy</span>
+          ><Txt k="refund.3eaae10a">{"Refund & "}</Txt><span className="text-[#E53935]"><Txt k="refund.e49d7c7c">{"Cancellation Policy"}</Txt></span>
           </h1>
 
           <p
@@ -335,18 +280,14 @@ export default function RefundPolicyPage() {
               fadeInUp,
               "animation-delay-200",
             )}
-          >
-            Applies to All Bookings, Cancellations and Deliveries
-          </p>
+          ><Txt k="refund.123e9cf2">{"Applies to All Bookings, Cancellations and Deliveries"}</Txt></p>
           <p
             className={cn(
               "text-sm text-slate-400",
               fadeInUp,
               "animation-delay-300",
             )}
-          >
-            Last Updated: 22/08/2026
-          </p>
+          ><Txt k="refund.f946fe2d">{"Last Updated: 22/08/2026"}</Txt></p>
         </div>
       </div>
 
@@ -364,41 +305,18 @@ export default function RefundPolicyPage() {
             <div className="flex gap-4 items-start">
               <AlertOctagon className="w-6 h-6 text-[#F5EB18] flex-shrink-0 mt-1" />
               <div>
-                <h2 className="font-bold text-xl mb-2 text-[#F5EB18]">
-                  Policy Overview
-                </h2>
-                <p className="text-white/90 leading-relaxed">
-                  This Refund & Cancellation Policy applies to courier,
-                  transport, and logistics services provided by FourSix46®
-                  Global Ltd, trading as Route46 Couriers, within the United
-                  Kingdom.
-                </p>
+                <h2 className="font-bold text-xl mb-2 text-[#F5EB18]"><Txt k="refund.b223659e">{"Policy Overview"}</Txt></h2>
+                <p className="text-white/90 leading-relaxed"><Txt k="refund.536e15ed">{"This Refund & Cancellation Policy applies to courier, transport, and logistics services provided by FourSix46® Global Ltd, trading as Route46 Couriers, within the United Kingdom."}</Txt></p>
                 <br />
-                <p className="text-white/90 leading-relaxed">
-                  All delivery and transport services are provided in accordance
-                  with our{" "}
+                <p className="text-white/90 leading-relaxed"><Txt k="refund.306fbc59">{"All delivery and transport services are provided in accordance with our"}</Txt>{" "}
                   <a
                     href="/terms"
                     className="underline decoration-[#F5EB18]/60 underline-offset-2 hover:text-[#F5EB18]"
-                  >
-                    Terms and Conditions
-                  </a>
-                  , which set out our standard terms governing liability,
-                  claims, and compensation.
-                </p>
+                  ><Txt k="refund.b01ec4b5_2">{"Terms and Conditions"}</Txt></a><Txt k="refund.d3690366">{", which set out our standard terms governing liability, claims, and compensation."}</Txt></p>
                 <br />
-                <p className="text-white/90 leading-relaxed">
-                  Where any conflict arises between this Refund & Cancellation
-                  Policy and our Terms and Conditions, our Terms and Conditions
-                  shall take precedence.
-                </p>
+                <p className="text-white/90 leading-relaxed"><Txt k="refund.6e775755">{"Where any conflict arises between this Refund & Cancellation Policy and our Terms and Conditions, our Terms and Conditions shall take precedence."}</Txt></p>
                 <br />
-                <p className="text-white/90 leading-relaxed">
-                  This policy outlines how booking cancellations, refunds, and
-                  related service adjustments are handled in accordance with our
-                  operational planning, driver dispatch procedures, and
-                  transport commitments.
-                </p>
+                <p className="text-white/90 leading-relaxed"><Txt k="refund.a5756faa">{"This policy outlines how booking cancellations, refunds, and related service adjustments are handled in accordance with our operational planning, driver dispatch procedures, and transport commitments."}</Txt></p>
               </div>
             </div>
           </div>
@@ -451,19 +369,13 @@ export default function RefundPolicyPage() {
                 <HelpCircle className="w-6 h-6" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-[#134467]">
-                  Need to request a refund?
-                </h3>
-                <p className="text-sm text-slate-500 mt-1">
-                  Contact our support team with your Booking Reference.
-                </p>
+                <h3 className="text-lg font-bold text-[#134467]"><Txt k="refund.676f6d4b">{"Need to request a refund?"}</Txt></h3>
+                <p className="text-sm text-slate-500 mt-1"><Txt k="refund.87a11e38">{"Contact our support team with your Booking Reference."}</Txt></p>
               </div>
               <a
                 href="/contact"
                 className="px-6 py-3 bg-[#134467] text-white font-bold rounded-xl hover:bg-[#0f3652] transition-colors shadow-lg shadow-blue-900/10"
-              >
-                Contact Support
-              </a>
+              ><Txt k="refund.446eb351">{"Contact Support"}</Txt></a>
             </div>
           </div>
         </div>

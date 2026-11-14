@@ -51,12 +51,20 @@ import {
   SEO_PAGES,
   TEXT_GROUPS,
   normaliseSiteContent,
+  type TextField,
   type SiteContent,
   type SocialLink,
   type StatItem,
   type Testimonial,
   type TrustedLogo,
 } from "@/content/siteContent";
+import { PAGE_TEXT_GROUPS } from "@/content/pageText.generated";
+
+/** Hand-made groups (home, footer, careers…) + every page generated from code. */
+const allTextGroups: { id: string; label: string; fields: (TextField & { section?: string })[] }[] = [
+  ...TEXT_GROUPS,
+  ...PAGE_TEXT_GROUPS,
+];
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -161,6 +169,7 @@ export function SiteContentCard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [textQuery, setTextQuery] = useState("");
 
   const load = async () => {
     setLoading(true);
@@ -302,16 +311,42 @@ export function SiteContentCard() {
 
           {/* ── Page text ─────────────────────────────────────────────── */}
           <TabsContent value="text" className="pt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+              <Input
+                value={textQuery}
+                onChange={(e) => setTextQuery(e.target.value)}
+                placeholder="Search page text… (e.g. refund, insurance, contact)"
+                className="sm:max-w-md"
+              />
+              <span className="text-xs text-muted-foreground">
+                Every page's text is listed below in page order. Open a page,
+                edit a field, then Save. Blank = original wording.
+              </span>
+            </div>
             <Accordion type="multiple" className="w-full">
-              {TEXT_GROUPS.map((group) => {
+              {allTextGroups.map((group) => {
+                const q = textQuery.trim().toLowerCase();
+                const fields = q
+                  ? group.fields.filter(
+                      (fl) =>
+                        fl.default.toLowerCase().includes(q) ||
+                        fl.label.toLowerCase().includes(q) ||
+                        (draft.text[fl.key] ?? "").toLowerCase().includes(q),
+                    )
+                  : group.fields;
+                if (q && fields.length === 0) return null;
                 const edited = group.fields.filter((fl) =>
                   draft.text[fl.key]?.trim(),
                 ).length;
+                let lastSection = "";
                 return (
                   <AccordionItem key={group.id} value={group.id}>
                     <AccordionTrigger className="hover:no-underline">
-                      <span className="flex items-center gap-2">
+                      <span className="flex flex-wrap items-center gap-2 text-left">
                         {group.label}
+                        <span className="text-xs font-normal text-muted-foreground">
+                          {q ? `${fields.length} match` : `${group.fields.length} fields`}
+                        </span>
                         {edited > 0 && (
                           <Badge variant="secondary" className="text-xs">
                             {edited} edited
@@ -320,11 +355,21 @@ export function SiteContentCard() {
                       </span>
                     </AccordionTrigger>
                     <AccordionContent className="space-y-4 pt-2">
-                      {group.fields.map((fl) => {
+                      {fields.map((fl) => {
                         const value = draft.text[fl.key] ?? "";
+                        const section =
+                          "section" in fl && fl.section !== lastSection
+                            ? (lastSection = fl.section as string)
+                            : null;
+                        const multiline = fl.multiline || fl.default.length > 90;
                         return (
                           <div key={fl.key}>
-                            <div className="flex items-center justify-between">
+                            {section && (
+                              <p className="text-xs font-bold uppercase tracking-wider text-[#134467] border-b pb-1 mb-3 mt-6 first:mt-0">
+                                {section}
+                              </p>
+                            )}
+                            <div className="flex items-center justify-between gap-2">
                               <Label className="font-semibold">{fl.label}</Label>
                               {value.trim() && (
                                 <button
@@ -332,25 +377,30 @@ export function SiteContentCard() {
                                   className="text-xs text-muted-foreground hover:text-foreground underline"
                                   onClick={() => setText(fl.key, "")}
                                 >
-                                  Reset to default
+                                  Reset to original
                                 </button>
                               )}
                             </div>
-                            {fl.multiline ? (
+                            {multiline ? (
                               <Textarea
                                 className="mt-1"
-                                rows={3}
+                                rows={Math.min(8, Math.max(3, Math.ceil(fl.default.length / 110)))}
                                 value={value}
-                                placeholder={fl.default}
+                                placeholder={fl.default.trim()}
                                 onChange={(e) => setText(fl.key, e.target.value)}
                               />
                             ) : (
                               <Input
                                 className="mt-1"
                                 value={value}
-                                placeholder={fl.default}
+                                placeholder={fl.default.trim()}
                                 onChange={(e) => setText(fl.key, e.target.value)}
                               />
+                            )}
+                            {value.trim() && (
+                              <p className="text-[11px] text-muted-foreground mt-1">
+                                Original: {fl.default.trim()}
+                              </p>
                             )}
                           </div>
                         );
@@ -363,7 +413,8 @@ export function SiteContentCard() {
             <p className="text-xs text-muted-foreground mt-4">
               The footer lines "Route46 Couriers is a trading name of
               FourSix46® Global Ltd" and the company number are fixed and not
-              editable here.
+              editable here. Form error messages (e.g. "Invalid email
+              address") are part of the form checks and stay in the code.
             </p>
           </TabsContent>
 

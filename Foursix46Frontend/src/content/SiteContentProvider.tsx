@@ -80,16 +80,33 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
 export const useSiteContent = () => useContext(SiteContentContext);
 
-/** t("home.cta.title") → CMS value, or the registry default when blank. */
+/**
+ * t("home.cta.title")            → CMS value, or the registry default.
+ * t("about.1a2b3c4d", "Default") → CMS value, or the given default.
+ * A blank CMS value always falls back to the default. When a default is
+ * given, its leading/trailing spaces are kept so inline text never runs into
+ * the element next to it.
+ */
 export function useText() {
   const { content } = useSiteContent();
   return useCallback(
-    (key: string): string => {
+    (key: string, fallback?: string): string => {
       const v = content.text[key];
-      return v && v.trim() ? v : (TEXT_DEFAULTS[key] ?? "");
+      const def = fallback ?? TEXT_DEFAULTS[key] ?? "";
+      if (!v || !v.trim()) return def;
+      if (fallback === undefined) return v;
+      const lead = /^\s*/.exec(def)?.[0] ?? "";
+      const trail = /\s*$/.exec(def)?.[0] ?? "";
+      return lead + v.trim() + trail;
     },
     [content.text],
   );
+}
+
+/** Editable inline text: <Txt k="about.1a2b3c4d">{"Default wording"}</Txt> */
+export function Txt({ k, children }: { k: string; children: string }) {
+  const t = useText();
+  return <>{t(k, children)}</>;
 }
 
 export function useStats() {

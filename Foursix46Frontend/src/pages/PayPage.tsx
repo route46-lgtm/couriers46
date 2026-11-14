@@ -260,10 +260,12 @@ import Footer from "@/components/Footer";
 import { useVatSettings } from "@/hooks/useVatSettings";
 
 import Seo from "@/components/Seo";
+import { Txt, useText } from "@/content/SiteContentProvider";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 const UK_PHONE_REGEX = /^\+44\d{10}$/;
 
 export default function PayPage() {
+  const txt = useText();
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL || "https://route46.couriers.uk";
 
@@ -411,9 +413,7 @@ export default function PayPage() {
             className="mb-6"
             onClick={() => navigate("/")}
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </Button>
+            <ArrowLeft className="w-4 h-4 mr-2" /><Txt k="pay.9754ecd4">{"Back to Home"}</Txt></Button>
 
           <Card className="p-8 rounded-3xl shadow-xl">
             {/* ── HEADER ── */}
@@ -421,49 +421,33 @@ export default function PayPage() {
               <div className="w-16 h-16 mx-auto bg-[#F5EB18] rounded-full flex items-center justify-center mb-4">
                 <CreditCard className="w-8 h-8 text-[#134467]" />
               </div>
-              <h1 className="text-4xl font-bold text-[#F81629]">
-                Secure Payment
-              </h1>
-              <p className="text-[#48AEDD] mt-2">
-                Pay your invoice securely via Stripe
-              </p>
+              <h1 className="text-4xl font-bold text-[#F81629]"><Txt k="pay.41909e23">{"Secure Payment"}</Txt></h1>
+              <p className="text-[#48AEDD] mt-2"><Txt k="pay.c074f226">{"Pay your invoice securely via Stripe"}</Txt></p>
             </div>
 
             {/* ── LEGAL NOTICE ── */}
             <div className="mb-8 rounded-2xl border border-[#134467]/10 bg-[#134467]/5 p-5 space-y-3">
               <div className="flex items-start gap-3">
                 <ShieldCheck className="w-5 h-5 text-[#134467] mt-0.5 shrink-0" />
-                <p className="text-sm text-[#134467]/80 leading-relaxed">
-                  Payments are processed securely via{" "}
-                  <strong className="text-[#134467]">Stripe</strong>, a globally
-                  trusted payment provider. FourSix46&reg; Global Ltd does not
-                  store or have access to your card details.
-                </p>
+                <p className="text-sm text-[#134467]/80 leading-relaxed"><Txt k="pay.6ffd8fbc">{"Payments are processed securely via"}</Txt>{" "}
+                  <strong className="text-[#134467]"><Txt k="pay.24974376">{"Stripe"}</Txt></strong><Txt k="pay.e7b6a500">{", a globally trusted payment provider. FourSix46® Global Ltd does not store or have access to your card details."}</Txt></p>
               </div>
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-[#134467] mt-0.5 shrink-0" />
-                <p className="text-sm text-[#134467]/80 leading-relaxed">
-                  This payment page is used for invoice settlement, service
-                  payments, or agreed charges across FourSix46&reg; ventures.
-                  Please ensure the payment amount and reference details are
-                  correct before proceeding.
-                </p>
+                <p className="text-sm text-[#134467]/80 leading-relaxed"><Txt k="pay.88207403">{"This payment page is used for invoice settlement, service payments, or agreed charges across FourSix46® ventures. Please ensure the payment amount and reference details are correct before proceeding."}</Txt></p>
               </div>
-              <p className="text-sm text-[#134467]/70 leading-relaxed pl-8">
-                If you have any questions regarding this payment, please contact
-                our team before completing the transaction.
-              </p>
+              <p className="text-sm text-[#134467]/70 leading-relaxed pl-8"><Txt k="pay.2ff44b1b">{"If you have any questions regarding this payment, please contact our team before completing the transaction."}</Txt></p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* ── CUSTOMER INFO ── */}
               <Card className="p-6 space-y-4">
-                <h2 className="font-semibold text-lg">Customer Information</h2>
+                <h2 className="font-semibold text-lg"><Txt k="pay.12de3401">{"Customer Information"}</Txt></h2>
 
                 <div className="space-y-1">
                   <Input
                     name="name"
-                    placeholder="Full Name *"
+                    placeholder={txt("pay.8ea10bf9", "Full Name *")}
                     required
                     value={payment.name}
                     onChange={handleChange}
@@ -479,7 +463,7 @@ export default function PayPage() {
                   <Input
                     name="email"
                     type="email"
-                    placeholder="Email Address *"
+                    placeholder={txt("pay.eaef005f", "Email Address *")}
                     required
                     value={payment.email}
                     onChange={handleChange}
@@ -494,7 +478,7 @@ export default function PayPage() {
                 <div className="space-y-1">
                   <Input
                     name="phone"
-                    placeholder="Phone (Optional, e.g. +44 7XXX XXXXXX)"
+                    placeholder={txt("pay.8c7947ca", "Phone (Optional, e.g. +44 7XXX XXXXXX)")}
                     value={payment.phone}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -509,7 +493,7 @@ export default function PayPage() {
 
               {/* ── PAYMENT DETAILS ── */}
               <Card className="p-6 space-y-4">
-                <h2 className="font-semibold text-lg">Payment Details</h2>
+                <h2 className="font-semibold text-lg"><Txt k="pay.c33d81f5">{"Payment Details"}</Txt></h2>
 
                 <Input
                   type="number"
@@ -527,22 +511,18 @@ export default function PayPage() {
                 {/* Dynamic VAT indicator — driven by admin settings */}
                 {vatLoading ? (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Loading VAT settings…
-                  </div>
+                    <Loader2 className="w-4 h-4 animate-spin" /><Txt k="pay.75b99dd5">{"Loading VAT settings…"}</Txt></div>
                 ) : vatEnabled ? (
                   <Input value={`VAT Rate: ${vatRate}%`} disabled readOnly />
                 ) : (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-md border bg-muted/40 text-sm text-muted-foreground">
-                    VAT: Not applicable
-                  </div>
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-md border bg-muted/40 text-sm text-muted-foreground"><Txt k="pay.6b5c4cc9">{"VAT: Not applicable"}</Txt></div>
                 )}
 
                 <div className="space-y-1">
                   <Textarea
                     name="reference"
                     required
-                    placeholder="Payment Reference (e.g. Quote Ref FSC-QQ-0007 or Job payment – London to Bristol) *"
+                    placeholder={txt("pay.b9d42e94", "Payment Reference (e.g. Quote Ref FSC-QQ-0007 or Job payment – London to Bristol) *")}
                     value={payment.reference}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -557,27 +537,27 @@ export default function PayPage() {
 
               {/* ── BREAKDOWN ── */}
               <Card className="p-6 space-y-3 bg-gray-50">
-                <h2 className="font-semibold text-lg">Payment Breakdown</h2>
+                <h2 className="font-semibold text-lg"><Txt k="pay.879143aa">{"Payment Breakdown"}</Txt></h2>
 
                 <div className="flex justify-between text-sm">
-                  <span>Net Amount</span>
+                  <span><Txt k="pay.005304f9">{"Net Amount"}</Txt></span>
                   <span>£{net.toFixed(2)}</span>
                 </div>
 
                 {vatEnabled ? (
                   <div className="flex justify-between text-sm">
-                    <span>VAT ({vatRate}%)</span>
+                    <span><Txt k="pay.aed05970">{"VAT ("}</Txt>{vatRate}%)</span>
                     <span>£{vatAmount.toFixed(2)}</span>
                   </div>
                 ) : (
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>VAT</span>
-                    <span>Not applicable</span>
+                    <span><Txt k="pay.75df8b53">{"VAT"}</Txt></span>
+                    <span><Txt k="pay.2a422277">{"Not applicable"}</Txt></span>
                   </div>
                 )}
 
                 <div className="border-t pt-3 flex justify-between font-bold text-lg">
-                  <span>Total Payable</span>
+                  <span><Txt k="pay.44fa96c9">{"Total Payable"}</Txt></span>
                   <span>£{totalAmount.toFixed(2)}</span>
                 </div>
               </Card>
@@ -593,10 +573,7 @@ export default function PayPage() {
                 <Label
                   htmlFor="confirm"
                   className="text-sm text-[#134467]/80 leading-relaxed cursor-pointer"
-                >
-                  By proceeding, you confirm that the payment amount and
-                  reference details are correct.
-                </Label>
+                ><Txt k="pay.d97e34d7">{"By proceeding, you confirm that the payment amount and reference details are correct."}</Txt></Label>
               </div>
 
               {/* ── PAY BUTTON ── */}
@@ -607,23 +584,17 @@ export default function PayPage() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Redirecting to Stripe…
-                  </>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" /><Txt k="pay.75dc989d">{"Redirecting to Stripe…"}</Txt></>
                 ) : (
                   <>
-                    <ShieldCheck className="w-5 h-5 mr-2" />
-                    Pay Securely via Stripe — £{totalAmount.toFixed(2)}
+                    <ShieldCheck className="w-5 h-5 mr-2" /><Txt k="pay.ed81d7c1">{"Pay Securely via Stripe — £"}</Txt>{totalAmount.toFixed(2)}
                   </>
                 )}
               </Button>
 
               {/* ── FOOTER LEGAL LINE ── */}
-              <p className="text-center text-xs text-muted-foreground leading-relaxed pt-2">
-                Payments are processed by Stripe. All payments are made to{" "}
-                <strong>FourSix46&reg; Global Ltd</strong> and are subject to
-                applicable terms and policies.
-              </p>
+              <p className="text-center text-xs text-muted-foreground leading-relaxed pt-2"><Txt k="pay.4b2dc2e6">{"Payments are processed by Stripe. All payments are made to"}</Txt>{" "}
+                <strong><Txt k="pay.867c8ae4">{"FourSix46® Global Ltd"}</Txt></strong><Txt k="pay.ff65b997">{" and are subject to applicable terms and policies."}</Txt></p>
             </form>
           </Card>
         </div>

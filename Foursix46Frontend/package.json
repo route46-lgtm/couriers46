@@ -6,7 +6,8 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "node scripts/fetch-site-content.mjs && vite-react-ssg build && node scripts/inject-seo.mjs",
+    "build": "node scripts/gen-page-text.cjs && node scripts/fetch-site-content.mjs && vite-react-ssg build && node scripts/inject-seo.mjs",
+    "cms:text": "node scripts/gen-page-text.cjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",

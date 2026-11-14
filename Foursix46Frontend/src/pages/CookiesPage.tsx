@@ -5,41 +5,43 @@ import Footer from "@/components/Footer";
 
 import Seo from "@/components/Seo";
 import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
+import { Txt, useText } from "@/content/SiteContentProvider";
 // Animation utility
 const fadeInUp = "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
 
 export default function CookiesPage() {
+  const txt = useText();
   // Intro content
   const introContent = "This section provides comprehensive information about how our website uses cookies. Cookies are small text files stored on your device that help us provide a better user experience. They enable essential functionality, remember your preferences, and help us understand how you use our platform.";
 
   const sections = [
     {
       icon: ShieldCheck,
-      title: "Essential Cookies",
+      title: txt("cookies.5a2e93ce", "Essential Cookies"),
       color: "#E53935", // Red
       bg: "bg-[#E53935]/10",
-      content: "Required for basic website functionality, including authentication, security, and navigation. These cannot be disabled as they are necessary for the service to work properly and securely."
+      content: txt("cookies.b0cff230", "Required for basic website functionality, including authentication, security, and navigation. These cannot be disabled as they are necessary for the service to work properly and securely.")
     },
     {
       icon: Activity,
-      title: "Performance Cookies",
+      title: txt("cookies.e38bee22", "Performance Cookies"),
       color: "#134467", // Navy
       bg: "bg-[#134467]/10",
-      content: "Help us understand how visitors interact with our website by collecting anonymous analytics data. This helps us improve our platform's performance, identify issues, and enhance the overall user experience."
+      content: txt("cookies.264ee21c", "Help us understand how visitors interact with our website by collecting anonymous analytics data. This helps us improve our platform's performance, identify issues, and enhance the overall user experience.")
     },
     {
       icon: Settings,
-      title: "Functional Cookies",
+      title: txt("cookies.99200518", "Functional Cookies"),
       color: "#F5EB18", // Yellow
       bg: "bg-[#F5EB18]/20",
-      content: "Remember your preferences and settings to provide a personalized experience, such as language preferences, saved locations, and recent delivery addresses. Disabling these may reset your preferences."
+      content: txt("cookies.1b0d368e", "Remember your preferences and settings to provide a personalized experience, such as language preferences, saved locations, and recent delivery addresses. Disabling these may reset your preferences.")
     },
     {
       icon: Sliders,
-      title: "Managing Cookies",
+      title: txt("cookies.6d1cb6ff", "Managing Cookies"),
       color: "#48AEDD", // Sky Blue
       bg: "bg-[#48AEDD]/10",
-      content: "You can control and manage cookies through your browser settings. Most browsers allow you to block or delete cookies, though this may impact your user experience. You can also use our cookie preference center to customize which optional cookies you accept."
+      content: txt("cookies.7e959f46", "You can control and manage cookies through your browser settings. Most browsers allow you to block or delete cookies, though this may impact your user experience. You can also use our cookie preference center to customize which optional cookies you accept.")
     }
   ];
 
@@ -71,18 +73,14 @@ export default function CookiesPage() {
         <div className="container mx-auto px-4 sm:px-6 text-center max-w-4xl relative z-10">
           <div className={cn("inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-slate-50 border border-[#48AEDD]/20 shadow-sm mb-8", fadeInUp)}>
             <Cookie className="w-4 h-4 text-[#48AEDD]" />
-            <span className="text-[#48AEDD] font-bold text-xs tracking-widest uppercase">Data Transparency</span>
+            <span className="text-[#48AEDD] font-bold text-xs tracking-widest uppercase"><Txt k="cookies.f5ffadba">{"Data Transparency"}</Txt></span>
           </div>
           
-          <h1 className={cn("text-4xl sm:text-5xl lg:text-6xl font-black text-[#48AEDD] mb-6 tracking-tight", fadeInUp, "animation-delay-100")}>
-            Cookies <span className="text-[#E53935]">Policy</span>
+          <h1 className={cn("text-4xl sm:text-5xl lg:text-6xl font-black text-[#48AEDD] mb-6 tracking-tight", fadeInUp, "animation-delay-100")}><Txt k="cookies.17c54740">{"Cookies "}</Txt><span className="text-[#E53935]"><Txt k="cookies.23d3bd66">{"Policy"}</Txt></span>
           </h1>
           
-          <p className={cn("text-lg sm:text-xl text-slate-500 mb-4 max-w-2xl mx-auto font-medium", fadeInUp, "animation-delay-200")}>
-            How we use data to improve your experience.
-          </p>
-          <p className={cn("text-sm text-slate-400", fadeInUp, "animation-delay-300")}>
-             Last Updated: {new Date().toLocaleDateString()}
+          <p className={cn("text-lg sm:text-xl text-slate-500 mb-4 max-w-2xl mx-auto font-medium", fadeInUp, "animation-delay-200")}><Txt k="cookies.62a864f9">{"How we use data to improve your experience."}</Txt></p>
+          <p className={cn("text-sm text-slate-400", fadeInUp, "animation-delay-300")}><Txt k="cookies.ebfd5757">{"Last Updated: "}</Txt>{new Date().toLocaleDateString()}
           </p>
         </div>
       </div>
@@ -99,7 +97,7 @@ export default function CookiesPage() {
             <div className="flex gap-4 items-start">
               <Info className="w-6 h-6 text-[#134467] flex-shrink-0 mt-1" />
               <div>
-                <h2 className="font-bold text-xl mb-2 text-[#134467]">What Are Cookies?</h2>
+                <h2 className="font-bold text-xl mb-2 text-[#134467]"><Txt k="cookies.3ab58da1">{"What Are Cookies?"}</Txt></h2>
                 <p className="text-[#134467]/90 leading-relaxed font-medium">
                   {introContent}
                 </p>
@@ -148,17 +146,13 @@ export default function CookiesPage() {
                   <HelpCircle className="w-6 h-6" />
                </div>
                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-[#134467]">Have questions about cookies?</h3>
-                  <p className="text-sm text-slate-500 mt-1">
-                    Contact our support team for data privacy enquiries.
-                  </p>
+                  <h3 className="text-lg font-bold text-[#134467]"><Txt k="cookies.27656b80">{"Have questions about cookies?"}</Txt></h3>
+                  <p className="text-sm text-slate-500 mt-1"><Txt k="cookies.60e76de4">{"Contact our support team for data privacy enquiries."}</Txt></p>
                </div>
                <a 
                  href="/contact" 
                  className="px-6 py-3 bg-[#134467] text-white font-bold rounded-xl hover:bg-[#0f3652] transition-colors shadow-lg shadow-blue-900/10"
-               >
-                 Contact Support
-               </a>
+               ><Txt k="cookies.446eb351">{"Contact Support"}</Txt></a>
              </div>
           </div>
 

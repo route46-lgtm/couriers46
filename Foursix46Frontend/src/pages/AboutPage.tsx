@@ -495,6 +495,7 @@ import Footer from "@/components/Footer";
 
 import Seo from "@/components/Seo";
 import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
+import { Txt, useText } from "@/content/SiteContentProvider";
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out fill-mode-forwards";
 
@@ -526,6 +527,7 @@ function TypingHighlight({ text, speed = 80 }) {
 }
 
 export default function AboutPage() {
+  const txt = useText();
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-white overflow-x-hidden font-sans">
       <Seo
@@ -553,17 +555,14 @@ export default function AboutPage() {
               "inline-block py-1 px-4 rounded-full bg-[#E53935]/10 text-[#E53935] font-bold text-sm mb-6 tracking-wider uppercase border border-[#E53935]/20",
               fadeInUp,
             )}
-          >
-            NATIONWIDE COURIER NETWORK
-          </span>
+          ><Txt k="about.8c4a282b">{"NATIONWIDE COURIER NETWORK"}</Txt></span>
           <h1
             className={cn(
               "text-5xl sm:text-6xl lg:text-7xl font-extrabold text-[#48AEDD] mb-6 tracking-tight leading-tight",
               fadeInUp,
               "animation-delay-100",
             )}
-          >
-            About <span className="text-[#E53935]">Route46 Couriers</span>
+          ><Txt k="about.dbcf555b">{"About "}</Txt><span className="text-[#E53935]"><Txt k="about.7d4c9f4a">{"Route46 Couriers"}</Txt></span>
           </h1>
           <p
             className={cn(
@@ -571,26 +570,15 @@ export default function AboutPage() {
               fadeInUp,
               "animation-delay-200",
             )}
-          >
-            A nationwide courier network backed by FourSix46® Global Ltd
-          </p>
+          ><Txt k="about.d628f6b7">{"A nationwide courier network backed by FourSix46® Global Ltd"}</Txt></p>
           <p
             className={cn(
               "text-base sm:text-lg text-[#134467]/70 leading-relaxed max-w-3xl mx-auto",
               fadeInUp,
               "animation-delay-300",
             )}
-          >
-            Route46 Couriers is a UK courier service provider offering reliable
-            same day and scheduled delivery solutions across the United Kingdom.
-            Operating through a nationwide network of professional courier
-            drivers and vehicles, Route46 Couriers connects businesses and
-            individuals with fast, secure, and dependable logistics solutions.
-            Route46 Couriers is a trading brand of{" "}
-            <strong className="text-[#134467]">FourSix46® Global Ltd</strong>, a
-            UK-registered company focused on building scalable logistics and
-            technology ventures.
-          </p>
+          ><Txt k="about.327b595b">{"Route46 Couriers is a UK courier service provider offering reliable same day and scheduled delivery solutions across the United Kingdom. Operating through a nationwide network of professional courier drivers and vehicles, Route46 Couriers connects businesses and individuals with fast, secure, and dependable logistics solutions. Route46 Couriers is a trading brand of"}</Txt>{" "}
+            <strong className="text-[#134467]"><Txt k="about.867c8ae4">{"FourSix46® Global Ltd"}</Txt></strong><Txt k="about.193e028f">{", a UK-registered company focused on building scalable logistics and technology ventures."}</Txt></p>
         </div>
       </div>
 
@@ -602,16 +590,14 @@ export default function AboutPage() {
             {/* Key Highlights */}
             <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm max-w-2xl mx-auto">
               <h3 className="text-sm font-black text-[#134467] uppercase tracking-widest mb-5 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#48AEDD]" />
-                Key Highlights
-              </h3>
+                <CheckCircle2 className="w-4 h-4 text-[#48AEDD]" /><Txt k="about.4143a2ab">{"Key Highlights"}</Txt></h3>
               <ul className="space-y-3">
                 {[
-                  "Same day courier services across the UK",
-                  "Access to thousands of drivers and vehicles nationwide",
-                  "Fast collection windows and reliable delivery timelines",
-                  "Professional courier network for businesses and individuals",
-                  "Fully insured and industry-compliant transport operations",
+                  txt("about.c40a04d0", "Same day courier services across the UK"),
+                  txt("about.9515c58b", "Access to thousands of drivers and vehicles nationwide"),
+                  txt("about.16fe8f36", "Fast collection windows and reliable delivery timelines"),
+                  txt("about.04a313ce", "Professional courier network for businesses and individuals"),
+                  txt("about.aa943174", "Fully insured and industry-compliant transport operations"),
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <span className="mt-0.5 w-5 h-5 rounded-full bg-[#48AEDD]/10 text-[#48AEDD] text-xs font-black flex items-center justify-center flex-shrink-0">
@@ -625,25 +611,11 @@ export default function AboutPage() {
               </ul>
             </div>
             <div className="text-center max-w-3xl mx-auto">
-              <span className="inline-block text-[11px] font-black uppercase tracking-[0.2em] bg-[#134467]/5 text-[#134467] px-5 py-2 rounded-full border border-[#134467]/10 mb-4">
-                Who We Are
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#134467] mb-4">
-                How <span className="text-[#E53935]">Route46 Works</span>
+              <span className="inline-block text-[11px] font-black uppercase tracking-[0.2em] bg-[#134467]/5 text-[#134467] px-5 py-2 rounded-full border border-[#134467]/10 mb-4"><Txt k="about.65d88dad">{"Who We Are"}</Txt></span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#134467] mb-4"><Txt k="about.de4816b3">{"How "}</Txt><span className="text-[#E53935]"><Txt k="about.019a9820">{"Route46 Works"}</Txt></span>
               </h2>
               <div className="w-12 h-1 rounded-full bg-[#E53935] mx-auto mb-6" />
-              <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed">
-                Route46 Couriers was established to simplify access to
-                professional courier services across the UK. Through a modern
-                logistics model and access to thousands of independent courier
-                drivers and vehicles nationwide, Route46 Couriers enables rapid
-                collection, time-critical deliveries, and flexible transport
-                solutions for businesses and individuals. Whether it is urgent
-                documents, parcels, pallet shipments, or scheduled business
-                deliveries, Route46 Couriers ensures that shipments are handled
-                by experienced courier professionals operating under recognised
-                UK logistics standards.
-              </p>
+              <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed"><Txt k="about.eacfb485">{"Route46 Couriers was established to simplify access to professional courier services across the UK. Through a modern logistics model and access to thousands of independent courier drivers and vehicles nationwide, Route46 Couriers enables rapid collection, time-critical deliveries, and flexible transport solutions for businesses and individuals. Whether it is urgent documents, parcels, pallet shipments, or scheduled business deliveries, Route46 Couriers ensures that shipments are handled by experienced courier professionals operating under recognised UK logistics standards."}</Txt></p>
             </div>
           </section>
 
@@ -661,29 +633,15 @@ export default function AboutPage() {
                 <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10">
                   <Building2 className="w-7 h-7 text-[#F5EB18]" />
                 </div>
-                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#F5EB18]">
-                  Parent Company
-                </span>
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#F5EB18]"><Txt k="about.6823ba88">{"Parent Company"}</Txt></span>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                Our Parent Company —{" "}
-                <span className="text-[#F5EB18]">FourSix46®</span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white"><Txt k="about.cb90b8ba">{"Our Parent Company —"}</Txt>{" "}
+                <span className="text-[#F5EB18]"><Txt k="about.43aad8d1">{"FourSix46®"}</Txt></span>
               </h2>
               <div className="w-12 h-1 rounded-full bg-[#F5EB18]" />
-              <p className="text-white/80 text-lg leading-relaxed">
-                Route46 Couriers operates under the umbrella of{" "}
-                <strong className="text-white">FourSix46® Global Ltd</strong>, a
-                UK-based company focused on developing scalable ventures across
-                logistics, technology, and digital platforms. FourSix46®
-                represents a long-term brand ecosystem designed to support
-                multiple industries through innovation, reliability, and
-                structured operational standards.
-              </p>
-              <p className="text-white/80 text-lg leading-relaxed">
-                As the parent company, FourSix46® provides the strategic
-                foundation, operational systems, and long-term vision behind
-                Route46 Couriers and other future ventures.
-              </p>
+              <p className="text-white/80 text-lg leading-relaxed"><Txt k="about.a4b81e7c">{"Route46 Couriers operates under the umbrella of"}</Txt>{" "}
+                <strong className="text-white"><Txt k="about.867c8ae4_2">{"FourSix46® Global Ltd"}</Txt></strong><Txt k="about.b00abf8d">{", a UK-based company focused on developing scalable ventures across logistics, technology, and digital platforms. FourSix46® represents a long-term brand ecosystem designed to support multiple industries through innovation, reliability, and structured operational standards."}</Txt></p>
+              <p className="text-white/80 text-lg leading-relaxed"><Txt k="about.c205e522">{"As the parent company, FourSix46® provides the strategic foundation, operational systems, and long-term vision behind Route46 Couriers and other future ventures."}</Txt></p>
             </div>
           </section>
 
@@ -702,7 +660,7 @@ export default function AboutPage() {
                 <div className="relative overflow-hidden rounded-xl aspect-[4/5]">
                   <img
                     src="/FourSix_Logo.jpeg"
-                    alt="FourSix46 Logo"
+                    alt={txt("about.b2d06235", "FourSix46 Logo")}
                     className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#134467]/90 via-[#134467]/20 to-transparent opacity-80" />
@@ -715,30 +673,14 @@ export default function AboutPage() {
 
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 text-[#48AEDD] font-bold tracking-wide uppercase text-sm">
-                <Quote className="w-5 h-5 fill-current" />
-                Origin Story
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#134467] leading-tight">
-                A Mark of <span className="text-[#E53935]">IDENTITY.</span>
+                <Quote className="w-5 h-5 fill-current" /><Txt k="about.178b5d6d">{"Origin Story"}</Txt></div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#134467] leading-tight"><Txt k="about.e86c548b">{"A Mark of "}</Txt><span className="text-[#E53935]"><Txt k="about.d5e6ba52">{"IDENTITY."}</Txt></span>
               </h2>
               <div className="space-y-6 text-lg text-[#134467]/80 leading-relaxed">
-                <p>
-                  Since 2018, <strong className="text-[#134467]">46</strong> has
-                  been more than just digits — it has been a personal symbol of
-                  meaning, luck, and drive. 46 became part of everyday life, a
-                  mark of IDENTITY.
-                </p>
-                <p>
-                  When it was time to step into the world of business, the
-                  vision was clear: build a brand that could stand the test of
-                  time, transcend industries, and carry a global presence.
-                </p>
-                <p>
-                  That vision became{" "}
-                  <strong className="text-[#134467]">FourSix46®</strong> — a
-                  name born from numbers, yet built to represent limitless
-                  growth.
-                </p>
+                <p><Txt k="about.9f9c7c66">{"Since 2018, "}</Txt><strong className="text-[#134467]">46</strong><Txt k="about.ec0d4755">{" has been more than just digits — it has been a personal symbol of meaning, luck, and drive. 46 became part of everyday life, a mark of IDENTITY."}</Txt></p>
+                <p><Txt k="about.309bee59">{"When it was time to step into the world of business, the vision was clear: build a brand that could stand the test of time, transcend industries, and carry a global presence."}</Txt></p>
+                <p><Txt k="about.b7f5f5b3">{"That vision became"}</Txt>{" "}
+                  <strong className="text-[#134467]"><Txt k="about.b9146421">{"FourSix46®"}</Txt></strong><Txt k="about.d170fe31">{" — a name born from numbers, yet built to represent limitless growth."}</Txt></p>
               </div>
             </div>
           </section>
@@ -751,9 +693,7 @@ export default function AboutPage() {
               <TypingHighlight
                 text={'" FourSix46® is more than a company name."'}
               />
-              <p className="mt-6 text-2xl text-[#134467] font-semibold max-w-md">
-                A house for multi-industry brands.
-              </p>
+              <p className="mt-6 text-2xl text-[#134467] font-semibold max-w-md"><Txt k="about.604cd518">{"A house for multi-industry brands."}</Txt></p>
             </div>
 
             {/* Right: Tweet image floats, X icon static in top right */}
@@ -767,7 +707,7 @@ export default function AboutPage() {
               >
                 <img
                   src="/tweet.jpeg"
-                  alt="FourSix46® on Social Media"
+                  alt={txt("about.4666d5b7", "FourSix46® on Social Media")}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 animate-float cursor-pointer"
                 />
               </a>
@@ -782,7 +722,7 @@ export default function AboutPage() {
               >
                 <img
                   src="/X-Logo.webp" // Use your uploaded "X" image filename here
-                  alt="X Twitter Icon"
+                  alt={txt("about.dc5861c6", "X Twitter Icon")}
                   className="w-full h-full object-contain cursor-pointer transition-transform duration-300 hover:scale-110 drop-shadow-lg"
                 />
               </a>
@@ -819,24 +759,11 @@ export default function AboutPage() {
                 <PawPrint className="w-16 h-16 text-[#F5EB18]" />
               </div>
               <div>
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-white">
-                  Why the Okapi?
-                </h2>
-                <p className="text-white/80 text-lg sm:text-xl leading-relaxed mb-8 max-w-3xl">
-                  At the heart of our identity is the okapi — A rare and
-                  majestic animal, a close relative of the giraffe, but often
-                  mistaken for something else due to its zebra-like legs and
-                  solitary nature.
-                </p>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-white"><Txt k="about.84ad00ff">{"Why the Okapi?"}</Txt></h2>
+                <p className="text-white/80 text-lg sm:text-xl leading-relaxed mb-8 max-w-3xl"><Txt k="about.4f7d4550">{"At the heart of our identity is the okapi — A rare and majestic animal, a close relative of the giraffe, but often mistaken for something else due to its zebra-like legs and solitary nature."}</Txt></p>
                 <div className="pl-6 border-l-4 border-[#F5EB18]">
-                  <p className="font-medium text-white text-xl italic mb-2">
-                    "Just as the okapi stands out in nature, FourSix46® stands
-                    out in business."
-                  </p>
-                  <p className="text-[#F5EB18] font-medium">
-                    It represents our uniqueness and commitment to standing out,
-                    wherever we go.
-                  </p>
+                  <p className="font-medium text-white text-xl italic mb-2"><Txt k="about.11cfd643">{"\"Just as the okapi stands out in nature, FourSix46® stands out in business.\""}</Txt></p>
+                  <p className="text-[#F5EB18] font-medium"><Txt k="about.950ce6f5">{"It represents our uniqueness and commitment to standing out, wherever we go."}</Txt></p>
                 </div>
               </div>
             </div>
@@ -850,52 +777,32 @@ export default function AboutPage() {
                 <div className="relative overflow-hidden rounded-3xl shadow-2xl border-4 border-white group-hover:border-[#48AEDD]/50 transition-all duration-500">
                   <img
                     src="/okapi.jpeg"
-                    alt="Okapi - Symbol of FourSix46®"
+                    alt={txt("about.d085551a", "Okapi - Symbol of FourSix46®")}
                     className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#134467]/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
                 <div className="absolute -bottom-6 -right-6 bg-[#E53935] text-white px-6 py-3 rounded-2xl shadow-xl border-4 border-white transform rotate-3 group-hover:rotate-6 transition-transform duration-300">
-                  <p className="font-bold text-sm uppercase tracking-wider">
-                    Unique & Bold
-                  </p>
+                  <p className="font-bold text-sm uppercase tracking-wider"><Txt k="about.28e19b17">{"Unique & Bold"}</Txt></p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <h2 className="text-4xl sm:text-5xl font-extrabold text-[#E53935] leading-tight">
-                    Route46
-                    <span className="text-[#48AEDD]"> Couriers</span>
+                  <h2 className="text-4xl sm:text-5xl font-extrabold text-[#E53935] leading-tight"><Txt k="about.aa275ddb">{"Route46"}</Txt><span className="text-[#48AEDD]"><Txt k="about.5348e6af">{" Couriers"}</Txt></span>
                   </h2>
                   <div className="inline-block">
-                    <p className="text-base font-semibold uppercase tracking-widest text-[#134467] border-b-4 border-[#F5EB18] inline-block pb-2">
-                      The Courier with a Difference
-                    </p>
+                    <p className="text-base font-semibold uppercase tracking-widest text-[#134467] border-b-4 border-[#F5EB18] inline-block pb-2"><Txt k="about.78e6dd7f">{"The Courier with a Difference"}</Txt></p>
                   </div>
                 </div>
                 <div className="space-y-5 text-lg text-[#134467]/80 leading-relaxed">
-                  <p>
-                    The first chapter of FourSix46® begins with logistics — one
-                    of the fastest-growing industries in the world. Route46
-                    Couriers was launched to bring adaptability, speed, and
-                    reliability into courier services.
-                  </p>
-                  <p>
-                    We combine technology, efficiency, and customer-focused
-                    service to ensure every delivery goes beyond expectations.
-                    Whether it's last-mile delivery, e-commerce shipping, or
-                    corporate logistics, we move with purpose.
-                  </p>
+                  <p><Txt k="about.582e2103">{"The first chapter of FourSix46® begins with logistics — one of the fastest-growing industries in the world. Route46 Couriers was launched to bring adaptability, speed, and reliability into courier services."}</Txt></p>
+                  <p><Txt k="about.465b397b">{"We combine technology, efficiency, and customer-focused service to ensure every delivery goes beyond expectations. Whether it's last-mile delivery, e-commerce shipping, or corporate logistics, we move with purpose."}</Txt></p>
                 </div>
                 <div className="pt-4">
                   <div className="bg-gradient-to-r from-[#F5EB18]/20 to-transparent px-6 py-4 rounded-2xl border-l-4 border-[#E53935]">
-                    <p className="font-semibold text-[#E53935]">
-                      At Route46 Couriers, we don't just deliver packages.
-                    </p>
-                    <p className="font-bold text-xl text-[#48AEDD] mt-1">
-                      We deliver differently.
-                    </p>
+                    <p className="font-semibold text-[#E53935]"><Txt k="about.1f545bf9">{"At Route46 Couriers, we don't just deliver packages."}</Txt></p>
+                    <p className="font-bold text-xl text-[#48AEDD] mt-1"><Txt k="about.ebf17391">{"We deliver differently."}</Txt></p>
                   </div>
                 </div>
               </div>
@@ -928,13 +835,8 @@ export default function AboutPage() {
 
           {/* ── FUTURE STATEMENT ── */}
           <div className="bg-[#48AEDD]/10 rounded-2xl p-8 sm:p-12 text-center border border-[#48AEDD]/20">
-            <h3 className="text-2xl font-bold text-[#134467] mb-3">
-              Statement
-            </h3>
-            <p className="text-[#134467]/80 text-lg sm:text-xl font-medium max-w-3xl mx-auto">
-              "This is only the beginning. From couriers to logistics, retail,
-              tech, and beyond — the future of FourSix46® is limitless."
-            </p>
+            <h3 className="text-2xl font-bold text-[#134467] mb-3"><Txt k="about.69505f01">{"Statement"}</Txt></h3>
+            <p className="text-[#134467]/80 text-lg sm:text-xl font-medium max-w-3xl mx-auto"><Txt k="about.503ecd0b">{"\"This is only the beginning. From couriers to logistics, retail, tech, and beyond — the future of FourSix46® is limitless.\""}</Txt></p>
           </div>
 
           {/* ── MISSION SECTION ── */}
@@ -942,61 +844,33 @@ export default function AboutPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#134467] text-white mb-2 shadow-lg shadow-[#134467]/20">
               <Target className="w-8 h-8" />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#134467]">
-              Our Mission
-            </h2>
-            <p className="text-xl text-[#134467]/80 leading-relaxed max-w-3xl mx-auto">
-              At Route46 Couriers, our mission is to provide fast, reliable, and
-              professional courier services across the United Kingdom by
-              connecting businesses and individuals with a trusted nationwide
-              network of courier drivers and vehicles. We aim to make same-day
-              and time-critical deliveries simple, transparent, and dependable —
-              ensuring every shipment, from urgent documents to pallet
-              transport, is handled with care, efficiency, and professional
-              logistics standards.
-            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#134467]"><Txt k="about.51ea136c">{"Our Mission"}</Txt></h2>
+            <p className="text-xl text-[#134467]/80 leading-relaxed max-w-3xl mx-auto"><Txt k="about.b2bb8147">{"At Route46 Couriers, our mission is to provide fast, reliable, and professional courier services across the United Kingdom by connecting businesses and individuals with a trusted nationwide network of courier drivers and vehicles. We aim to make same-day and time-critical deliveries simple, transparent, and dependable — ensuring every shipment, from urgent documents to pallet transport, is handled with care, efficiency, and professional logistics standards."}</Txt></p>
             <div className="grid sm:grid-cols-2 gap-6 text-left">
               <div className="bg-white p-6 rounded-2xl border border-[#48AEDD]/20 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-[#48AEDD]/10 flex items-center justify-center flex-shrink-0">
                     <Truck className="w-5 h-5 text-[#48AEDD]" />
                   </div>
-                  <h3 className="font-bold text-[#134467]">
-                    Reliable Courier Services
-                  </h3>
+                  <h3 className="font-bold text-[#134467]"><Txt k="about.9d3075a9">{"Reliable Courier Services"}</Txt></h3>
                 </div>
-                <p className="text-[#134467]/75 leading-relaxed text-sm">
-                  We are committed to delivering shipments safely and
-                  efficiently across the UK. From small parcels to larger
-                  freight, every delivery is handled with professional care and
-                  industry-standard transport practices.
-                </p>
+                <p className="text-[#134467]/75 leading-relaxed text-sm"><Txt k="about.fc5b5c26">{"We are committed to delivering shipments safely and efficiently across the UK. From small parcels to larger freight, every delivery is handled with professional care and industry-standard transport practices."}</Txt></p>
               </div>
               <div className="bg-white p-6 rounded-2xl border border-[#E53935]/20 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-[#E53935]/10 flex items-center justify-center flex-shrink-0">
                     <Users className="w-5 h-5 text-[#E53935]" />
                   </div>
-                  <h3 className="font-bold text-[#134467]">
-                    Supporting Drivers and Businesses
-                  </h3>
+                  <h3 className="font-bold text-[#134467]"><Txt k="about.29566a66">{"Supporting Drivers and Businesses"}</Txt></h3>
                 </div>
-                <p className="text-[#134467]/75 leading-relaxed text-sm">
-                  Our network connects thousands of courier drivers with
-                  businesses and individuals who require dependable delivery
-                  services. By enabling access to a nationwide courier network,
-                  Route46 Couriers helps ensure reliable logistics support
-                  across the UK.
-                </p>
+                <p className="text-[#134467]/75 leading-relaxed text-sm"><Txt k="about.5c22c6bb">{"Our network connects thousands of courier drivers with businesses and individuals who require dependable delivery services. By enabling access to a nationwide courier network, Route46 Couriers helps ensure reliable logistics support across the UK."}</Txt></p>
               </div>
             </div>
           </section>
 
           {/* ── VALUES GRID ── */}
           <section className="space-y-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#134467]">
-              Our Values
-            </h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#134467]"><Txt k="about.c132a1bc">{"Our Values"}</Txt></h2>
             <div className="grid md:grid-cols-3 gap-8">
               {/* Value 1 */}
               <div className="group bg-white border border-slate-100 rounded-[2rem] p-8 hover:shadow-[0_20px_50px_rgba(229,57,53,0.15)] transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
@@ -1004,15 +878,8 @@ export default function AboutPage() {
                 <div className="w-14 h-14 bg-[#E53935]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#E53935] transition-colors relative z-10">
                   <Shield className="w-7 h-7 text-[#E53935] group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-xl font-bold text-[#134467] mb-3 relative z-10">
-                  1. Safety and Responsibility
-                </h3>
-                <p className="text-[#134467]/80 leading-relaxed text-sm relative z-10">
-                  The safety of drivers, customers, and transported goods is our
-                  highest priority. We promote responsible driving, secure
-                  parcel handling, and professional courier practices throughout
-                  every delivery.
-                </p>
+                <h3 className="text-xl font-bold text-[#134467] mb-3 relative z-10"><Txt k="about.144c8911">{"1. Safety and Responsibility"}</Txt></h3>
+                <p className="text-[#134467]/80 leading-relaxed text-sm relative z-10"><Txt k="about.e73415a4">{"The safety of drivers, customers, and transported goods is our highest priority. We promote responsible driving, secure parcel handling, and professional courier practices throughout every delivery."}</Txt></p>
               </div>
 
               {/* Value 2 */}
@@ -1021,14 +888,8 @@ export default function AboutPage() {
                 <div className="w-14 h-14 bg-[#48AEDD]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#48AEDD] transition-colors relative z-10">
                   <Users className="w-7 h-7 text-[#48AEDD] group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-xl font-bold text-[#134467] mb-3 relative z-10">
-                  2. Respect for Drivers and Customers
-                </h3>
-                <p className="text-[#134467]/80 leading-relaxed text-sm relative z-10">
-                  We believe strong logistics networks are built on trust and
-                  respect. Every driver and every customer deserves clear
-                  communication, fair service, and professional treatment.
-                </p>
+                <h3 className="text-xl font-bold text-[#134467] mb-3 relative z-10"><Txt k="about.799b4f45">{"2. Respect for Drivers and Customers"}</Txt></h3>
+                <p className="text-[#134467]/80 leading-relaxed text-sm relative z-10"><Txt k="about.907a61b5">{"We believe strong logistics networks are built on trust and respect. Every driver and every customer deserves clear communication, fair service, and professional treatment."}</Txt></p>
               </div>
 
               {/* Value 3 */}
@@ -1037,24 +898,13 @@ export default function AboutPage() {
                 <div className="w-14 h-14 bg-[#F5EB18]/20 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#F5EB18] transition-colors relative z-10">
                   <TrendingUp className="w-7 h-7 text-[#134467] transition-colors" />
                 </div>
-                <h3 className="text-xl font-bold text-[#134467] mb-3 relative z-10">
-                  3. Reliability Through Trust
-                </h3>
-                <p className="text-[#134467]/80 leading-relaxed text-sm relative z-10">
-                  Route46 Couriers focuses on long-term relationships with
-                  businesses and individuals who depend on reliable delivery
-                  services. We build trust through consistent service
-                  performance and transparent communication.
-                </p>
+                <h3 className="text-xl font-bold text-[#134467] mb-3 relative z-10"><Txt k="about.c35ae00b">{"3. Reliability Through Trust"}</Txt></h3>
+                <p className="text-[#134467]/80 leading-relaxed text-sm relative z-10"><Txt k="about.71b9f5a7">{"Route46 Couriers focuses on long-term relationships with businesses and individuals who depend on reliable delivery services. We build trust through consistent service performance and transparent communication."}</Txt></p>
               </div>
             </div>
 
             {/* SEO line under values */}
-            <p className="text-center text-sm text-[#134467]/55 font-medium max-w-2xl mx-auto leading-relaxed">
-              Route46 Couriers provides same day courier services across the UK,
-              supported by a nationwide logistics network with access to
-              thousands of courier drivers and vehicles.
-            </p>
+            <p className="text-center text-sm text-[#134467]/55 font-medium max-w-2xl mx-auto leading-relaxed"><Txt k="about.9a43c2a2">{"Route46 Couriers provides same day courier services across the UK, supported by a nationwide logistics network with access to thousands of courier drivers and vehicles."}</Txt></p>
           </section>
 
           {/* ── OUR NETWORK ── */}
@@ -1072,34 +922,21 @@ export default function AboutPage() {
                   <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10">
                     <MapPin className="w-7 h-7 text-[#F5EB18]" />
                   </div>
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#F5EB18]">
-                    Coverage
-                  </span>
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#F5EB18]"><Txt k="about.25132226">{"Coverage"}</Txt></span>
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                  Our Network
-                </h2>
+                <h2 className="text-3xl sm:text-4xl font-bold text-white"><Txt k="about.fdb83460">{"Our Network"}</Txt></h2>
                 <div className="w-12 h-1 rounded-full bg-[#F5EB18]" />
-                <p className="text-white/80 text-lg leading-relaxed">
-                  Route46 Couriers operates through a nationwide courier network
-                  with access to thousands of courier drivers and vehicles
-                  across the United Kingdom. This flexible logistics
-                  infrastructure allows Route46 Couriers to coordinate
-                  deliveries efficiently across cities, towns, and business hubs
-                  while maintaining reliable service availability.
-                </p>
+                <p className="text-white/80 text-lg leading-relaxed"><Txt k="about.42430023">{"Route46 Couriers operates through a nationwide courier network with access to thousands of courier drivers and vehicles across the United Kingdom. This flexible logistics infrastructure allows Route46 Couriers to coordinate deliveries efficiently across cities, towns, and business hubs while maintaining reliable service availability."}</Txt></p>
               </div>
               <div className="space-y-4">
-                <h3 className="text-sm font-black uppercase tracking-widest text-[#F5EB18] mb-4">
-                  Our courier network supports:
-                </h3>
+                <h3 className="text-sm font-black uppercase tracking-widest text-[#F5EB18] mb-4"><Txt k="about.48b03d66">{"Our courier network supports:"}</Txt></h3>
                 <ul className="space-y-3">
                   {[
-                    "Urgent document transport",
-                    "Parcel delivery",
-                    "Pallet transport",
-                    "Business courier contracts",
-                    "Time-critical shipments",
+                    txt("about.722f422c", "Urgent document transport"),
+                    txt("about.24749c02", "Parcel delivery"),
+                    txt("about.5730f3ef", "Pallet transport"),
+                    txt("about.01259a3c", "Business courier contracts"),
+                    txt("about.79240960", "Time-critical shipments"),
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <span className="mt-0.5 w-5 h-5 rounded-full bg-[#F5EB18]/20 text-[#F5EB18] text-xs font-black flex items-center justify-center flex-shrink-0">
@@ -1121,11 +958,8 @@ export default function AboutPage() {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#134467] text-white mb-4 shadow-lg shadow-[#134467]/20">
                 <User className="w-8 h-8" />
               </div>
-              <span className="block text-[11px] font-black uppercase tracking-[0.2em] bg-[#134467]/5 text-[#134467] px-5 py-2 rounded-full border border-[#134467]/10 mb-4 w-fit mx-auto">
-                Leadership
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#134467] mb-4">
-                About the <span className="text-[#E53935]">Founder</span>
+              <span className="block text-[11px] font-black uppercase tracking-[0.2em] bg-[#134467]/5 text-[#134467] px-5 py-2 rounded-full border border-[#134467]/10 mb-4 w-fit mx-auto"><Txt k="about.a82a7df1">{"Leadership"}</Txt></span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#134467] mb-4"><Txt k="about.19dc5137">{"About the "}</Txt><span className="text-[#E53935]"><Txt k="about.210fdd6e">{"Founder"}</Txt></span>
               </h2>
               <div className="w-12 h-1 rounded-full bg-[#E53935] mx-auto mb-6" />
             </div>
@@ -1136,26 +970,11 @@ export default function AboutPage() {
                     href="https://46dc.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                  >
-                    Dinesh Koyyalamudi
-                  </a>
-                </strong>{" "}
-                is a portfolio entrepreneur and business &amp; brand consultant
-                — founder of FourSix46®, the UK parent brand behind Route46
-                Couriers, Cinevenn, Stack46 and 46Dogs.
-              </p>
-              <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed">
-                He built Route46 Couriers to bring the same structure and brand
-                discipline to logistics that FourSix46® applies across every
-                venture it owns, and works alongside a small number of
-                early-stage founders, advising on strategy, structure and brand.
-              </p>
+                  ><Txt k="about.2b36c4be">{"Dinesh Koyyalamudi"}</Txt></a>
+                </strong>{" "}<Txt k="about.170819a7">{"is a portfolio entrepreneur and business & brand consultant — founder of FourSix46®, the UK parent brand behind Route46 Couriers, Cinevenn, Stack46 and 46Dogs."}</Txt></p>
+              <p className="text-base sm:text-lg text-[#134467]/75 leading-relaxed"><Txt k="about.774b4dca">{"He built Route46 Couriers to bring the same structure and brand discipline to logistics that FourSix46® applies across every venture it owns, and works alongside a small number of early-stage founders, advising on strategy, structure and brand."}</Txt></p>
               <div className="pl-6 border-l-4 border-[#48AEDD] mt-4">
-                <p className="text-[#134467]/80 font-medium leading-relaxed italic">
-                  "My vision for Route46 Couriers is a courier brand people
-                  trust — built on the same standards, wherever in the UK you
-                  are."
-                </p>
+                <p className="text-[#134467]/80 font-medium leading-relaxed italic"><Txt k="about.8ee11ee1">{"\"My vision for Route46 Couriers is a courier brand people trust — built on the same standards, wherever in the UK you are.\""}</Txt></p>
               </div>
             </div>
           </section>
@@ -1165,17 +984,9 @@ export default function AboutPage() {
             <Globe className="absolute top-10 left-10 w-40 h-40 opacity-10 rotate-12" />
             <Layers className="absolute bottom-10 right-10 w-32 h-32 opacity-10 -rotate-12 text-[#F5EB18]" />
             <div className="relative z-10 max-w-3xl mx-auto space-y-6">
-              <h3 className="text-3xl sm:text-4xl font-bold">Looking Ahead</h3>
-              <p className="text-white/90 text-xl leading-relaxed">
-                Route46 Couriers continues to expand its courier network and
-                logistics capabilities while operating under the strategic
-                direction of FourSix46® Global Ltd. The long-term vision is to
-                build a modern logistics platform that combines strong
-                operational standards with scalable technology infrastructure.
-              </p>
-              <div className="inline-block border-2 border-[#F5EB18] text-[#F5EB18] font-bold py-4 px-10 rounded-full tracking-wide uppercase text-sm hover:bg-[#F5EB18] hover:text-[#134467] transition-colors cursor-default shadow-lg">
-                FourSix46®
-              </div>
+              <h3 className="text-3xl sm:text-4xl font-bold"><Txt k="about.b9af4991">{"Looking Ahead"}</Txt></h3>
+              <p className="text-white/90 text-xl leading-relaxed"><Txt k="about.fedc66d4">{"Route46 Couriers continues to expand its courier network and logistics capabilities while operating under the strategic direction of FourSix46® Global Ltd. The long-term vision is to build a modern logistics platform that combines strong operational standards with scalable technology infrastructure."}</Txt></p>
+              <div className="inline-block border-2 border-[#F5EB18] text-[#F5EB18] font-bold py-4 px-10 rounded-full tracking-wide uppercase text-sm hover:bg-[#F5EB18] hover:text-[#134467] transition-colors cursor-default shadow-lg"><Txt k="about.662695d2">{"FourSix46®"}</Txt></div>
             </div>
           </div>
 
@@ -1199,12 +1010,8 @@ export default function AboutPage() {
               </svg>
             </span>
             <p className="text-xs text-[#134467]/55 font-medium leading-relaxed text-left">
-              <span className="font-bold text-[#134467]/70">
-                Legal Statement:{" "}
-              </span>
-              Route46 Couriers is a trading brand of FourSix46® Global Ltd, a
-              company registered in the United Kingdom.
-            </p>
+              <span className="font-bold text-[#134467]/70"><Txt k="about.330861e8">{"Legal Statement:"}</Txt>{" "}
+              </span><Txt k="about.8776e4fa">{"Route46 Couriers is a trading brand of FourSix46® Global Ltd, a company registered in the United Kingdom."}</Txt></p>
           </div>
         </div>
       </div>

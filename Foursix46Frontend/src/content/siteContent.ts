@@ -294,6 +294,19 @@ export const TEXT_GROUPS: TextGroup[] = [
   },
 ];
 
+/** Page text fields generated from the page source (scripts/gen-page-text.cjs). */
+export interface PageTextField extends TextField {
+  /** Nearest heading above this text on the page — used to group the admin. */
+  section: string;
+}
+
+export interface PageTextGroup {
+  id: string;
+  label: string;
+  path: string;
+  fields: PageTextField[];
+}
+
 export const TEXT_DEFAULTS: Record<string, string> = Object.fromEntries(
   TEXT_GROUPS.flatMap((g) => g.fields.map((fl) => [fl.key, fl.default])),
 );

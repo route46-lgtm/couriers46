@@ -5,19 +5,21 @@ import Footer from "@/components/Footer";
 
 import Seo from "@/components/Seo";
 import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
+import { Txt, useText } from "@/content/SiteContentProvider";
 // Smoother animation utility
 const fadeInUp = "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
 
 export default function AccreditedTrustedPage() {
+  const txt = useText();
 
   // Bento Grid Data - Light, Vibrant, High Visibility
   const certifications = [
     {
       id: "companies-house",
       icon: Building2,
-      title: "Registered UK Company",
-      subtitle: "Companies House Verified",
-      description: "Route46 Couriers is a trading name of FourSix46 Global Ltd, a company registered in England & Wales (Company No. 16712658). Every job is backed by a fully verifiable, accountable UK business, checkable by anyone on the public Companies House register.",
+      title: txt("accredited.d7b36ef6", "Registered UK Company"),
+      subtitle: txt("accredited.3bbd9de5", "Companies House Verified"),
+      description: txt("accredited.719643e4", "Route46 Couriers is a trading name of FourSix46 Global Ltd, a company registered in England & Wales (Company No. 16712658). Every job is backed by a fully verifiable, accountable UK business, checkable by anyone on the public Companies House register."),
       // Sky Blue Theme
       iconColor: "text-[#48AEDD]",
       bg: "bg-[#48AEDD]/5",
@@ -27,9 +29,9 @@ export default function AccreditedTrustedPage() {
     {
       id: "cyber",
       icon: Lock,
-      title: "Cyber Essentials",
-      subtitle: "Secured & Protected",
-      description: "Government-backed cybersecurity certification, assessed and verified by IASME, demonstrating protection against common cyber threats.",
+      title: txt("accredited.2b4e90f9", "Cyber Essentials"),
+      subtitle: txt("accredited.eb06bb4f", "Secured & Protected"),
+      description: txt("accredited.aff1312b", "Government-backed cybersecurity certification, assessed and verified by IASME, demonstrating protection against common cyber threats."),
       // Red Theme
       iconColor: "text-[#E53935]",
       bg: "bg-[#E53935]/5",
@@ -39,9 +41,9 @@ export default function AccreditedTrustedPage() {
     {
       id: "insured",
       icon: Shield,
-      title: "Fully Insured & Cyber Protected",
-      subtitle: "For Public Liability & Cargo",
-      description: "From goods in transit to digital operations, we maintain robust insurance coverage and cyber liability protection. Your shipments and sensitive business data are handled with the highest level of security and care.",
+      title: txt("accredited.40732e4e", "Fully Insured & Cyber Protected"),
+      subtitle: txt("accredited.d34cbe1a", "For Public Liability & Cargo"),
+      description: txt("accredited.ba3b83b4", "From goods in transit to digital operations, we maintain robust insurance coverage and cyber liability protection. Your shipments and sensitive business data are handled with the highest level of security and care."),
       // Yellow Theme
       iconColor: "text-[#dcb004]",
       bg: "bg-[#F5EB18]/10",
@@ -51,9 +53,9 @@ export default function AccreditedTrustedPage() {
     {
       id: "ico",
       icon: FileCheck,
-      title: "ICO Registered",
-      subtitle: "Data Protection, Guaranteed!",
-      description: "Registered with the Information Commissioner’s Office (ICO), demonstrating our commitment to data privacy and compliance with UK data protection laws.",
+      title: txt("accredited.90223693", "ICO Registered"),
+      subtitle: txt("accredited.634ca807", "Data Protection, Guaranteed!"),
+      description: txt("accredited.025bc46d", "Registered with the Information Commissioner’s Office (ICO), demonstrating our commitment to data privacy and compliance with UK data protection laws."),
       // Green Theme
       iconColor: "text-[#48AEDD]",
       bg: "bg-[#B7D55E]/10",
@@ -63,9 +65,9 @@ export default function AccreditedTrustedPage() {
     {
       id: "fsb",
       icon: Building2,
-      title: "FSB Member",
-      subtitle: "Supported & Approved",
-      description: "Proudly supported by the FSB—backed by 51 years of expertise in strengthening UK businesses.",
+      title: txt("accredited.33608aa1", "FSB Member"),
+      subtitle: txt("accredited.b5e73bc6", "Supported & Approved"),
+      description: txt("accredited.f008b8c1", "Proudly supported by the FSB—backed by 51 years of expertise in strengthening UK businesses."),
       // Red Theme
       iconColor: "text-[#E53935]",
       bg: "bg-[#E53935]/5",
@@ -77,8 +79,8 @@ export default function AccreditedTrustedPage() {
   const commitments = [
     {
       icon: Award,
-      title: "Excellence",
-      description: "Striving for perfection in every mile we cover.",
+      title: txt("accredited.b50cf104", "Excellence"),
+      description: txt("accredited.cb1a8b94", "Striving for perfection in every mile we cover."),
       bg: "bg-white",
       iconBg: "bg-[#E53935]/10",
       iconColor: "text-[#E53935]",
@@ -87,8 +89,8 @@ export default function AccreditedTrustedPage() {
     },
     {
       icon: Target,
-      title: "Safety",
-      description: "Strict protocols to protect your people and parcels.",
+      title: txt("accredited.4298a9ad", "Safety"),
+      description: txt("accredited.8378f29b", "Strict protocols to protect your people and parcels."),
       bg: "bg-white",
       iconBg: "bg-[#48AEDD]/10",
       iconColor: "text-[#48AEDD]",
@@ -97,8 +99,8 @@ export default function AccreditedTrustedPage() {
     },
     {
       icon: CheckCircle,
-      title: "Reliability",
-      description: "Delivering on our promises, on time, every time.",
+      title: txt("accredited.d5324f2e", "Reliability"),
+      description: txt("accredited.82105d50", "Delivering on our promises, on time, every time."),
       bg: "bg-white",
       iconBg: "bg-[#F5EB18]/20",
       iconColor: "text-[#dcb004]",
@@ -134,15 +136,10 @@ export default function AccreditedTrustedPage() {
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#E53935]/5 rounded-full blur-3xl -z-10" />
 
         <div className="container mx-auto px-6 sm:px-8 text-center max-w-4xl relative z-10">
-          <span className={cn("inline-block py-1.5 px-4 rounded-full bg-[#48AEDD]/10 text-[#48AEDD] font-bold text-xs sm:text-sm mb-6 tracking-widest uppercase", fadeInUp)}>
-            Trust & Compliance
-          </span>
-          <h1 className={cn("text-5xl sm:text-6xl lg:text-7xl font-extrabold text-[#48AEDD] mb-6 tracking-tight", fadeInUp, "animation-delay-100")}>
-            Accredited &amp; <span className="text-[#E53935]">Trusted</span>
+          <span className={cn("inline-block py-1.5 px-4 rounded-full bg-[#48AEDD]/10 text-[#48AEDD] font-bold text-xs sm:text-sm mb-6 tracking-widest uppercase", fadeInUp)}><Txt k="accredited.729f4e62">{"Trust & Compliance"}</Txt></span>
+          <h1 className={cn("text-5xl sm:text-6xl lg:text-7xl font-extrabold text-[#48AEDD] mb-6 tracking-tight", fadeInUp, "animation-delay-100")}><Txt k="accredited.650917fe">{"Accredited & "}</Txt><span className="text-[#E53935]"><Txt k="accredited.d623bb37">{"Trusted"}</Txt></span>
           </h1>
-          <p className={cn("text-lg sm:text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed font-medium", fadeInUp, "animation-delay-200")}>
-            We believe in transparency. Our certifications and standards demonstrate our dedication to safety, quality, and accountability in every delivery.
-          </p>
+          <p className={cn("text-lg sm:text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed font-medium", fadeInUp, "animation-delay-200")}><Txt k="accredited.58fb64b1">{"We believe in transparency. Our certifications and standards demonstrate our dedication to safety, quality, and accountability in every delivery."}</Txt></p>
         </div>
       </div>
 
@@ -205,12 +202,8 @@ export default function AccreditedTrustedPage() {
         <div className="container mx-auto px-6 sm:px-8 relative z-10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-20">
-              <h2 className={cn("text-4xl sm:text-5xl font-extrabold mb-6 text-[#134467]", fadeInUp)}>
-                Our Core Commitments
-              </h2>
-              <p className={cn("text-slate-500 max-w-2xl mx-auto text-lg font-medium", fadeInUp, "animation-delay-100")}>
-                Beyond certifications, these are the values that drive our daily operations.
-              </p>
+              <h2 className={cn("text-4xl sm:text-5xl font-extrabold mb-6 text-[#134467]", fadeInUp)}><Txt k="accredited.a72d6550">{"Our Core Commitments"}</Txt></h2>
+              <p className={cn("text-slate-500 max-w-2xl mx-auto text-lg font-medium", fadeInUp, "animation-delay-100")}><Txt k="accredited.d4a3f0f5">{"Beyond certifications, these are the values that drive our daily operations."}</Txt></p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">

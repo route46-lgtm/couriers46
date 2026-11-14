@@ -5760,10 +5760,14 @@ const cmsArr = (v, max) => (Array.isArray(v) ? v.slice(0, max) : []);
 function sanitiseSiteContent(body) {
   const b = body && typeof body === "object" ? body : {};
 
+  // Page text: keys like "home.cta.title" or "terms.1a2b3c4d". Blank values
+  // are not stored (blank = use the page's built-in wording).
   const text = {};
   if (b.text && typeof b.text === "object") {
-    for (const [k, v] of Object.entries(b.text)) {
-      if (/^[\w.-]{1,100}$/.test(k) && typeof v === "string") text[k] = cmsStr(v);
+    for (const [k, v] of Object.entries(b.text).slice(0, 5000)) {
+      if (/^[\w.-]{1,100}$/.test(k) && typeof v === "string" && v.trim()) {
+        text[k] = cmsStr(v, 20000);
+      }
     }
   }
 

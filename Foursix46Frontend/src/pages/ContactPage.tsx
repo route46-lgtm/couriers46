@@ -24,11 +24,13 @@ import { LoadingAnimation } from "@/components/shared/LoadingAnimation";
 
 import Seo from "@/components/Seo";
 import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
+import { Txt, useText } from "@/content/SiteContentProvider";
 // Animation utilities
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards";
 
 export default function ContactPage() {
+  const txt = useText();
   const navigate = useNavigate();
 
   // --- State for Form ---
@@ -181,8 +183,8 @@ export default function ContactPage() {
   const contactInfo = [
     {
       icon: Mail,
-      title: "Email Us",
-      content: "operations@route46couriers.co.uk",
+      title: txt("contact.3abaa1b4", "Email Us"),
+      content: txt("contact.f0fece5b", "operations@route46couriers.co.uk"),
       link: "mailto:operations@route46couriers.co.uk",
       color: "#E53935",
       bg: "bg-[#E53935]/10",
@@ -190,7 +192,7 @@ export default function ContactPage() {
     },
     {
       icon: Phone,
-      title: "Call Us",
+      title: txt("contact.c59f5c13", "Call Us"),
       content: "+44 0330 124 1966",
       link: "tel:+4403301241966",
       color: "#48AEDD",
@@ -199,8 +201,8 @@ export default function ContactPage() {
     },
     {
       icon: MapPin,
-      title: "Head Office",
-      content: "London, England, United Kingdom",
+      title: txt("contact.55fbe01d", "Head Office"),
+      content: txt("contact.5b602d5a", "London, England, United Kingdom"),
       link: "#",
       color: "#134467",
       bg: "bg-[#134467]/10",
@@ -208,8 +210,8 @@ export default function ContactPage() {
     },
     {
       icon: Clock,
-      title: "Working Hours",
-      content: "Available 24/7",
+      title: txt("contact.7e74e384", "Working Hours"),
+      content: txt("contact.0cb240f7", "Available 24/7"),
       link: "#",
       color: "#dcb004",
       bg: "bg-[#F5EB18]/20",
@@ -249,9 +251,7 @@ export default function ContactPage() {
               )}
             >
               <span className="w-2 h-2 rounded-full bg-[#E53935] animate-ping" />
-              <span className="text-[#134467] font-bold text-xs tracking-widest uppercase">
-                We are always online
-              </span>
+              <span className="text-[#134467] font-bold text-xs tracking-widest uppercase"><Txt k="contact.77bd80b0">{"We are always online"}</Txt></span>
             </div>
 
             <h1
@@ -260,11 +260,8 @@ export default function ContactPage() {
                 fadeInUp,
                 "animation-delay-100",
               )}
-            >
-              Contact <br className="hidden sm:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E53935] to-[#E53935]">
-                Route46 Couriers
-              </span>
+            ><Txt k="contact.1781a272">{"Contact "}</Txt><br className="hidden sm:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E53935] to-[#E53935]"><Txt k="contact.7d4c9f4a">{"Route46 Couriers"}</Txt></span>
             </h1>
 
             <p
@@ -273,10 +270,7 @@ export default function ContactPage() {
                 fadeInUp,
                 "animation-delay-200",
               )}
-            >
-              Whether you need a courier quote, delivery support, or business
-              logistics assistance, the Route46 Couriers team is ready to help.
-            </p>
+            ><Txt k="contact.cf6ca685">{"Whether you need a courier quote, delivery support, or business logistics assistance, the Route46 Couriers team is ready to help."}</Txt></p>
           </div>
         </div>
 
@@ -294,14 +288,8 @@ export default function ContactPage() {
                 )}
               >
                 <div className="relative z-10 mb-10">
-                  <h2 className="text-3xl font-bold text-[#134467] mb-4 flex items-center gap-3">
-                    Get in Touch
-                  </h2>
-                  <p className="text-[#134467]/80 text-lg leading-relaxed">
-                    Reach out to us directly using the contact information
-                    below, or fill out the form and we will get back to you
-                    within 24 hours.
-                  </p>
+                  <h2 className="text-3xl font-bold text-[#134467] mb-4 flex items-center gap-3"><Txt k="contact.4cc5c588">{"Get in Touch"}</Txt></h2>
+                  <p className="text-[#134467]/80 text-lg leading-relaxed"><Txt k="contact.f199ca5d">{"Reach out to us directly using the contact information below, or fill out the form and we will get back to you within 24 hours."}</Txt></p>
                 </div>
 
                 <div className="relative z-10 grid gap-6 flex-1 content-center">
@@ -349,12 +337,8 @@ export default function ContactPage() {
                   "animation-delay-400",
                 )}
               >
-                <h2 className="text-3xl font-bold text-[#134467] mb-2">
-                  Send a Message
-                </h2>
-                <p className="text-[#134467]/80 mb-8 text-lg">
-                  Fill in the details below and we'll contact you shortly.
-                </p>
+                <h2 className="text-3xl font-bold text-[#134467] mb-2"><Txt k="contact.d982bc7b">{"Send a Message"}</Txt></h2>
+                <p className="text-[#134467]/80 mb-8 text-lg"><Txt k="contact.bc7bd660">{"Fill in the details below and we'll contact you shortly."}</Txt></p>
 
                 <form
                   onSubmit={handleSubmit}
@@ -368,9 +352,7 @@ export default function ContactPage() {
                         <p className="font-semibold text-green-800 text-sm">
                           {submitMessage}
                         </p>
-                        <p className="text-green-700 text-xs mt-1">
-                          Confirmation email has been sent to your inbox.
-                        </p>
+                        <p className="text-green-700 text-xs mt-1"><Txt k="contact.68717518">{"Confirmation email has been sent to your inbox."}</Txt></p>
                       </div>
                     </div>
                   )}
@@ -390,9 +372,7 @@ export default function ContactPage() {
                       <label
                         htmlFor="name"
                         className="text-sm font-bold text-[#134467] ml-1 transition-colors group-focus-within:text-[#E53935]"
-                      >
-                        Name *
-                      </label>
+                      ><Txt k="contact.5670c914">{"Name *"}</Txt></label>
                       <div className="relative">
                         <User className="absolute left-4 top-3.5 w-5 h-5 text-slate-400 group-focus-within:text-[#E53935] transition-colors" />
                         <Input
@@ -401,7 +381,7 @@ export default function ContactPage() {
                           value={formData.name}
                           onChange={handleInputChange}
                           onBlur={handleBlur}
-                          placeholder="John Doe"
+                          placeholder={txt("contact.bd686672", "John Doe")}
                           disabled={isLoading}
                           required
                           aria-required="true"
@@ -418,9 +398,7 @@ export default function ContactPage() {
                       <label
                         htmlFor="email"
                         className="text-sm font-bold text-[#134467] ml-1 transition-colors group-focus-within:text-[#E53935]"
-                      >
-                        Email *
-                      </label>
+                      ><Txt k="contact.a48cbd12">{"Email *"}</Txt></label>
                       <div className="relative">
                         <Mail className="absolute left-4 top-3.5 w-5 h-5 text-slate-400 group-focus-within:text-[#E53935] transition-colors" />
                         <Input
@@ -430,7 +408,7 @@ export default function ContactPage() {
                           value={formData.email}
                           onChange={handleInputChange}
                           onBlur={handleBlur}
-                          placeholder="john@example.com"
+                          placeholder={txt("contact.a6eb9f78", "john@example.com")}
                           disabled={isLoading}
                           required
                           aria-required="true"
@@ -447,9 +425,7 @@ export default function ContactPage() {
 
                     {/* CUSTOM DROPDOWN IMPLEMENTATION */}
                     <div className="space-y-2 w-full" ref={dropdownRef}>
-                      <label className="text-sm font-bold text-[#134467] ml-1">
-                        Who is submitting?
-                      </label>
+                      <label className="text-sm font-bold text-[#134467] ml-1"><Txt k="contact.446bbafb">{"Who is submitting?"}</Txt></label>
                       <div className="relative">
                         <button
                           type="button"
@@ -501,9 +477,7 @@ export default function ContactPage() {
                     <label
                       htmlFor="subject"
                       className="text-sm font-bold text-[#134467] ml-1 transition-colors group-focus-within:text-[#E53935]"
-                    >
-                      Subject *
-                    </label>
+                    ><Txt k="contact.db68e658">{"Subject *"}</Txt></label>
                     <div className="relative">
                       <HelpCircle className="absolute left-4 top-3.5 w-5 h-5 text-slate-400 group-focus-within:text-[#E53935] transition-colors" />
                       <Input
@@ -512,7 +486,7 @@ export default function ContactPage() {
                         value={formData.subject}
                         onChange={handleInputChange}
                         onBlur={handleBlur}
-                        placeholder="What is this regarding?"
+                        placeholder={txt("contact.da95bb0f", "What is this regarding?")}
                         disabled={isLoading}
                         required
                         aria-required="true"
@@ -530,16 +504,14 @@ export default function ContactPage() {
                     <label
                       htmlFor="message"
                       className="text-sm font-bold text-[#134467] ml-1 transition-colors group-focus-within:text-[#E53935]"
-                    >
-                      Message *
-                    </label>
+                    ><Txt k="contact.02457ac2">{"Message *"}</Txt></label>
                     <Textarea
                       id="message"
                       name="message"
                       value={formData.message}
                       onChange={handleInputChange}
                       onBlur={handleBlur}
-                      placeholder="Tell us how we can help you..."
+                      placeholder={txt("contact.883a0c4b", "Tell us how we can help you...")}
                       disabled={isLoading}
                       required
                       aria-required="true"
@@ -561,13 +533,9 @@ export default function ContactPage() {
                       <>
                         <span className="inline-block animate-spin mr-2">
                           ⏳
-                        </span>
-                        Sending...
-                      </>
+                        </span><Txt k="contact.b60ed7f8">{"Sending..."}</Txt></>
                     ) : (
-                      <>
-                        Send Message
-                        <Send className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <><Txt k="contact.1815257c">{"Send Message"}</Txt><Send className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
                   </Button>
@@ -601,9 +569,7 @@ export default function ContactPage() {
             </svg>
           </span>
           <p className="text-sm text-[#134467]/70 font-medium leading-relaxed text-center">
-            <span className="font-bold text-[#134467]/85">Available 24/7</span>{" "}
-            for urgent courier enquiries across the UK.
-          </p>
+            <span className="font-bold text-[#134467]/85"><Txt k="contact.4b6c5a9e">{"Available 24/7"}</Txt></span>{" "}<Txt k="contact.2f746250">{"for urgent courier enquiries across the UK."}</Txt></p>
         </div>
 
         {/* FINAL CTA SECTION */}
@@ -620,29 +586,22 @@ export default function ContactPage() {
                 <Truck className="w-10 h-10 text-[#134467]" />
               </div>
 
-              <h2 className="text-4xl sm:text-5xl font-black text-[#48AEDD] mb-6 leading-tight">
-                Ready to Ship with{" "}
-                <span className="text-[#E53935]">Confidence?</span>
+              <h2 className="text-4xl sm:text-5xl font-black text-[#48AEDD] mb-6 leading-tight"><Txt k="contact.da93b211">{"Ready to Ship with"}</Txt>{" "}
+                <span className="text-[#E53935]"><Txt k="contact.d853f63d">{"Confidence?"}</Txt></span>
               </h2>
 
-              <p className="text-[#134467]/80 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
-                Join businesses and individuals across the UK who trust Route46
-                Couriers for reliable courier and delivery services.
-              </p>
+              <p className="text-[#134467]/80 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-medium"><Txt k="contact.5563350c">{"Join businesses and individuals across the UK who trust Route46 Couriers for reliable courier and delivery services."}</Txt></p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button
                   onClick={() => navigate("/quick-quote")}
                   className="h-16 px-10 bg-[#134467] hover:bg-[#0f3652] text-white text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1"
-                >
-                  Get a Quick Quote
-                </Button>
+                ><Txt k="contact.1585a0f8">{"Get a Quick Quote"}</Txt></Button>
                 <Button
                   variant="outline"
                   onClick={() => navigate("/for-businesses")}
                   className="h-16 px-10 border-2 border-[#134467]/100 bg-transparent text-[#134467] hover:bg-[#134467]/100 text-lg font-bold rounded-full transition-all duration-300 hover:-translate-y-1"
-                >
-                  Join Our Courier Network{" "}
+                ><Txt k="contact.5bcca5fb">{"Join Our Courier Network"}</Txt>{" "}
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>

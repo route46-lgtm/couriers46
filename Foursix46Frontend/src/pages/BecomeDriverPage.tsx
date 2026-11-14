@@ -38,6 +38,7 @@ import { LoadingAnimation } from "@/components/shared/LoadingAnimation";
 
 import Seo from "@/components/Seo";
 import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
+import { Txt, useText } from "@/content/SiteContentProvider";
 // --- Zod Validation Schemas ---
 
 // Step 1: Personal Information
@@ -187,6 +188,7 @@ const step3Fields: (keyof DriverData)[] = [
 // --- React Component ---
 
 export default function BecomeDriverPage() {
+  const txt = useText();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -475,22 +477,15 @@ export default function BecomeDriverPage() {
             onClick={() => navigate("/")}
             className="mb-8"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Button>
+            <ArrowLeft className="w-4 h-4" /><Txt k="becomeDriver.9754ecd4">{"Back to Home"}</Txt></Button>
 
           <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/20 p-6 sm:p-10 mb-16 transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#F5EB18]/100 mb-4">
                 <Truck className="w-8 h-8 text-[#134467]" />
               </div>
-              <h1 className="text-4xl font-bold text-[#F81629] mb-2">
-                Become a Courier Driver with Route46 Couriers
-              </h1>
-              <p className="text-[#48AEDD] font-medium text-lg">
-                Join Route46 Couriers and access delivery opportunities across
-                the UK through our nationwide logistics network.
-              </p>
+              <h1 className="text-4xl font-bold text-[#F81629] mb-2"><Txt k="becomeDriver.2e033d13">{"Become a Courier Driver with Route46 Couriers"}</Txt></h1>
+              <p className="text-[#48AEDD] font-medium text-lg"><Txt k="becomeDriver.64ba3ffb">{"Join Route46 Couriers and access delivery opportunities across the UK through our nationwide logistics network."}</Txt></p>
             </div>
 
             {/* Driver Benefits Section */}
@@ -500,9 +495,7 @@ export default function BecomeDriverPage() {
                 <div className="flex items-center gap-3 mb-4">
                   <CheckCircle2 className="w-6 h-6 text-[#48AEDD]" />
 
-                  <h3 className="text-xl font-bold text-[#134467]">
-                    Why Drive with Route46 Couriers
-                  </h3>
+                  <h3 className="text-xl font-bold text-[#134467]"><Txt k="becomeDriver.1ab263fe">{"Why Drive with Route46 Couriers"}</Txt></h3>
                 </div>
 
                 <ul className="space-y-3">
@@ -510,45 +503,34 @@ export default function BecomeDriverPage() {
                     <span className="text-[#48AEDD] mt-1">✓</span>
 
                     <span className="text-muted-foreground">
-                      <strong>Access to Thousands of Delivery Jobs:</strong>{" "}
-                      Connect to courier delivery opportunities across the UK
-                      through our logistics network.
-                    </span>
+                      <strong><Txt k="becomeDriver.1ab36f56">{"Access to Thousands of Delivery Jobs:"}</Txt></strong>{" "}<Txt k="becomeDriver.a565f08d">{"Connect to courier delivery opportunities across the UK through our logistics network."}</Txt></span>
                   </li>
 
                   <li className="flex items-start gap-2">
                     <span className="text-[#48AEDD] mt-1">✓</span>
 
                     <span className="text-muted-foreground">
-                      <strong>Flexible Working Schedule:</strong> Choose when
-                      and where you want to work.
-                    </span>
+                      <strong><Txt k="becomeDriver.d87b4fa0">{"Flexible Working Schedule:"}</Txt></strong><Txt k="becomeDriver.1353e67f">{" Choose when and where you want to work."}</Txt></span>
                   </li>
 
                   <li className="flex items-start gap-2">
                     <span className="text-[#48AEDD] mt-1">✓</span>
 
                     <span className="text-muted-foreground">
-                      <strong>Competitive Delivery Rates:</strong> Earn per
-                      delivery with transparent job pricing.
-                    </span>
+                      <strong><Txt k="becomeDriver.06961b66">{"Competitive Delivery Rates:"}</Txt></strong><Txt k="becomeDriver.25bba4b6">{" Earn per delivery with transparent job pricing."}</Txt></span>
                   </li>
 
                   <li className="flex items-start gap-2">
                     <span className="text-[#48AEDD] mt-1">✓</span>
 
                     <span className="text-muted-foreground">
-                      <strong>Nationwide Delivery Opportunities:</strong> Access
-                      courier jobs across major UK cities and regions.
-                    </span>
+                      <strong><Txt k="becomeDriver.dc186078">{"Nationwide Delivery Opportunities:"}</Txt></strong><Txt k="becomeDriver.0bae5f8c">{" Access courier jobs across major UK cities and regions."}</Txt></span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[#48AEDD] mt-1">✓</span>
 
                     <span className="text-muted-foreground">
-                      <strong>Driver Support:</strong> Our team supports drivers
-                      with onboarding and operational guidance.
-                    </span>
+                      <strong><Txt k="becomeDriver.e2d238f2">{"Driver Support:"}</Txt></strong><Txt k="becomeDriver.f8b3e3e9">{" Our team supports drivers with onboarding and operational guidance."}</Txt></span>
                   </li>
                 </ul>
               </div>
@@ -557,50 +539,38 @@ export default function BecomeDriverPage() {
                 <div className="flex items-center gap-3 mb-4">
                   <FileCheck className="w-6 h-6 text-[#E53935]" />
 
-                  <h3 className="text-xl font-bold text-[#134467]">
-                    Driver Requirements
-                  </h3>
+                  <h3 className="text-xl font-bold text-[#134467]"><Txt k="becomeDriver.bc648dab">{"Driver Requirements"}</Txt></h3>
                 </div>
 
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2">
                     <span className="text-[#E53935]">•</span>
 
-                    <span className="text-muted-foreground">
-                      Valid UK driving license
-                    </span>
+                    <span className="text-muted-foreground"><Txt k="becomeDriver.19957a81">{"Valid UK driving license"}</Txt></span>
                   </li>
 
                   <li className="flex items-start gap-2">
                     <span className="text-[#E53935]">•</span>
 
-                    <span className="text-muted-foreground">
-                      Access to a vehicle or courier van
-                    </span>
+                    <span className="text-muted-foreground"><Txt k="becomeDriver.197c64b3">{"Access to a vehicle or courier van"}</Txt></span>
                   </li>
 
                   <li className="flex items-start gap-2">
                     <span className="text-[#E53935]">•</span>
 
-                    <span className="text-muted-foreground">
-                      Hire & Reward Insurance (if using own vehicle)
-                    </span>
+                    <span className="text-muted-foreground"><Txt k="becomeDriver.d2b87da5">{"Hire & Reward Insurance (if using own vehicle)"}</Txt></span>
                   </li>
 
                   <li className="flex items-start gap-2">
                     <span className="text-[#E53935]">•</span>
 
-                    <span className="text-muted-foreground">
-                      Right to Work in the UK
-                    </span>
+                    <span className="text-muted-foreground"><Txt k="becomeDriver.c1e22625">{"Right to Work in the UK"}</Txt></span>
                   </li>
 
                   <li className="flex items-start gap-2">
                     <span className="text-[#E53935]">•</span>
 
-                    <span className="text-muted-foreground">
-                      No more than 6 penalty points
-                    </span>
+                    <span className="text-muted-foreground"><Txt k="becomeDriver.78035a21">{"No more than 6 penalty points"}</Txt></span>
                   </li>
                 </ul>
               </div>
@@ -620,9 +590,9 @@ export default function BecomeDriverPage() {
                         name="firstName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>First Name *</FormLabel>
+                            <FormLabel><Txt k="becomeDriver.cc184e7b">{"First Name *"}</Txt></FormLabel>
                             <FormControl>
-                              <Input placeholder="John" {...field} />
+                              <Input placeholder={txt("becomeDriver.9437d898", "John")} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -633,9 +603,9 @@ export default function BecomeDriverPage() {
                         name="lastName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Last Name *</FormLabel>
+                            <FormLabel><Txt k="becomeDriver.83cf208d">{"Last Name *"}</Txt></FormLabel>
                             <FormControl>
-                              <Input placeholder="Smith" {...field} />
+                              <Input placeholder={txt("becomeDriver.7614dc96", "Smith")} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -648,7 +618,7 @@ export default function BecomeDriverPage() {
                       name="dateOfBirth"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Date of Birth *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.c617409d">{"Date of Birth *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
                               type="date"
@@ -666,11 +636,11 @@ export default function BecomeDriverPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email Address *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.ba1ca4d7">{"Email Address *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
                               type="email"
-                              placeholder="john.smith@example.com"
+                              placeholder={txt("becomeDriver.9ebdcfae", "john.smith@example.com")}
                               {...field}
                             />
                           </FormControl>
@@ -684,11 +654,11 @@ export default function BecomeDriverPage() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.cb3c98ee">{"Phone Number *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
                               type="tel"
-                              placeholder="+44 7XXX XXXXXX"
+                              placeholder={txt("becomeDriver.547ecec5", "+44 7XXX XXXXXX")}
                               maxLength={13} // +44 (3) + 10 digits = 13
                               {...field}
                               onChange={(e) => {
@@ -726,10 +696,10 @@ export default function BecomeDriverPage() {
                       name="addressLine1"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Address Line 1 *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.2bd8c1a8">{"Address Line 1 *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="e.g., 10 Downing Street"
+                              placeholder={txt("becomeDriver.651b5890", "e.g., 10 Downing Street")}
                               {...field}
                             />
                           </FormControl>
@@ -743,10 +713,10 @@ export default function BecomeDriverPage() {
                       name="addressLine2"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Address Line 2</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.a9d077b1">{"Address Line 2"}</Txt></FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="e.g., Flat 2A (optional)"
+                              placeholder={txt("becomeDriver.127194f0", "e.g., Flat 2A (optional)")}
                               {...field}
                             />
                           </FormControl>
@@ -760,9 +730,9 @@ export default function BecomeDriverPage() {
                       name="town"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Town/City *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.742392f8">{"Town/City *"}</Txt></FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g., London" {...field} />
+                            <Input placeholder={txt("becomeDriver.13de08c5", "e.g., London")} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -774,10 +744,10 @@ export default function BecomeDriverPage() {
                       name="county"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>County *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.181a0e69">{"County *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="e.g., Greater London"
+                              placeholder={txt("becomeDriver.5d558c2d", "e.g., Greater London")}
                               {...field}
                             />
                           </FormControl>
@@ -791,9 +761,9 @@ export default function BecomeDriverPage() {
                       name="postcode"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Postcode *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.574a5894">{"Postcode *"}</Txt></FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g., SW1A 2AA" {...field} />
+                            <Input placeholder={txt("becomeDriver.aabe0c78", "e.g., SW1A 2AA")} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -810,26 +780,22 @@ export default function BecomeDriverPage() {
                       name="vehicleType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Vehicle Type *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.693849fb">{"Vehicle Type *"}</Txt></FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select vehicle type" />
+                                <SelectValue placeholder={txt("becomeDriver.38fac1e1", "Select vehicle type")} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="SWB">SWB</SelectItem>
-                              <SelectItem value="MWB">MWB</SelectItem>
-                              <SelectItem value="LWB/XLWB">LWB/XLWB</SelectItem>
-                              <SelectItem value="LUTON TAIL/CURTAIN">
-                                LUTON TAIL/CURTAIN
-                              </SelectItem>
-                              <SelectItem value="LARGER or SPECIALIST">
-                                LARGER or SPECIALIST
-                              </SelectItem>
+                              <SelectItem value="SWB"><Txt k="becomeDriver.f93fa318">{"SWB"}</Txt></SelectItem>
+                              <SelectItem value="MWB"><Txt k="becomeDriver.55e4d787">{"MWB"}</Txt></SelectItem>
+                              <SelectItem value="LWB/XLWB"><Txt k="becomeDriver.3efdce1b">{"LWB/XLWB"}</Txt></SelectItem>
+                              <SelectItem value="LUTON TAIL/CURTAIN"><Txt k="becomeDriver.fcbd4cd0">{"LUTON TAIL/CURTAIN"}</Txt></SelectItem>
+                              <SelectItem value="LARGER or SPECIALIST"><Txt k="becomeDriver.f5e56f9d">{"LARGER or SPECIALIST"}</Txt></SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -843,9 +809,9 @@ export default function BecomeDriverPage() {
                         name="registration"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>License Plate Number *</FormLabel>
+                            <FormLabel><Txt k="becomeDriver.a8810303">{"License Plate Number *"}</Txt></FormLabel>
                             <FormControl>
-                              <Input placeholder="AB12 CDE" {...field} />
+                              <Input placeholder={txt("becomeDriver.c6f24980", "AB12 CDE")} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -856,7 +822,7 @@ export default function BecomeDriverPage() {
                         name="year"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Year *</FormLabel>
+                            <FormLabel><Txt k="becomeDriver.6d47f499">{"Year *"}</Txt></FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="2020"
@@ -881,10 +847,10 @@ export default function BecomeDriverPage() {
                       name="makeModel"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Make & Model *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.27aa4a3c">{"Make & Model *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="e.g., Ford Transit"
+                              placeholder={txt("becomeDriver.1fd61cc2", "e.g., Ford Transit")}
                               {...field}
                             />
                           </FormControl>
@@ -898,10 +864,10 @@ export default function BecomeDriverPage() {
                       name="dvlaCheckCode"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>DVLA check code *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.71857fcf">{"DVLA check code *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="e.g., ABC12345DEF"
+                              placeholder={txt("becomeDriver.4316ee0f", "e.g., ABC12345DEF")}
                               maxLength={11}
                               {...field}
                               onChange={(e) => {
@@ -923,9 +889,7 @@ export default function BecomeDriverPage() {
                     {/* File Inputs: Store files in state when selected */}
                     <div className="grid md:grid-cols-3 gap-4">
                       <div className="col-span-1 space-y-2">
-                        <Label htmlFor="drivingLicense">
-                          Driving License *
-                        </Label>
+                        <Label htmlFor="drivingLicense"><Txt k="becomeDriver.ca7e9c0c">{"Driving License *"}</Txt></Label>
                         <Input
                           id="drivingLicense"
                           type="file"
@@ -986,23 +950,17 @@ export default function BecomeDriverPage() {
                                 <Upload className="w-4 h-4 text-muted-foreground" />{" "}
                                 {/* Make sure to import Upload from lucide-react */}
                               </div>
-                              <span className="text-sm text-muted-foreground">
-                                Click to Upload
-                              </span>
+                              <span className="text-sm text-muted-foreground"><Txt k="becomeDriver.1c282b8c">{"Click to Upload"}</Txt></span>
                             </div>
                           )}
                         </label>
                         {fileUploadAttempted && !selectedFiles.drivingLicense && (
-                          <p className="text-sm font-medium text-destructive">
-                            Driving License is required
-                          </p>
+                          <p className="text-sm font-medium text-destructive"><Txt k="becomeDriver.ce184631">{"Driving License is required"}</Txt></p>
                         )}
                       </div>
 
                       <div className="col-span-1 space-y-2">
-                        <Label htmlFor="vehicleInsurance">
-                          Vehicle Insurance (Hire & Reward) *
-                        </Label>
+                        <Label htmlFor="vehicleInsurance"><Txt k="becomeDriver.f19aa699">{"Vehicle Insurance (Hire & Reward) *"}</Txt></Label>
 
                         <Input
                           id="vehicleInsurance"
@@ -1061,22 +1019,16 @@ export default function BecomeDriverPage() {
                               <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center mx-auto mb-2">
                                 <Upload className="w-4 h-4 text-muted-foreground" />
                               </div>
-                              <span className="text-sm text-muted-foreground">
-                                Click to Upload
-                              </span>
+                              <span className="text-sm text-muted-foreground"><Txt k="becomeDriver.1c282b8c_2">{"Click to Upload"}</Txt></span>
                             </div>
                           )}
                         </label>
                         {fileUploadAttempted && !selectedFiles.vehicleInsurance && (
-                          <p className="text-sm font-medium text-destructive">
-                            Vehicle Insurance (Hire &amp; Reward) is required
-                          </p>
+                          <p className="text-sm font-medium text-destructive"><Txt k="becomeDriver.8a219c96">{"Vehicle Insurance (Hire & Reward) is required"}</Txt></p>
                         )}
                       </div>
                       <div className="col-span-1 space-y-2">
-                        <Label htmlFor="publicLiabilityInsurance">
-                          Public Liability Insurance *
-                        </Label>
+                        <Label htmlFor="publicLiabilityInsurance"><Txt k="becomeDriver.98221cbf">{"Public Liability Insurance *"}</Txt></Label>
 
                         <Input
                           id="publicLiabilityInsurance"
@@ -1135,22 +1087,16 @@ export default function BecomeDriverPage() {
                               <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center mx-auto mb-2">
                                 <Upload className="w-4 h-4 text-muted-foreground" />
                               </div>
-                              <span className="text-sm text-muted-foreground">
-                                Click to Upload
-                              </span>
+                              <span className="text-sm text-muted-foreground"><Txt k="becomeDriver.1c282b8c_3">{"Click to Upload"}</Txt></span>
                             </div>
                           )}
                         </label>
                         {fileUploadAttempted && !selectedFiles.publicLiabilityInsurance && (
-                          <p className="text-sm font-medium text-destructive">
-                            Public Liability Insurance is required
-                          </p>
+                          <p className="text-sm font-medium text-destructive"><Txt k="becomeDriver.cd3a5e53">{"Public Liability Insurance is required"}</Txt></p>
                         )}
                       </div>
                       <div className="col-span-1 space-y-2">
-                        <Label htmlFor="goodsInTransitInsurance">
-                          Goods In Transit Insurance *
-                        </Label>
+                        <Label htmlFor="goodsInTransitInsurance"><Txt k="becomeDriver.a565fbbf">{"Goods In Transit Insurance *"}</Txt></Label>
 
                         <Input
                           id="goodsInTransitInsurance"
@@ -1209,16 +1155,12 @@ export default function BecomeDriverPage() {
                               <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center mx-auto mb-2">
                                 <Upload className="w-4 h-4 text-muted-foreground" />
                               </div>
-                              <span className="text-sm text-muted-foreground">
-                                Click to Upload
-                              </span>
+                              <span className="text-sm text-muted-foreground"><Txt k="becomeDriver.1c282b8c_4">{"Click to Upload"}</Txt></span>
                             </div>
                           )}
                         </label>
                         {fileUploadAttempted && !selectedFiles.goodsInTransitInsurance && (
-                          <p className="text-sm font-medium text-destructive">
-                            Goods In Transit Insurance is required
-                          </p>
+                          <p className="text-sm font-medium text-destructive"><Txt k="becomeDriver.82f3d2bd">{"Goods In Transit Insurance is required"}</Txt></p>
                         )}
                       </div>
                     </div>
@@ -1228,10 +1170,10 @@ export default function BecomeDriverPage() {
                       name="niNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>National Insurance Number *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.6c086f5d">{"National Insurance Number *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="AB 12 34 56 C"
+                              placeholder={txt("becomeDriver.5feefe0a", "AB 12 34 56 C")}
                               maxLength={9}
                               {...field}
                             />
@@ -1245,7 +1187,7 @@ export default function BecomeDriverPage() {
                       name="utrNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>UTR Number *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.a6aa6543">{"UTR Number *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
                               placeholder="1234 567 890"
@@ -1271,7 +1213,7 @@ export default function BecomeDriverPage() {
                       name="rightToWorkCode"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Right to Work Share Code *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.40c71ae6">{"Right to Work Share Code *"}</Txt></FormLabel>
                           <FormControl>
                             <Input
                               placeholder="X1Y2Z3A4B"
@@ -1295,9 +1237,7 @@ export default function BecomeDriverPage() {
                     />
 
                     <div className="space-y-2">
-                      <Label htmlFor="rightToWorkDoc">
-                        Right to Work Verification Document *
-                      </Label>
+                      <Label htmlFor="rightToWorkDoc"><Txt k="becomeDriver.c388ed12">{"Right to Work Verification Document *"}</Txt></Label>
                       <Input
                         id="rightToWorkDoc"
                         type="file"
@@ -1352,16 +1292,12 @@ export default function BecomeDriverPage() {
                             <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center mx-auto mb-2">
                               <Upload className="w-4 h-4 text-muted-foreground" />
                             </div>
-                            <span className="text-sm text-muted-foreground">
-                              Click to Upload
-                            </span>
+                            <span className="text-sm text-muted-foreground"><Txt k="becomeDriver.1c282b8c_5">{"Click to Upload"}</Txt></span>
                           </div>
                         )}
                       </label>
                       {fileUploadAttempted && !selectedFiles.rightToWorkDoc && (
-                        <p className="text-sm font-medium text-destructive">
-                          Right to Work Verification Document is required
-                        </p>
+                        <p className="text-sm font-medium text-destructive"><Txt k="becomeDriver.fb10b748">{"Right to Work Verification Document is required"}</Txt></p>
                       )}
                     </div>
                     {/* DBS confirmation checkbox */}
@@ -1382,17 +1318,13 @@ export default function BecomeDriverPage() {
                             <FormLabel
                               htmlFor="dbsConfirmed"
                               className="text-sm text-muted-foreground leading-relaxed cursor-pointer"
-                            >
-                              I confirm that I have requested a basic DBS check
-                              through{" "}
+                            ><Txt k="becomeDriver.ca6eceaa">{"I confirm that I have requested a basic DBS check through"}</Txt>{" "}
                               <a
                                 href="https://www.gov.uk/request-copy-criminal-record"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-primary underline"
-                              >
-                                https://www.gov.uk/request-copy-criminal-record
-                              </a>
+                              ><Txt k="becomeDriver.9a5a3e49">{"https://www.gov.uk/request-copy-criminal-record"}</Txt></a>
                             </FormLabel>
                             <FormMessage />
                           </div>
@@ -1406,10 +1338,7 @@ export default function BecomeDriverPage() {
                 {currentStep === 3 && (
                   <>
                     <div className="bg-muted/50 p-6 rounded-xl">
-                      <p className="text-sm text-muted-foreground">
-                        We need your banking details to process your weekly
-                        payments securely.
-                      </p>
+                      <p className="text-sm text-muted-foreground"><Txt k="becomeDriver.3391ccf5">{"We need your banking details to process your weekly payments securely."}</Txt></p>
                     </div>
 
                     <FormField
@@ -1417,9 +1346,9 @@ export default function BecomeDriverPage() {
                       name="accountName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Account Name *</FormLabel>
+                          <FormLabel><Txt k="becomeDriver.c60baae6">{"Account Name *"}</Txt></FormLabel>
                           <FormControl>
-                            <Input placeholder="John Smith" {...field} />
+                            <Input placeholder={txt("becomeDriver.71008555", "John Smith")} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1432,7 +1361,7 @@ export default function BecomeDriverPage() {
                         name="sortCode"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Sort Code *</FormLabel>
+                            <FormLabel><Txt k="becomeDriver.0afd90cf">{"Sort Code *"}</Txt></FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="12-34-56"
@@ -1479,7 +1408,7 @@ export default function BecomeDriverPage() {
                         name="accountNumber"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Account Number *</FormLabel>
+                            <FormLabel><Txt k="becomeDriver.0674a937">{"Account Number *"}</Txt></FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="12345678"
@@ -1495,14 +1424,8 @@ export default function BecomeDriverPage() {
                     </div>
 
                     <div className="bg-primary/5 border border-primary/20 p-6 rounded-xl mt-8">
-                      <h3 className="font-semibold text-secondary mb-3">
-                        Ready to Start?
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        Once you submit this application, our team will review
-                        your details within 1 business day. You'll receive an
-                        email with next steps and access to the driver portal.
-                      </p>
+                      <h3 className="font-semibold text-secondary mb-3"><Txt k="becomeDriver.533e6d4d">{"Ready to Start?"}</Txt></h3>
+                      <p className="text-sm text-muted-foreground"><Txt k="becomeDriver.5f1cf1d0">{"Once you submit this application, our team will review your details within 1 business day. You'll receive an email with next steps and access to the driver portal."}</Txt></p>
                     </div>
                   </>
                 )}
@@ -1516,18 +1439,11 @@ export default function BecomeDriverPage() {
                 onClick={handleBack}
                 disabled={currentStep === 1 || submitted}
               >
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </Button>
+                <ArrowLeft className="w-4 h-4" /><Txt k="becomeDriver.6583c11b">{"Back"}</Txt></Button>
               {submitted ? (
                 <div className="text-center w-full py-8">
-                  <h2 className="text-2xl font-semibold text-green-600 mb-4">
-                    Thank you!
-                  </h2>
-                  <p>
-                    Your application was submitted successfully. We’ll be in
-                    touch soon.
-                  </p>
+                  <h2 className="text-2xl font-semibold text-green-600 mb-4"><Txt k="becomeDriver.48ee833f">{"Thank you!"}</Txt></h2>
+                  <p><Txt k="becomeDriver.8b38b1db">{"Your application was submitted successfully. We’ll be in touch soon."}</Txt></p>
                 </div>
               ) : (
                 <Button
