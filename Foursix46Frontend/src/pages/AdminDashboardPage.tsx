@@ -2759,6 +2759,7 @@ import { BlogFormDialog } from "@/components/admin/BlogFormDialog"; // ✅ NEW
 import { CareerFormDialog } from "@/components/admin/CareerFormDialog";
 import { VatSettingsCard } from "@/components/admin/VatSettingsCard";
 import { SiteContentCard } from "@/components/admin/SiteContentCard";
+import { PublishSiteButton } from "@/components/admin/PublishSiteButton";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -3733,6 +3734,8 @@ export default function AdminDashboardPage() {
           <p className="text-muted-foreground">Welcome, {user?.email}</p>
         </div>
         <div className="flex items-center gap-3">
+          {/* Re-publish the static HTML after editing blogs, services, etc. */}
+          <PublishSiteButton />
           <Button
             variant="outline"
             onClick={handleRefresh}

@@ -44,6 +44,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import {
+  PublishSiteButton,
+  announceRebuild,
+  type RebuildStatus,
+} from "@/components/admin/PublishSiteButton";
 import { useSiteContent } from "@/content/SiteContentProvider";
 import { SEO_PAGES, normaliseSiteContent } from "@/content/siteContent";
 import {
@@ -173,7 +178,7 @@ export function SiteContentCard() {
       setDraft(d);
       setSavedJson(JSON.stringify(d));
       await reload();
-      toast.success("Site content saved — live on the website now.");
+      announceRebuild(json.rebuild as RebuildStatus);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to save site content.");
     } finally {
@@ -226,11 +231,13 @@ export function SiteContentCard() {
           <CardDescription className="mt-1">
             Edit website text, stats, testimonials, the "Trusted by" strip,
             social links and search titles. Changes go live as soon as you
-            save. Every field shows the text currently on the website — edit
-            it in place.
+            save, and the website is re-published automatically so the page
+            HTML matches (about 2–3 minutes). Every field shows the text
+            currently on the website — edit it in place.
           </CardDescription>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <PublishSiteButton />
           {dirty && (
             <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
               Unsaved changes

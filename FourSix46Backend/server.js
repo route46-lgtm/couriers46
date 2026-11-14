@@ -5794,6 +5794,40 @@ async function hasConsentedTestimonials() {
   }
 }
 
+// Rebuild the static website so its HTML (what "View source" and search
+// engines see) carries the latest CMS content. The pages are pre-rendered at
+// build time; without a rebuild only the browser-side text updates.
+// FRONTEND_DEPLOY_HOOK_URL = Vercel → frontend project → Settings → Git →
+// Deploy Hooks → create hook → copy URL. Keep it secret (server env only).
+async function triggerSiteRebuild(reason) {
+  const hook = process.env.FRONTEND_DEPLOY_HOOK_URL;
+  if (!hook) return "not-configured";
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const r = await fetch(hook, { method: "POST", signal: ctrl.signal });
+    clearTimeout(timer);
+    if (!r.ok) {
+      console.error(`[REBUILD] deploy hook returned HTTP ${r.status}`);
+      return "failed";
+    }
+    console.log(`[REBUILD] website rebuild triggered (${reason})`);
+    return "triggered";
+  } catch (err) {
+    console.error("[REBUILD] deploy hook failed:", err.message || err);
+    return "failed";
+  }
+}
+
+/* ── POST /api/admin/rebuild-site — admin: re-publish the website HTML ── */
+app.post("/api/admin/rebuild-site", requireAdmin, async (req, res) => {
+  const rebuild = await triggerSiteRebuild(
+    `manual by ${(req.adminUser && req.adminUser.email) || "admin"}`,
+  );
+  const status = rebuild === "failed" ? 502 : 200;
+  return res.status(status).json({ rebuild });
+});
+
 /* ── GET /api/site-content — public ── */
 app.get("/api/site-content", async (req, res) => {
   try {
@@ -5828,7 +5862,8 @@ app.put("/api/admin/site-content", requireAdmin, async (req, res) => {
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedBy: (req.adminUser && req.adminUser.email) || null,
     });
-    return res.json({ success: true, content: clean });
+    const rebuild = await triggerSiteRebuild("site content saved");
+    return res.json({ success: true, content: clean, rebuild });
   } catch (err) {
     console.error("[SITE CONTENT PUT]", err);
     return res.status(500).json({ message: "Failed to save site content." });
