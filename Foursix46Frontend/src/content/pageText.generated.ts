@@ -4954,3 +4954,119 @@ export const PAGE_TEXT_GROUPS: PageTextGroup[] = [
     ]
   }
 ];
+
+/** Current <Seo> title/description of each static page (title without the brand suffix). */
+export const SEO_DEFAULTS: Record<string, { title: string; description: string }> = {
+  "/about": {
+    "title": "About Route46 Couriers",
+    "description": "Route46 Couriers is a UK same day courier and time-critical logistics operator, and a trading name of FourSix46® Global Ltd. Learn who we are and how we deliver."
+  },
+  "/accredited-trusted": {
+    "title": "Accreditations & Trust",
+    "description": "Route46 Couriers is a registered UK company, Cyber Essentials certified, ICO registered, fully insured and an FSB member. See our UK industry accreditations."
+  },
+  "/become-driver": {
+    "title": "Become a Courier Driver",
+    "description": "Join the Route46 Couriers driver network. Apply to run same day and time-critical courier work across the UK with consistent jobs and fast payment."
+  },
+  "/blog": {
+    "title": "Courier & Logistics Blog",
+    "description": "Guides, industry news and practical advice on same day courier delivery, time-critical logistics and UK transport from the Route46 Couriers team."
+  },
+  "/booking-thank-you": {
+    "title": "Booking Confirmed",
+    "description": ""
+  },
+  "/careers": {
+    "title": "Careers & Courier Jobs",
+    "description": "Open roles at Route46 Couriers. Join a UK same day courier and time-critical logistics team — driver, operations and office vacancies."
+  },
+  "/contact": {
+    "title": "Contact Us",
+    "description": "Speak to the Route46 Couriers team about same day delivery, dedicated vehicles and time-critical UK logistics. Call, email or send us a message."
+  },
+  "/contact-thank-you": {
+    "title": "Message Received",
+    "description": ""
+  },
+  "/cookies": {
+    "title": "Cookies Policy",
+    "description": "How Route46 Couriers uses cookies and similar technologies, and how you can manage your cookie preferences."
+  },
+  "/driver-thank-you": {
+    "title": "Driver Application Received",
+    "description": ""
+  },
+  "/faqs": {
+    "title": "Frequently Asked Questions",
+    "description": "Answers to common questions about Route46 Couriers — booking a same day courier, pricing, insurance, collection times and delivery policies."
+  },
+  "/for-businesses": {
+    "title": "Courier Services for Businesses",
+    "description": "Business courier accounts with Route46 Couriers: dedicated same day vehicles, scheduled contracts, account billing and nationwide UK coverage."
+  },
+  "/": {
+    "title": "Same Day Courier Services UK",
+    "description": "Fast, reliable same day courier services across the UK. Secure transport, professional drivers and real-time delivery updates with Route46 Couriers."
+  },
+  "/locations": {
+    "title": "Locations We Serve",
+    "description": "Cities and regions where Route46 Couriers provides reliable same day courier services across the UK mainland — from London and Birmingham to Cardiff and Manchester."
+  },
+  "/404": {
+    "title": "Page Not Found",
+    "description": ""
+  },
+  "/pay/cancel": {
+    "title": "Payment Cancelled",
+    "description": ""
+  },
+  "/pay": {
+    "title": "Pay an Invoice",
+    "description": ""
+  },
+  "/pay/success": {
+    "title": "Payment Successful",
+    "description": ""
+  },
+  "/privacy": {
+    "title": "Privacy Policy",
+    "description": "How Route46 Couriers collects, uses and protects your personal data. ICO registered and UK GDPR compliant."
+  },
+  "/quick-quote": {
+    "title": "Get a Same Day Courier Quote",
+    "description": "Get a fast, no-obligation quote for same day courier delivery anywhere in the UK. Tell us your collection and delivery details and we will price it."
+  },
+  "/get-a-quote/thank-you": {
+    "title": "Quote Request Received",
+    "description": ""
+  },
+  "/refund-policy": {
+    "title": "Refund Policy",
+    "description": "Route46 Couriers' refund and cancellation policy for same day courier bookings and prepaid deliveries."
+  },
+  "/sectors": {
+    "title": "Industry Sectors We Serve",
+    "description": "Specialist courier services for dental, aerospace, medical, legal, automotive and manufacturing sectors across the UK."
+  },
+  "/services": {
+    "title": "Our Courier Services",
+    "description": "Explore Route46 Couriers services — same day, next day, dedicated vehicle, nationwide and time-critical delivery across the UK."
+  },
+  "/shipper-thank-you": {
+    "title": "Business Enquiry Received",
+    "description": ""
+  },
+  "/sitemap": {
+    "title": "Sitemap",
+    "description": "Every page on the Route46 Couriers website in one place — services, industry sectors, UK locations, blog posts and careers."
+  },
+  "/terms": {
+    "title": "Terms & Conditions",
+    "description": "The terms and conditions governing use of the Route46 Couriers website and our same day courier services."
+  },
+  "/testimonials": {
+    "title": "Customer Testimonials",
+    "description": "Feedback from Route46 Couriers customers on our same day delivery and time-critical logistics service, published with their permission."
+  }
+};

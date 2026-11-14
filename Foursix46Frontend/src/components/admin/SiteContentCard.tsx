@@ -45,58 +45,17 @@ import {
 } from "@/components/ui/accordion";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import { useSiteContent } from "@/content/SiteContentProvider";
+import { SEO_PAGES, normaliseSiteContent } from "@/content/siteContent";
 import {
-  DEFAULT_SOCIAL_LINKS,
-  DEFAULT_STATS,
-  SEO_PAGES,
-  TEXT_GROUPS,
-  normaliseSiteContent,
-  type TextField,
-  type SiteContent,
-  type SocialLink,
-  type StatItem,
-  type Testimonial,
-  type TrustedLogo,
-} from "@/content/siteContent";
-import { PAGE_TEXT_GROUPS } from "@/content/pageText.generated";
-
-/** Hand-made groups (home, footer, careers…) + every page generated from code. */
-const allTextGroups: { id: string; label: string; fields: (TextField & { section?: string })[] }[] = [
-  ...TEXT_GROUPS,
-  ...PAGE_TEXT_GROUPS,
-];
+  allTextGroups,
+  seoOriginal,
+  toDraft,
+  toPayload,
+  type Draft,
+} from "./siteContentDraft";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-interface Draft {
-  text: Record<string, string>;
-  stats: StatItem[];
-  testimonials: Testimonial[];
-  trustedBy: TrustedLogo[];
-  socialLinks: SocialLink[];
-  seo: Record<string, { title: string; description: string }>;
-}
-
-function toDraft(c: SiteContent): Draft {
-  // Any platform added to the defaults later (e.g. Crunchbase) shows up even
-  // if an older saved list does not have it yet.
-  const saved = c.socialLinks ?? DEFAULT_SOCIAL_LINKS;
-  const missing = DEFAULT_SOCIAL_LINKS.filter(
-    (d) => !saved.some((s) => s.id === d.id),
-  );
-  const seo: Draft["seo"] = {};
-  for (const [k, v] of Object.entries(c.seo)) {
-    seo[k] = { title: v.title ?? "", description: v.description ?? "" };
-  }
-  return {
-    text: { ...c.text },
-    stats: (c.stats ?? DEFAULT_STATS).map((s) => ({ ...s })),
-    testimonials: c.testimonials.map((t) => ({ ...t })),
-    trustedBy: c.trustedBy.map((l) => ({ ...l })),
-    socialLinks: [...saved, ...missing].map((s) => ({ ...s })),
-    seo,
-  };
-}
 
 async function authHeaders(): Promise<Record<string, string>> {
   const token = await auth.currentUser?.getIdToken();
@@ -206,7 +165,7 @@ export function SiteContentCard() {
       const res = await fetch(`${apiUrl}/api/admin/site-content`, {
         method: "PUT",
         headers: await authHeaders(),
-        body: JSON.stringify(draft),
+        body: JSON.stringify(toPayload(draft)),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.message || `HTTP ${res.status}`);
@@ -267,7 +226,8 @@ export function SiteContentCard() {
           <CardDescription className="mt-1">
             Edit website text, stats, testimonials, the "Trusted by" strip,
             social links and search titles. Changes go live as soon as you
-            save. Blank text fields use the built-in wording.
+            save. Every field shows the text currently on the website — edit
+            it in place.
           </CardDescription>
         </div>
         <div className="flex items-center gap-2">
@@ -320,7 +280,7 @@ export function SiteContentCard() {
               />
               <span className="text-xs text-muted-foreground">
                 Every page's text is listed below in page order. Open a page,
-                edit a field, then Save. Blank = original wording.
+                change the text in a field, then Save.
               </span>
             </div>
             <Accordion type="multiple" className="w-full">
@@ -335,8 +295,8 @@ export function SiteContentCard() {
                     )
                   : group.fields;
                 if (q && fields.length === 0) return null;
-                const edited = group.fields.filter((fl) =>
-                  draft.text[fl.key]?.trim(),
+                const edited = group.fields.filter(
+                  (fl) => (draft.text[fl.key] ?? "").trim() !== fl.default.trim(),
                 ).length;
                 let lastSection = "";
                 return (
@@ -356,7 +316,9 @@ export function SiteContentCard() {
                     </AccordionTrigger>
                     <AccordionContent className="space-y-4 pt-2">
                       {fields.map((fl) => {
-                        const value = draft.text[fl.key] ?? "";
+                        const original = fl.default.trim();
+                        const value = draft.text[fl.key] ?? original;
+                        const changed = value.trim() !== original;
                         const section =
                           "section" in fl && fl.section !== lastSection
                             ? (lastSection = fl.section as string)
@@ -371,11 +333,11 @@ export function SiteContentCard() {
                             )}
                             <div className="flex items-center justify-between gap-2">
                               <Label className="font-semibold">{fl.label}</Label>
-                              {value.trim() && (
+                              {changed && (
                                 <button
                                   type="button"
                                   className="text-xs text-muted-foreground hover:text-foreground underline"
-                                  onClick={() => setText(fl.key, "")}
+                                  onClick={() => setText(fl.key, original)}
                                 >
                                   Reset to original
                                 </button>
@@ -383,23 +345,23 @@ export function SiteContentCard() {
                             </div>
                             {multiline ? (
                               <Textarea
-                                className="mt-1"
                                 rows={Math.min(8, Math.max(3, Math.ceil(fl.default.length / 110)))}
                                 value={value}
-                                placeholder={fl.default.trim()}
+                                className={changed ? "mt-1 border-amber-400" : "mt-1"}
                                 onChange={(e) => setText(fl.key, e.target.value)}
                               />
                             ) : (
                               <Input
-                                className="mt-1"
                                 value={value}
-                                placeholder={fl.default.trim()}
+                                className={changed ? "mt-1 border-amber-400" : "mt-1"}
                                 onChange={(e) => setText(fl.key, e.target.value)}
                               />
                             )}
-                            {value.trim() && (
+                            {changed && (
                               <p className="text-[11px] text-muted-foreground mt-1">
-                                Original: {fl.default.trim()}
+                                {value.trim()
+                                  ? <>Original: {original}</>
+                                  : "Empty — the original text will be kept."}
                               </p>
                             )}
                           </div>
@@ -694,13 +656,13 @@ export function SiteContentCard() {
           {/* ── SEO ───────────────────────────────────────────────────── */}
           <TabsContent value="seo" className="pt-4 space-y-4">
             <p className="text-sm text-muted-foreground">
-              Search titles and descriptions for the main pages. Leave blank to
-              keep the page's built-in wording. " | Route46 Couriers" is added
+              Search titles and descriptions for the main pages, filled with
+              what each page uses today. " | Route46 Couriers" is added
               to titles automatically. Services, sectors, locations and blog
               posts keep their own SEO fields in their editors.
             </p>
             {SEO_PAGES.map((pg) => {
-              const v = draft.seo[pg.path] ?? { title: "", description: "" };
+              const v = draft.seo[pg.path] ?? seoOriginal(pg.path);
               const setSeo = (patch: Partial<typeof v>) =>
                 set({ seo: { ...draft.seo, [pg.path]: { ...v, ...patch } } });
               return (
@@ -720,7 +682,6 @@ export function SiteContentCard() {
                       className="mt-1"
                       value={v.title}
                       maxLength={200}
-                      placeholder="Page default"
                       onChange={(e) => setSeo({ title: e.target.value })}
                     />
                   </div>
@@ -736,7 +697,6 @@ export function SiteContentCard() {
                       rows={2}
                       value={v.description}
                       maxLength={500}
-                      placeholder="Page default"
                       onChange={(e) => setSeo({ description: e.target.value })}
                     />
                   </div>
