@@ -20,6 +20,16 @@ import {
 } from "@/components/ui/select";
 
 /* ─── Types ─── */
+// "closed" = Application closed: the job stays visible on the website with a
+// "Closed – cannot apply" label and its Apply button is disabled.
+export type CareerStatus = "draft" | "published" | "closed";
+
+const STATUS_LABEL: Record<CareerStatus, string> = {
+  draft: "Draft",
+  published: "Published",
+  closed: "Application closed",
+};
+
 interface CareerFormData {
   id?: string;
   title: string;
@@ -27,7 +37,7 @@ interface CareerFormData {
   employmentType: string;
   description: string;
   requirements: string;
-  status: "draft" | "published";
+  status: CareerStatus;
   sortOrder: number;
 }
 
@@ -78,7 +88,7 @@ export function CareerFormDialog({ open, editingItem, onClose, onSave }: Props) 
     update({ sortOrder: isNaN(parsed) ? 0 : parsed });
   };
 
-  const handleSave = async (status: "draft" | "published") => {
+  const handleSave = async (status: CareerStatus) => {
     const currentForm = formRef.current;
     const save = onSaveRef.current;
 
@@ -113,8 +123,11 @@ export function CareerFormDialog({ open, editingItem, onClose, onSave }: Props) 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {editingItem ? "Edit Career Listing" : "Create Career Listing"}
-            <Badge variant={form.status === "published" ? "default" : "secondary"}>
-              {form.status}
+            <Badge
+              variant={form.status === "draft" ? "secondary" : "default"}
+              className={form.status === "closed" ? "bg-red-600 hover:bg-red-600" : ""}
+            >
+              {STATUS_LABEL[form.status] ?? form.status}
             </Badge>
           </DialogTitle>
         </DialogHeader>
@@ -196,7 +209,7 @@ export function CareerFormDialog({ open, editingItem, onClose, onSave }: Props) 
               <Label>Status</Label>
               <Select
                 value={form.status}
-                onValueChange={(v) => update({ status: v as "draft" | "published" })}
+                onValueChange={(v) => update({ status: v as CareerStatus })}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -204,8 +217,15 @@ export function CareerFormDialog({ open, editingItem, onClose, onSave }: Props) 
                 <SelectContent>
                   <SelectItem value="draft">Draft</SelectItem>
                   <SelectItem value="published">Published</SelectItem>
+                  <SelectItem value="closed">Application closed</SelectItem>
                 </SelectContent>
               </Select>
+              {form.status === "closed" && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Stays visible on the website, labelled "Closed – cannot
+                  apply", with applying disabled.
+                </p>
+              )}
             </div>
             <div>
               <Label>
@@ -245,9 +265,21 @@ export function CareerFormDialog({ open, editingItem, onClose, onSave }: Props) 
           <Button
             className="bg-[#134467] hover:bg-[#0e3352] text-white"
             disabled={isSaving}
-            onClick={() => handleSave("published")}
+            // Keeps "Application closed" when that is the selected status;
+            // otherwise publishes (draft → published, as before).
+            onClick={() =>
+              handleSave(form.status === "closed" ? "closed" : "published")
+            }
           >
-            {isSaving ? "Saving..." : editingItem ? "Update" : "Create & Publish"}
+            {isSaving
+              ? "Saving..."
+              : form.status === "closed"
+                ? editingItem
+                  ? "Update (Closed)"
+                  : "Create as Closed"
+                : editingItem
+                  ? "Update & Publish"
+                  : "Create & Publish"}
           </Button>
         </DialogFooter>
       </DialogContent>

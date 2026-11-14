@@ -10,11 +10,13 @@ import {
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
+  Lock,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 
 import Seo from "@/components/Seo";
 import { jobPostingSchema, breadcrumbSchema } from "@/lib/seo";
+import { useText } from "@/content/SiteContentProvider";
 const apiUrl = import.meta.env.VITE_API_URL;
 const CAREERS_EMAIL = "operations@route46couriers.co.uk";
 
@@ -36,6 +38,7 @@ export default function CareerDetailPage() {
   const [job, setJob] = useState<Career | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const t = useText();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,7 +60,10 @@ export default function CareerDetailPage() {
     .map((r) => r.trim())
     .filter(Boolean);
 
-  const applyHref = job
+  // "Application closed": job stays visible, but applying is disabled.
+  const isClosed = job?.status === "closed";
+
+  const applyHref = job && !isClosed
     ? `mailto:${CAREERS_EMAIL}?subject=${encodeURIComponent(
         `Application for ${job.title}`,
       )}&body=${encodeURIComponent(
@@ -71,10 +77,15 @@ export default function CareerDetailPage() {
         <Seo
           title={`${job.title} | Careers at Route46 Couriers`}
           rawTitle
-          description={`${job.title} — ${job.employmentType} role in ${job.location}. Apply now to join the Route46 Couriers team.`}
+          description={
+            isClosed
+              ? `${job.title} — ${job.employmentType} role in ${job.location}. Applications for this role are now closed.`
+              : `${job.title} — ${job.employmentType} role in ${job.location}. Apply now to join the Route46 Couriers team.`
+          }
           path={`/careers/${id}`}
           schemas={[
-            jobPostingSchema({
+            // No JobPosting for a closed role — Google must not list it as open.
+            !isClosed && jobPostingSchema({
               path: `/careers/${id}`,
               title: job.title,
               description: job.description || job.title,
@@ -124,6 +135,12 @@ export default function CareerDetailPage() {
               <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
                 {job.title}
               </h1>
+              {isClosed && (
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/20 text-red-100 text-sm font-bold mb-4">
+                  <Lock className="w-4 h-4" />
+                  {t("careers.closedLabel")}
+                </div>
+              )}
               <div className="flex items-center gap-1.5 text-[#48AEDD]/90 text-lg font-medium">
                 <MapPin className="w-5 h-5" />
                 {job.location}
@@ -213,14 +230,32 @@ export default function CareerDetailPage() {
                     </dd>
                   </div>
                 </dl>
-                <a href={applyHref} className="block">
-                  <Button className="w-full bg-[#134467] hover:bg-[#0e3352] text-white">
-                    Apply Now <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </a>
-                <p className="text-xs text-slate-400 mt-3 text-center">
-                  Opens an email to {CAREERS_EMAIL}
-                </p>
+                {isClosed ? (
+                  <>
+                    <Button
+                      disabled
+                      aria-disabled="true"
+                      className="w-full bg-slate-300 text-slate-600 cursor-not-allowed disabled:opacity-100"
+                    >
+                      <Lock className="w-4 h-4 mr-2" />
+                      {t("careers.closedLabel")}
+                    </Button>
+                    <p className="text-xs text-slate-500 mt-3 text-center">
+                      {t("careers.closedNotice")}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <a href={applyHref} className="block">
+                      <Button className="w-full bg-[#134467] hover:bg-[#0e3352] text-white">
+                        Apply Now <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </a>
+                    <p className="text-xs text-slate-400 mt-3 text-center">
+                      Opens an email to {CAREERS_EMAIL}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

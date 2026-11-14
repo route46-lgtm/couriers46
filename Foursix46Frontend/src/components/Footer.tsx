@@ -1,11 +1,13 @@
 import React from "react";
 import { Heart } from "lucide-react"; // Only importing Heart as others are replaced by images
 import { cn } from "@/lib/utils";
+import { useText } from "@/content/SiteContentProvider";
 
 const fadeInUp =
   "animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out fill-mode-forwards";
 
 export default function Footer() {
+  const t = useText();
   const trustBadges = [
     // {
     //   icon: "/ISO 9001.png",
@@ -23,34 +25,34 @@ export default function Footer() {
 
     {
       icon: "/Cyber Essentials.png",
-      title: "Cyber Essentials Certified",
-      description: "Secure and Protected Systems",
+      title: t("footer.badge1.title"),
+      description: t("footer.badge1.text"),
       color: "#dcb004",
     },
     {
       icon: "/FullyInsured.png",
-      title: "Fully Insured Courier Services",
-      description: "Public Liability and Goods in Transit Coverage",
+      title: t("footer.badge2.title"),
+      description: t("footer.badge2.text"),
       color: "#E53935",
     },
     {
       icon: "/ICOclear.jpg",
-      title: "ICO Registered",
-      description: "Data Protection and Privacy Compliance",
+      title: t("footer.badge3.title"),
+      description: t("footer.badge3.text"),
       color: "#48AEDD",
     },
 
     {
       icon: "/FSB.jpeg",
-      title: "Federation of Small Businesses Member",
-      description: "Supporting UK Business Standards",
+      title: t("footer.badge4.title"),
+      description: t("footer.badge4.text"),
       color: "#134467",
     },
     {
       icon: "/Trustd Verified.png",
-      title: "Trustd Verified Business",
+      title: t("footer.badge5.title"),
       sub: "",
-      description: "Fraud Prevention and Identity Verification",
+      description: t("footer.badge5.text"),
       color: "#E53935",
     },
   ];
@@ -66,8 +68,10 @@ export default function Footer() {
               fadeInUp,
             )}
           >
-            Trusted{" "}
-            <span className="text-[#E53935]">Industry Accreditations</span>
+            {t("footer.heading")}{" "}
+            <span className="text-[#E53935]">
+              {t("footer.headingHighlight")}
+            </span>
           </h2>
           <p
             className={cn(
@@ -76,10 +80,7 @@ export default function Footer() {
               "animation-delay-100",
             )}
           >
-            Route46 Couriers operates in accordance with recognised UK industry
-            standards. We are fully insured, registered, and committed to
-            maintaining high standards in safety, logistics operations, and data
-            protection.
+            {t("footer.intro")}
           </p>
         </div>
 
@@ -172,8 +173,7 @@ export default function Footer() {
         <div className="flex flex-col items-center gap-4 text-center pb-8">
           {/* SEO coverage line */}
           <p className="text-xs text-[#134467]/60 font-medium max-w-2xl leading-relaxed">
-            Route46 Couriers provides same day courier services across the UK,
-            including Cardiff, London, Birmingham, Manchester, and Bristol.
+            {t("footer.coverage")}
           </p>
 
           {/* Legal links */}

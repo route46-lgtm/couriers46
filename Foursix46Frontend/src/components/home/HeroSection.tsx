@@ -1,5 +1,6 @@
 // import { Button } from "@/components/ui/button";
 // import { Building2, Send } from "lucide-react";
+import { useText } from "@/content/SiteContentProvider";
 
 // interface HeroSectionProps {
 //   onSendParcel: () => void;
@@ -294,6 +295,8 @@ export const HeroSection = ({
   backgroundImageUrl = "/route462.webp",
   mobileBackgroundImageUrl = "/route463mob.webp",
 }: HeroSectionProps) => {
+  const t = useText();
+  const heroDescription = t("home.hero.description");
   return (
     <section
       className="
@@ -378,7 +381,7 @@ export const HeroSection = ({
               Route46 Couriers
             </span>
             <span className="text-[0.6rem] font-bold text-[#f5eb18] tracking-[0.18em] uppercase leading-tight mt-1 whitespace-nowrap">
-              The Courier with a difference
+              {t("home.hero.brandTagline")}
             </span>
           </div>
         </div>
@@ -394,7 +397,7 @@ export const HeroSection = ({
           >
             <div className="px-4 sm:px-5 py-2 rounded-full bg-transparent border border-white/70 text-white text-[11px] sm:text-xs font-bold tracking-wide uppercase animate-pulse-glow flex items-center gap-2 backdrop-blur-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-[#48AEDD] flex-shrink-0" />
-              UK-WIDE COURIER NETWORK
+              {t("home.hero.badge")}
             </div>
           </div>
 
@@ -404,11 +407,11 @@ export const HeroSection = ({
             style={{ animationDelay: "160ms" }}
           >
             <span className="text-[#48AEDD] whitespace-nowrap">
-              Same Day Courier
+              {t("home.hero.titleLine1")}
             </span>
             <br />
             <span className="block mt-1 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-[#F81E30] to-[#ff6b6b]">
-              Service In UK
+              {t("home.hero.titleLine2")}
             </span>
           </h1>
 
@@ -417,11 +420,14 @@ export const HeroSection = ({
             className="text-sm sm:text-lg text-gray-200 mb-7 sm:mb-9 leading-relaxed max-w-xl mx-auto lg:mx-0 drop-shadow-md animate-fade-in-up"
             style={{ animationDelay: "240ms" }}
           >
-            <span className="text-white font-semibold">Route46</span> Couriers
-            provides urgent parcel delivery, document transport, and
-            time-critical logistics across the United Kingdom, offers rapid
-            collection, direct delivery, and real-time tracking for businesses
-            and individuals who require fast and secure transport solutions.
+            {heroDescription.startsWith("Route46") ? (
+              <>
+                <span className="text-white font-semibold">Route46</span>
+                {heroDescription.slice("Route46".length)}
+              </>
+            ) : (
+              heroDescription
+            )}
           </p>
 
           {/* BUTTONS */}
@@ -442,7 +448,7 @@ export const HeroSection = ({
               "
             >
               <Send className="w-5 h-5 flex-shrink-0" />
-              Quick Quote
+              {t("home.hero.primaryCta")}
             </Button>
 
             <Button
@@ -460,7 +466,7 @@ export const HeroSection = ({
               "
             >
               <Building2 className="w-5 h-5 flex-shrink-0" />
-              Join Our Courier Network
+              {t("home.hero.secondaryCta")}
             </Button>
           </div>
         </div>

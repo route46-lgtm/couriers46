@@ -26,6 +26,7 @@ import {
   TWITTER_HANDLE,
   clean,
 } from "@/lib/seo";
+import { useSeoOverride } from "@/content/SiteContentProvider";
 
 interface SeoProps {
   /** Page title. " | Route46 Couriers" is appended unless `rawTitle` is set. */
@@ -40,8 +41,8 @@ interface SeoProps {
   noindex?: boolean;
   /** Use the title exactly as given, without the brand suffix. */
   rawTitle?: boolean;
-  /** JSON-LD graphs to attach to this page. */
-  schemas?: object[];
+  /** JSON-LD graphs to attach to this page. Falsy entries are skipped. */
+  schemas?: (object | false | null | undefined)[];
   /** Extra <head> children if a page needs something bespoke. */
   children?: React.ReactNode;
 }
@@ -59,6 +60,12 @@ export default function Seo({
   schemas = [],
   children,
 }: SeoProps) {
+  // Admin → Site Content → SEO can override a static page's title/description.
+  // Blank fields keep the page's own copy.
+  const override = useSeoOverride(path);
+  if (override?.title?.trim()) title = override.title.trim();
+  if (override?.description?.trim()) description = override.description.trim();
+
   const url = canonical(path);
   const fullTitle =
     rawTitle || title.includes(SITE_NAME) ? title : `${title}${BRAND_SUFFIX}`;

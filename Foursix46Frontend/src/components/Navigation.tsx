@@ -715,6 +715,8 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
+import { useSocialLinks, useTestimonials } from "@/content/SiteContentProvider";
+import type { SocialId } from "@/content/siteContent";
 
 // Custom TikTok Icon Component (Authentic Look)
 const TiktokIcon = ({ className }: { className?: string }) => (
@@ -725,6 +727,38 @@ const TiktokIcon = ({ className }: { className?: string }) => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+  </svg>
+);
+
+// Crunchbase "cb" mark
+const CrunchbaseIcon = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <rect
+      x="2.5"
+      y="2.5"
+      width="19"
+      height="19"
+      rx="4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+    <text
+      x="12"
+      y="16.2"
+      textAnchor="middle"
+      fontSize="10.5"
+      fontWeight="700"
+      fontFamily="Arial, Helvetica, sans-serif"
+      fill="currentColor"
+    >
+      cb
+    </text>
   </svg>
 );
 
@@ -745,7 +779,7 @@ const navItems = [
   { id: "quick-quote", label: "Quick Quote", icon: Send, path: "/quick-quote" },
 ];
 
-const infoItems = [
+const ALL_INFO_ITEMS = [
   { id: "about", label: "About", icon: Info, path: "/about" },
   {
     id: "services",
@@ -781,60 +815,38 @@ const legalItems = [
   },
 ];
 
-const socialItems = [
-  {
-    id: "tiktok",
-    label: "TikTok",
-    icon: TiktokIcon,
-    path: "https://www.tiktok.com/@route46_couriers",
-    color: "hover:text-[#000000] hover:bg-[#00f2ea]/20",
-  },
-  {
-    id: "instagram",
-    label: "Instagram",
-    icon: Instagram,
-    path: "https://www.instagram.com/route46couriers/",
-    color: "hover:text-[#E1306C] hover:bg-[#E1306C]/20",
-  },
-  {
-    id: "whatsapp",
-    label: "WhatsApp",
-    icon: MessageCircle,
-    path: "https://wa.me/447393363802",
-    color: "hover:text-[#25D366] hover:bg-[#25D366]/20",
-  },
-  {
-    id: "facebook",
-    label: "Facebook",
-    icon: Facebook,
-    path: "https://www.facebook.com/route46couriers/",
-    color: "hover:text-[#1877F2] hover:bg-[#1877F2]/20",
-  },
-  {
-    id: "youtube",
-    label: "YouTube",
-    icon: Youtube,
-    path: "https://www.youtube.com/@Route46Couriers",
-    color: "hover:text-[#FF0000] hover:bg-[#FF0000]/20",
-  },
-  {
-    id: "linkedin",
-    label: "LinkedIn",
-    icon: Linkedin,
-    path: "https://www.linkedin.com/company/route46-couriers/",
-    color: "hover:text-[#0077b5] hover:bg-[#0077b5]/20",
-  },
-  {
-    id: "x",
-    label: "X",
-    icon: X,
-    path: "https://x.com/Route46Couriers",
-    color: "hover:text-black hover:bg-black/20",
-  },
-];
+// Icon + hover colour per platform. Which links show (and their URLs) comes
+// from Admin → Site Content → Social links.
+const SOCIAL_STYLES: Record<
+  SocialId,
+  { icon: React.ComponentType<{ className?: string }>; color: string }
+> = {
+  tiktok: { icon: TiktokIcon, color: "hover:text-[#000000] hover:bg-[#00f2ea]/20" },
+  instagram: { icon: Instagram, color: "hover:text-[#E1306C] hover:bg-[#E1306C]/20" },
+  whatsapp: { icon: MessageCircle, color: "hover:text-[#25D366] hover:bg-[#25D366]/20" },
+  facebook: { icon: Facebook, color: "hover:text-[#1877F2] hover:bg-[#1877F2]/20" },
+  youtube: { icon: Youtube, color: "hover:text-[#FF0000] hover:bg-[#FF0000]/20" },
+  linkedin: { icon: Linkedin, color: "hover:text-[#0077b5] hover:bg-[#0077b5]/20" },
+  x: { icon: X, color: "hover:text-black hover:bg-black/20" },
+  crunchbase: { icon: CrunchbaseIcon, color: "hover:text-[#0288D1] hover:bg-[#0288D1]/20" },
+};
 
 export const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const socialItems = useSocialLinks()
+    .filter((l) => SOCIAL_STYLES[l.id])
+    .map((l) => ({
+      id: l.id,
+      label: l.label,
+      path: l.url,
+      icon: SOCIAL_STYLES[l.id].icon,
+      color: SOCIAL_STYLES[l.id].color,
+    }));
+  // The Testimonials link only appears once there are consented testimonials.
+  const hasTestimonials = useTestimonials().length > 0;
+  const infoItems = ALL_INFO_ITEMS.filter(
+    (i) => i.id !== "testimonials" || hasTestimonials,
+  );
   const location = useLocation();
   const navigate = useNavigate();
 

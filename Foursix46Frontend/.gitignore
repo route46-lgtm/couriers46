@@ -24,3 +24,5 @@ dist-ssr
 *.sln
 *.sw?
 .env
+# Site Content CMS snapshot (written at build time)
+.site-content.json

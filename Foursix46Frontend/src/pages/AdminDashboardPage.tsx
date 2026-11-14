@@ -2758,6 +2758,7 @@ import { FaqFormDialog } from "@/components/admin/FaqFormDialog";
 import { BlogFormDialog } from "@/components/admin/BlogFormDialog"; // ✅ NEW
 import { CareerFormDialog } from "@/components/admin/CareerFormDialog";
 import { VatSettingsCard } from "@/components/admin/VatSettingsCard";
+import { SiteContentCard } from "@/components/admin/SiteContentCard";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -2844,6 +2845,7 @@ type DashboardView =
   | "careers"
   | "quickQuotes"
   | "vatSettings"
+  | "siteContent"
   | "payments";
 
 interface Booking {
@@ -3826,6 +3828,7 @@ export default function AdminDashboardPage() {
             },
             { view: "payments", label: "Payments", count: payments.length },
             { view: "vatSettings", label: "VAT Settings", count: undefined },
+            { view: "siteContent", label: "Site Content", count: undefined },
           ].map(({ view, label, count }) => (
             <Card
               key={view}
@@ -3881,6 +3884,9 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
+
+        {/* ── Site Content CMS ─────────────────────────────────────────────── */}
+        {currentView === "siteContent" && <SiteContentCard />}
 
         {/* ── Pending Drivers ──────────────────────────────────────────────── */}
         {currentView === "pending" && (
@@ -4928,10 +4934,14 @@ export default function AdminDashboardPage() {
                               className={
                                 item.status === "published"
                                   ? "bg-green-100 text-green-800"
-                                  : "bg-yellow-100 text-yellow-800"
+                                  : item.status === "closed"
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-yellow-100 text-yellow-800"
                               }
                             >
-                              {item.status}
+                              {item.status === "closed"
+                                ? "Application closed"
+                                : item.status}
                             </Badge>
                           </TableCell>
                           <TableCell className="space-x-2">

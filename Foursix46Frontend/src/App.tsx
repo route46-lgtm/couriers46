@@ -197,6 +197,7 @@ import { Navigation } from "@/components/Navigation";
 import { Chatbot } from "@/components/Chatbot";
 import ScrollToTop from "@/components/ScrollToTop";
 import { organizationSchema, websiteSchema, clean } from "@/lib/seo";
+import { SiteContentProvider } from "@/content/SiteContentProvider";
 
 const queryClient = new QueryClient();
 
@@ -300,6 +301,7 @@ export class PageErrorBoundary extends Component<EBProps, EBState> {
 // titles, meta and JSON-LD never reached the built HTML.
 export const RootLayout = () => (
   <QueryClientProvider client={queryClient}>
+    <SiteContentProvider>
     <TooltipProvider>
       <>
         {/* ── Site-wide JSON-LD ────────────────────────────────────────────
@@ -324,6 +326,7 @@ export const RootLayout = () => (
         {/* <Chatbot /> */}
       </>
     </TooltipProvider>
+    </SiteContentProvider>
   </QueryClientProvider>
 );
 

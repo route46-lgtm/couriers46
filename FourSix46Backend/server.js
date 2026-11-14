@@ -4090,7 +4090,10 @@ app.get("/sitemap.xml", async (req, res) => {
     u(`${BASE_URL}/faqs`,               "monthly", "0.6");
     u(`${BASE_URL}/for-businesses`,     "monthly", "0.7");
     u(`${BASE_URL}/become-driver`,      "monthly", "0.7");
-    u(`${BASE_URL}/testimonials`,       "monthly", "0.6");
+    // Only listed once there are consented testimonials (page is noindex otherwise).
+    if (await hasConsentedTestimonials()) {
+      u(`${BASE_URL}/testimonials`,     "monthly", "0.6");
+    }
     u(`${BASE_URL}/careers`,            "weekly",  "0.6");
     u(`${BASE_URL}/quick-quote`,        "monthly", "0.9");
     u(`${BASE_URL}/accredited-trusted`, "monthly", "0.5");
@@ -5508,13 +5511,16 @@ app.delete("/api/faqs/:id", async (req, res) => {
 // =============================================
 // CAREERS — public + admin CRUD
 // =============================================
+// draft = hidden · published = open · closed = "Application closed"
+const CAREER_STATUSES = ["draft", "published", "closed"];
 
-// GET /api/careers — public, published only
+// GET /api/careers — public: published + "Application closed" (closed jobs
+// stay visible on the site with applying disabled).
 app.get("/api/careers", async (req, res) => {
   try {
     const snapshot = await db
       .collection("careers")
-      .where("status", "==", "published")
+      .where("status", "in", ["published", "closed"])
       .get(); // ← no .orderBy() here, sort in JS (same pattern as FAQs)
 
     const careers = snapshot.docs
@@ -5534,7 +5540,7 @@ app.get("/api/careers/:id", async (req, res) => {
     const { id } = req.params;
     const doc = await db.collection("careers").doc(id).get();
 
-    if (!doc.exists || doc.data().status !== "published") {
+    if (!doc.exists || !["published", "closed"].includes(doc.data().status)) {
       return res.status(404).json({ message: "Job listing not found" });
     }
 
@@ -5575,6 +5581,9 @@ app.post("/api/careers", async (req, res) => {
         message: "Title, location, employment type, and description are required",
       });
     }
+    if (req.body.status && !CAREER_STATUSES.includes(req.body.status)) {
+      return res.status(400).json({ message: "Invalid status." });
+    }
 
     const docRef = await db.collection("careers").add({
       ...req.body,
@@ -5605,6 +5614,9 @@ app.put("/api/careers/:id", async (req, res) => {
       return res.status(400).json({
         message: "Title, location, employment type, and description are required.",
       });
+    }
+    if (status && !CAREER_STATUSES.includes(status)) {
+      return res.status(400).json({ message: "Invalid status." });
     }
 
     await docRef.update({
@@ -5643,6 +5655,179 @@ app.delete("/api/careers/:id", async (req, res) => {
   } catch (error) {
     console.error("Error deleting career listing:", error);
     res.status(500).json({ message: "Failed to delete career listing." });
+  }
+});
+
+// =============================================
+// SITE CONTENT CMS — one document: settings/siteContent
+// Page text, footer text, stats row, testimonials, "Trusted by" strip,
+// social links and SEO titles/descriptions (Admin → Site Content).
+// =============================================
+const SITE_CONTENT_DOC = "settings/siteContent";
+const SITE_SOCIAL_IDS = [
+  "tiktok", "instagram", "whatsapp", "facebook",
+  "youtube", "linkedin", "x", "crunchbase",
+];
+
+// Writes require a signed-in Firebase user with the `admin` custom claim —
+// the same claim the admin dashboard checks before it renders.
+async function requireAdmin(req, res, next) {
+  try {
+    const header = req.headers.authorization || "";
+    const token = header.startsWith("Bearer ") ? header.slice(7) : null;
+    if (!token) return res.status(401).json({ message: "Sign in required." });
+    const decoded = await admin.auth().verifyIdToken(token);
+    if (decoded.admin !== true) {
+      return res.status(403).json({ message: "Admin access required." });
+    }
+    req.adminUser = decoded;
+    return next();
+  } catch (err) {
+    return res
+      .status(401)
+      .json({ message: "Session expired. Please sign in again." });
+  }
+}
+
+const cmsStr = (v, max = 5000) =>
+  typeof v === "string" ? v.trim().slice(0, max) : "";
+const cmsUrl = (v) => {
+  const s = cmsStr(v, 2000);
+  return /^https?:\/\//i.test(s) || s.startsWith("/") ? s : "";
+};
+const cmsArr = (v, max) => (Array.isArray(v) ? v.slice(0, max) : []);
+
+function sanitiseSiteContent(body) {
+  const b = body && typeof body === "object" ? body : {};
+
+  const text = {};
+  if (b.text && typeof b.text === "object") {
+    for (const [k, v] of Object.entries(b.text)) {
+      if (/^[\w.-]{1,100}$/.test(k) && typeof v === "string") text[k] = cmsStr(v);
+    }
+  }
+
+  const seo = {};
+  if (b.seo && typeof b.seo === "object") {
+    for (const [k, v] of Object.entries(b.seo)) {
+      if (k.length <= 200 && /^\/[\w\-/]*$/.test(k) && v && typeof v === "object") {
+        const title = cmsStr(v.title, 200);
+        const description = cmsStr(v.description, 500);
+        if (title || description) seo[k] = { title, description };
+      }
+    }
+  }
+
+  const out = {
+    text,
+    seo,
+    testimonials: cmsArr(b.testimonials, 50)
+      .map((t) => ({
+        name: cmsStr(t && t.name, 120),
+        company: cmsStr(t && t.company, 160),
+        quote: cmsStr(t && t.quote, 2000),
+        photo: cmsUrl(t && t.photo),
+        consent: !!t && t.consent === true,
+      }))
+      .filter((t) => t.name || t.quote),
+    trustedBy: cmsArr(b.trustedBy, 50)
+      .map((l) => ({
+        name: cmsStr(l && l.name, 120),
+        logo: cmsUrl(l && l.logo),
+        confirmed: !!l && l.confirmed === true,
+      }))
+      .filter((l) => l.name || l.logo),
+  };
+
+  // stats / socialLinks: only stored when sent, so "never saved" (→ site
+  // defaults) stays different from "saved as empty" (→ show none).
+  if (Array.isArray(b.stats)) {
+    out.stats = cmsArr(b.stats, 12)
+      .map((s) => ({
+        value: cmsStr(s && s.value, 40),
+        label: cmsStr(s && s.label, 120),
+        enabled: !s || s.enabled !== false,
+      }))
+      .filter((s) => s.value || s.label);
+  }
+  if (Array.isArray(b.socialLinks)) {
+    out.socialLinks = cmsArr(b.socialLinks, 20)
+      .filter((s) => s && SITE_SOCIAL_IDS.includes(s.id))
+      .map((s) => ({
+        id: s.id,
+        label: cmsStr(s.label, 40),
+        url: cmsUrl(s.url),
+        enabled: s.enabled !== false,
+      }));
+  }
+  return out;
+}
+
+// Public view: testimonials without consent and logos not confirmed by the
+// customer never leave the server.
+function publicSiteContent(d) {
+  const data = d || {};
+  const out = {
+    text: data.text || {},
+    seo: data.seo || {},
+    testimonials: (data.testimonials || []).filter((t) => t && t.consent === true),
+    trustedBy: (data.trustedBy || []).filter((l) => l && l.confirmed === true),
+  };
+  if (Array.isArray(data.stats)) {
+    out.stats = data.stats.filter((s) => s && s.enabled !== false);
+  }
+  if (Array.isArray(data.socialLinks)) out.socialLinks = data.socialLinks;
+  return out;
+}
+
+async function hasConsentedTestimonials() {
+  try {
+    const snap = await db.doc(SITE_CONTENT_DOC).get();
+    const list = (snap.exists && snap.data().testimonials) || [];
+    return list.some((t) => t && t.consent === true && t.quote && t.name);
+  } catch (e) {
+    return false;
+  }
+}
+
+/* ── GET /api/site-content — public ── */
+app.get("/api/site-content", async (req, res) => {
+  try {
+    const snap = await db.doc(SITE_CONTENT_DOC).get();
+    res.set("Cache-Control", "public, max-age=60");
+    return res.json(publicSiteContent(snap.exists ? snap.data() : {}));
+  } catch (err) {
+    console.error("[SITE CONTENT GET]", err);
+    return res.status(500).json({ message: "Failed to load site content." });
+  }
+});
+
+/* ── GET /api/admin/site-content — admin, includes unticked items ── */
+app.get("/api/admin/site-content", requireAdmin, async (req, res) => {
+  try {
+    const snap = await db.doc(SITE_CONTENT_DOC).get();
+    const data = snap.exists ? snap.data() : {};
+    delete data.updatedAt;
+    return res.json(data);
+  } catch (err) {
+    console.error("[SITE CONTENT ADMIN GET]", err);
+    return res.status(500).json({ message: "Failed to load site content." });
+  }
+});
+
+/* ── PUT /api/admin/site-content — admin, replaces the whole document ── */
+app.put("/api/admin/site-content", requireAdmin, async (req, res) => {
+  try {
+    const clean = sanitiseSiteContent(req.body);
+    await db.doc(SITE_CONTENT_DOC).set({
+      ...clean,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedBy: (req.adminUser && req.adminUser.email) || null,
+    });
+    return res.json({ success: true, content: clean });
+  } catch (err) {
+    console.error("[SITE CONTENT PUT]", err);
+    return res.status(500).json({ message: "Failed to save site content." });
   }
 });
 

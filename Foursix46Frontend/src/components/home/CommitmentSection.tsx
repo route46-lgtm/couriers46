@@ -1,11 +1,14 @@
 import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useText } from "@/content/SiteContentProvider";
 
 interface CommitmentSectionProps {
   benefits: string[];
 }
 
-export const CommitmentSection = ({ benefits }: CommitmentSectionProps) => (
+export const CommitmentSection = ({ benefits }: CommitmentSectionProps) => {
+  const t = useText();
+  return (
   <section className="py-20 px-4 sm:px-8 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
     {/* Inline Animation Styles */}
     <style>{`
@@ -31,17 +34,17 @@ export const CommitmentSection = ({ benefits }: CommitmentSectionProps) => (
         <div className="inline-flex items-center gap-2 mb-3 px-4 py-1 rounded-full bg-[#134467]/5 border border-[#134467]/10">
           <ShieldCheck className="w-4 h-4 text-[#E53935]" />
           <span className="text-xs font-bold uppercase tracking-widest text-[#134467]">
-            Our Promise
+            {t("home.commitment.eyebrow")}
           </span>
         </div>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#134467] mb-4">
-          Reliable Same Day Courier Services{" "}
-          <span className="text-[#48AEDD]">Across the UK</span>
+          {t("home.commitment.title")}{" "}
+          <span className="text-[#48AEDD]">
+            {t("home.commitment.titleHighlight")}
+          </span>
         </h2>
         <p className="text-[#134467]/80 max-w-2xl mx-auto text-lg">
-          Looking for a reliable same day courier service in the UK? <br />
-          Route46 Couriers provides fast collection and secure delivery for
-          urgent shipments and business logistics.
+          {t("home.commitment.intro")}
         </p>
       </div>
 
@@ -77,3 +80,4 @@ export const CommitmentSection = ({ benefits }: CommitmentSectionProps) => (
     </div>
   </section>
 );
+};

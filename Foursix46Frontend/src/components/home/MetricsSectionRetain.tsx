@@ -6,8 +6,11 @@ import {
   Zap,
   MapPin,
 } from "lucide-react";
+import { useText } from "@/content/SiteContentProvider";
 
-export const MetricsSectionRetain = () => (
+export const MetricsSectionRetain = () => {
+  const t = useText();
+  return (
   <section className="px-4 sm:px-6 lg:px-8 -mt-10 sm:-mt-14 lg:-mt-20 relative z-30 mb-12 sm:mb-16">
     {/* Custom Animation Styles */}
     <style>{`
@@ -38,10 +41,10 @@ export const MetricsSectionRetain = () => (
                 </div>
                 <div>
                   <p className="font-bold text-[#134467] text-sm sm:text-base">
-                    Same Day Delivery
+                    {t("home.highlights.1.title")}
                   </p>
                   <p className="text-[10px] sm:text-xs text-[#134467]/80 mt-0.5">
-                    Urgent courier delivery available across the UK
+                    {t("home.highlights.1.text")}
                   </p>
                 </div>
               </div>
@@ -53,10 +56,10 @@ export const MetricsSectionRetain = () => (
                 </div>
                 <div>
                   <p className="font-bold text-[#134467] text-sm sm:text-base">
-                    Live Tracking
+                    {t("home.highlights.2.title")}
                   </p>
                   <p className="text-[10px] sm:text-xs text-[#134467]/80 mt-0.5">
-                    Track your shipment in real time with delivery updates
+                    {t("home.highlights.2.text")}
                   </p>
                 </div>
               </div>
@@ -68,10 +71,10 @@ export const MetricsSectionRetain = () => (
                 </div>
                 <div>
                   <p className="font-bold text-[#134467] text-sm sm:text-base">
-                    60 Mins Pickup
+                    {t("home.highlights.3.title")}
                   </p>
                   <p className="text-[10px] sm:text-xs text-[#134467]/80 mt-0.5">
-                    Courier collection within 60 minutes in major UK cities
+                    {t("home.highlights.3.text")}
                   </p>
                 </div>
               </div>
@@ -84,7 +87,7 @@ export const MetricsSectionRetain = () => (
                 {/* Left Part */}
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-xl sm:text-2xl font-extrabold text-[#E53935]">
-                    On a Mission to cut CO2 Emissions
+                    {t("home.highlights.bannerMain")}
                   </span>
                   {/* <span className="font-bold text-[#134467]/90 text-xs sm:text-sm">Successful Deliveries</span> */}
                 </div>
@@ -96,7 +99,7 @@ export const MetricsSectionRetain = () => (
 
                 {/* Right Part - Now sits on the baseline (bottom) naturally */}
                 <span className="font-bold text-[#134467]/90 text-xs sm:text-sm">
-                  Upto 30% per Delivery
+                  {t("home.highlights.bannerSub")}
                 </span>
               </div>
             </div>
@@ -106,3 +109,4 @@ export const MetricsSectionRetain = () => (
     </div>
   </section>
 );
+};

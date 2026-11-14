@@ -39,6 +39,7 @@ export const SAME_AS = [
   "https://www.youtube.com/@Route46Couriers",
   "https://www.tiktok.com/@route46_couriers",
   "https://www.linkedin.com/company/route46-couriers/",
+  "https://www.crunchbase.com/organization/route46-couriers",
 ];
 
 /* ── URL helpers ──────────────────────────────────────────────────────────── */

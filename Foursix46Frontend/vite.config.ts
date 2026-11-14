@@ -132,6 +132,20 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import viteTsconfigPaths from "vite-tsconfig-paths";
+import fs from "fs";
+
+// Site Content CMS snapshot, written by scripts/fetch-site-content.mjs right
+// before the build. Baked in so the static HTML already carries the CMS text;
+// the browser then refreshes it live. Missing/broken file → empty (defaults).
+function readSiteContentSnapshot(): unknown {
+  try {
+    return JSON.parse(
+      fs.readFileSync(path.resolve(__dirname, ".site-content.json"), "utf-8"),
+    );
+  } catch {
+    return {};
+  }
+}
 
 const BASE_URL = "https://www.route46couriers.co.uk";
 
@@ -149,6 +163,10 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+  },
+
+  define: {
+    __SITE_CONTENT__: JSON.stringify(readSiteContentSnapshot()),
   },
 
   plugins: [

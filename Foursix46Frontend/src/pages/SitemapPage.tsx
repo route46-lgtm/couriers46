@@ -13,6 +13,7 @@
    re-fetched on client-side navigation so the page is never stale.
 ───────────────────────────────────────────────────────────────────────────── */
 
+import { useTestimonials } from "@/content/SiteContentProvider";
 import { useEffect, useState } from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import { Loader2, ExternalLink } from "lucide-react";
@@ -220,7 +221,14 @@ export default function SitemapPage() {
     };
   }, []);
 
-  const sections = data?.sections ?? [];
+  // /testimonials is only linked once there are consented testimonials.
+  const hasTestimonials = useTestimonials().length > 0;
+  const sections = (data?.sections ?? []).map((section) => ({
+    ...section,
+    links: hasTestimonials
+      ? section.links
+      : section.links.filter((l) => l.path !== "/testimonials"),
+  }));
   const totalLinks = sections.reduce((n, s) => n + s.links.length, 0);
 
   return (

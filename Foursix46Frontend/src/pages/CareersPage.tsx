@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 
 import Seo from "@/components/Seo";
 import { webPageSchema, breadcrumbSchema } from "@/lib/seo";
+import { useText } from "@/content/SiteContentProvider";
 const apiUrl = import.meta.env.VITE_API_URL;
 const CAREERS_EMAIL = "operations@route46couriers.co.uk";
 
@@ -26,6 +27,7 @@ export default function CareersPage() {
   const [careers, setCareers] = useState<Career[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeType, setActiveType] = useState("All");
+  const t = useText();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -83,14 +85,14 @@ export default function CareersPage() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#48AEDD]/20 text-[#48AEDD] text-sm font-semibold mb-6">
               <Briefcase className="w-4 h-4" />
-              Join Our Team
+              {t("careers.badge")}
             </div>
             <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
-              Careers at <span className="text-[#F5EB18]">Route46</span>
+              {t("careers.title")}{" "}
+              <span className="text-[#F5EB18]">{t("careers.titleHighlight")}</span>
             </h1>
             <p className="text-[#48AEDD]/80 text-xl max-w-2xl mx-auto">
-              Explore current openings and help us build the logistics
-              network of the future.
+              {t("careers.subtitle")}
             </p>
           </motion.div>
         </div>
@@ -136,10 +138,10 @@ export default function CareersPage() {
           <div className="text-center py-24">
             <Briefcase className="w-12 h-12 mx-auto text-slate-300 mb-4" />
             <p className="text-slate-500 text-lg font-medium">
-              No open positions right now.
+              {t("careers.emptyTitle")}
             </p>
             <p className="text-slate-400 text-sm mt-1">
-              Check back soon, or send us your CV at{" "}
+              {t("careers.emptyText")}{" "}
               <a
                 href={`mailto:${CAREERS_EMAIL}`}
                 className="text-[#E53935] font-semibold"
@@ -154,7 +156,9 @@ export default function CareersPage() {
         {/* Job Listings */}
         {!loading && filtered.length > 0 && (
           <div className="space-y-4">
-            {filtered.map((job, i) => (
+            {filtered.map((job, i) => {
+              const isClosed = job.status === "closed";
+              return (
               <motion.div
                 key={job.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -163,7 +167,11 @@ export default function CareersPage() {
               >
                 <Link
                   to={`/careers/${job.id}`}
-                  className="group block rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-[#48AEDD]/40 transition-all overflow-hidden bg-white p-6"
+                  className={`group block rounded-2xl border shadow-sm hover:shadow-md transition-all overflow-hidden p-6 ${
+                    isClosed
+                      ? "border-slate-200 bg-slate-50"
+                      : "border-slate-100 bg-white hover:border-[#48AEDD]/40"
+                  }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex-1">
@@ -174,6 +182,11 @@ export default function CareersPage() {
                         <Badge className="bg-[#F5EB18] text-[#134467] font-bold text-xs">
                           {job.employmentType}
                         </Badge>
+                        {isClosed && (
+                          <Badge className="bg-red-100 text-red-700 hover:bg-red-100 font-bold text-xs">
+                            {t("careers.closedLabel")}
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-3">
                         <MapPin className="w-4 h-4" />
@@ -184,13 +197,20 @@ export default function CareersPage() {
                       </p>
                     </div>
 
-                    <Button className="shrink-0 bg-[#134467] group-hover:bg-[#0e3352] text-white whitespace-nowrap pointer-events-none">
+                    <Button
+                      className={`shrink-0 whitespace-nowrap pointer-events-none ${
+                        isClosed
+                          ? "bg-slate-300 text-slate-600"
+                          : "bg-[#134467] group-hover:bg-[#0e3352] text-white"
+                      }`}
+                    >
                       View Details <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
                 </Link>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
